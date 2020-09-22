@@ -1,0 +1,12 @@
+@import "reset";
+//为了缩小打包面积，可在index.html的style标签内引入
+@import "utils";
+//for循环生成的 margin、padding、width、height类
+@import "custom";
+//自定义的一些快捷css类
+@import "color";
+//颜色
+@import "dialog";
+//弹窗
+@import "layout"; //布局
+
