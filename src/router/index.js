@@ -12,17 +12,17 @@ export const constantRouterMap = [
         name: 'login',
         component: _import('pages/login'),
         hidden: true,
-    },{
+    }, {
         path: '/terminal',
         name: 'terminal',
         component: _import('pages/terminal'),
         hidden: true,
-    },{
+    }, {
         path: '/file',
         name: 'file',
-        component: _import('pages/file'),
+        component: _import('file_manager/file'),
         hidden: true,
-    },{
+    }, {
         path: '/home',
         name: 'home',
         component: _import('pages/home'),
@@ -41,5 +41,5 @@ export const constantRouterMap = [
 export default new VueRouter({
     // mode: 'history',
     routes: constantRouterMap,
-    scrollBehavior: () => ({ y: 0 }),
+    scrollBehavior: () => ({y: 0}),
 })

@@ -61,7 +61,6 @@
 </template>
 
 <script>
-    import verify from '../../components/verify'
     import { types } from '../../store/mutation-types'
 
     export default {

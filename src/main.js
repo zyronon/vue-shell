@@ -4,11 +4,12 @@ import './assets/scss/index.scss'
 import router from './router'
 import store from './store'
 import mixin from './utils/mixin'
-import api from './api'
+import request from "./utils/http";
 
 Vue.config.productionTip = false
 Vue.prototype.$bus = new Vue()
-Vue.prototype.$api = { ...api }
+Vue.prototype.$request = request
+
 
 Vue.mixin(mixin)
 new Vue({

@@ -1,11 +1,14 @@
 <template>
     <div>
         <div v-for="(item,index) in list" :key="index">
-            <div :path="test(path,item.name)" :style="calcMarginLeft(deep)" class="name">
+            <div :path="(path?path+'/':'')+item.name"
+                 :style="calcMarginLeft(deep)"
+                 class="name"
+                 @click="goto((path?path+'/':'')+item.name)">
                 <img src="@/assets/images/file.png" alt="">
                 <span>{{item.name}}</span>
             </div>
-            <dir-item class="children" :deep="deep+1" :path="test(path,item.name)" v-if="item.children"
+            <dir-item class="children" :deep="deep+1" :path="(path?path+'/':'')+item.name" v-if="item.children"
                       :list="item.children"></dir-item>
         </div>
     </div>
@@ -33,9 +36,8 @@
                 // console.log(pPath,cPath)
                 return pPath + '/' + cPath
             },
-            goto(pPath, cPath) {
-                this.$emit('goToPath', pPath + '/' + cPath)
-                // console.log(pPath,cPath)
+            goto(p) {
+                this.$bus.$emit('gotoPath', p)
             },
         }
     }
@@ -49,10 +51,12 @@
         display: flex;
         align-items: center;
         cursor: pointer;
-        img{
+
+        img {
             height: 22px;
         }
-        span{
+
+        span {
             margin-left: 5px;
         }
 

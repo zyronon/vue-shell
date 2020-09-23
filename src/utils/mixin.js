@@ -18,6 +18,7 @@ export default {
         // })
         // 将globalMethods里面的方法用对象展开符混入到mixin上,以方便调用，直接this.$xxx方法名就可以了
         ...globalMethods,
+
     },
     filters: {
         // //将filter里面的方法添加了vue的筛选器上
