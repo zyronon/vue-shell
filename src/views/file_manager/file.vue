@@ -80,7 +80,7 @@
             <div class="header">
                 <span class="title">{{readFile.title}}</span>
                 <div class="right">
-                    <div class="button">保存</div>
+                    <div class="button" @click="save">保存</div>
                     <img class="cp" src="@/assets/images/close.png" alt="" @click="readFile.isShow = false">
                 </div>
             </div>
@@ -89,7 +89,7 @@
                     <div class="line-number" v-for="item of readFile.lines">{{item}}</div>
                 </div>
                 <!--                <textarea>{{readFile.content}}</textarea>-->
-                <pre contenteditable="">{{readFile.content}}</pre>
+                <pre contenteditable="" ref="pre">{{readFile.content}}</pre>
             </div>
         </div>
 
@@ -253,6 +253,13 @@
             }
         },
         methods: {
+            save(){
+               // console.log(this.readFile.content)
+                let pre = this.$refs['pre']
+                let newContent = pre.innerText
+
+                console.log()
+            },
             async upload(e) {
                 // console.log(e);
                 let file = e.path[0].files[0]
