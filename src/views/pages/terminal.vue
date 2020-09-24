@@ -189,13 +189,6 @@
 </script>
 
 <style lang="scss" scoped>
-    html, body {
-        padding: 0;
-        margin: 0;
-        height: 100%;
-
-    }
-
     .content {
         $font-color: rgb(0, 255, 0);
         $font-size: 18px;

@@ -151,59 +151,8 @@
     }
 
     $border-color: gray;
-    input {
-        background-color: #fff;
-        background-image: none;
-        border-radius: 4px;
-        border: 1px solid #DCDFE6;
-        box-sizing: border-box;
-        color: #606266;
-        display: inline-block;
-        font-size: inherit;
-        height: 40px;
-        line-height: 40px;
-        outline: none;
-        padding: 0 15px;
-        transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-        width: 100%;
 
-        &:focus {
-            outline: none;
-            border-color: #4080B0;
-        }
-    }
-    .button {
-        display: inline-block;
-        line-height: 1;
-        white-space: nowrap;
-        cursor: pointer;
-        background: #fff;
-        border: 1px solid #DCDFE6;
-        border-color: #DCDFE6;
-        color: #606266;
-        -webkit-appearance: none;
-        text-align: center;
-        box-sizing: border-box;
-        outline: none;
-        margin: 0;
-        transition: .1s;
-        font-weight: 500;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-        padding: 12px 20px;
-        font-size: 14px;
-        border-radius: 4px;
 
-        &.primary {
-            color: #fff;
-            background-color: #4080B0;
-            border-color: #4080B0;
-        }
-        &:active {
-            opacity: .7;
-        }
-    }
     .app {
         position: relative;;
         padding: 10px;
