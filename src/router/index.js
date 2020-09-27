@@ -27,6 +27,11 @@ export const constantRouterMap = [
         name: 'home',
         component: _import('pages/home'),
         hidden: true,
+    }, {
+        path: '/code',
+        name: 'code',
+        component: _import('file_manager/CodeEdit'),
+        hidden: true,
     },
     {
         path: '',

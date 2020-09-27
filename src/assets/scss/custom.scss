@@ -67,7 +67,7 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    padding: 12px 20px;
+    padding: 6px 10px;
     font-size: 14px;
     border-radius: 4px;
 
@@ -97,6 +97,7 @@ input {
     padding: 0 15px;
     transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     width: 100%;
+
 
     &:focus {
         outline: none;

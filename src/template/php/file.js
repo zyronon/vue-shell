@@ -64,6 +64,16 @@ export default class File {
        `
     }
 
+    read(){
+        return`
+        echo @file_get_contents('${this.arg1}');
+        `
+    }
+
+    change(){
+        return`@file_put_contents('${this.arg1}', base64_decode($_POST['${this.arg2}']));`
+    }
+
     delete() {
         return `
        @unlink('${this.arg1}');

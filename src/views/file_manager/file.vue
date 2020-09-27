@@ -76,22 +76,14 @@
                 </div>
             </div>
         </div>
-        <div class="file-content" v-if="readFile.isShow">
-            <div class="header">
-                <span class="title">{{readFile.title}}</span>
-                <div class="right">
-                    <div class="button">保存</div>
-                    <img class="cp" src="@/assets/images/close.png" alt="" @click="readFile.isShow = false">
-                </div>
-            </div>
-            <div class="content">
-                <div class="lines">
-                    <div class="line-number" v-for="item of readFile.lines">{{item}}</div>
-                </div>
-                <!--                <textarea>{{readFile.content}}</textarea>-->
-                <pre contenteditable="">{{readFile.content}}</pre>
-            </div>
-        </div>
+        <CodeEdit class="file-content"
+                  @close="readFile.isShow = false"
+                  v-if="readFile.isShow"
+                  :content="readFile.content"
+                  :title="readFile.title"
+                  :path="readFile.path">
+        </CodeEdit>
+
 
         <div v-if="contextMenu.isShow" :style="{top:contextMenu.top+'px',left:contextMenu.left+'px'}"
              class="contextmenu">
@@ -146,10 +138,14 @@
     import DirItem from "./DirItem"
     import File from '../../template/php/file.js'
     import CONSTANT from "../../utils/const_var";
+    import CodeEdit from "./CodeEdit";
+    import base64 from "../../utils/base64";
+
 
     export default {
         components: {
-            'dir-item': DirItem
+            'dir-item': DirItem,
+            'CodeEdit': CodeEdit
         },
         data() {
             return {
@@ -169,10 +165,501 @@
                 },
                 readFile: {
                     isShow: false,
-                    content: '',
-                    lines: 0,
+                    content: `
+                    <?php
+
+namespace app\\index\\controller;
+
+use think\\Db;
+use think\\response\\Json;
+use think\\worker\\Server;
+
+class Worker extends Server {
+    protected $socket = 'http://0.0.0.0:2346';
+
+
+    public function onWorkerStart($worker) {
+
+    }
+
+    public function onWorkerReload($worker) {
+
+    }
+
+    public function onConnect($connection) {
+//        $connection->uid = ++$this->global_uid;
+//        $connection->getRemoteIp();
+//        echo $connection->id;
+        $connection->id = uniqid();
+    }
+
+    public function onMessage($connection, $data) {
+        if ($data == null) {
+            return;
+        }
+        $data = json_decode($data, true);
+
+        $roomId = $data['roomId'];
+        $user = $data['user'];
+
+        $db = Db::table('rooms_users');
+
+        $room = Db::table('rooms')
+            ->where('id', $roomId)
+            ->find();
+
+        $roomsUsers = $db
+            ->where('roomId', $roomId)
+            ->select();
+
+        $isJoin = Db::table('rooms_users')
+            ->where('roomId', $data['roomId'])
+            ->where('userId', $user['openId'])
+            ->find();
+
+        if (isset($data['option'])) {
+            $option = $data['option'];
+            switch ($option['type']) {
+                case 'confirm':
+                    //加入
+                    $connection->id = uniqid();
+                    if ($option['value']) {
+                        if ($isJoin) {
+                            if ($isJoin['connId'] !== $connection->id) {
+                                Db::table('rooms_users')
+                                    ->where('id', $isJoin['id'])
+                                    ->update([
+                                        'connId' => $connection->id,
+                                        'type' => 1,
+                                        'status' => 0
+                                    ]);
+                            }
+                            echo '在';
+                        } else {
+                            echo '否';
+                            $roomsPlayUsers = Db::table('rooms_users')
+                                ->where('roomId', $roomId)
+                                ->where('type', 1)
+                                ->select();
+
+                            if (count($roomsPlayUsers) >= 10) {
+                                return $connection->send(wsSuccess('notice', '', '房间已满'));
+                            }
+                            Db::table('rooms_users')
+                                ->insert([
+                                    'roomId' => $roomId,
+                                    'userId' => $user['openId'],
+                                    'connId' => $connection->id,
+                                    'type' => 1,
+                                    'status' => 0,
+                                ]);
+                        }
+                        $roomsPlayUsers = Db::table('rooms_users')
+                            ->where('roomId', $roomId)
+                            ->where('type', 1)
+                            ->select();
+
+
+                        $roomsUsers = Db::table('rooms_users')
+                            ->where('roomId', $roomId)
+                            ->select();
+
+                        foreach ($roomsUsers as $item) {
+                            foreach ($this->worker->connections as $i) {
+                                if ($i->id == $item['connId']) {
+                                    $i->send(wsSuccess('userJoin', $roomsPlayUsers, $user['name'] . '已加入'));
+                                }
+                            }
+                        }
+                    } else {
+                        //观战
+                        if ($isJoin) {
+                            if ($isJoin['connId'] !== $connection->id) {
+                                Db::table('rooms_users')
+                                    ->where('id', $isJoin['id'])
+                                    ->update([
+                                        'connId' => $connection->id,
+                                        'type' => 0,
+                                        'status' => 0,
+                                    ]);
+                            }
+                            echo '在';
+                        } else {
+                            echo '否';
+                            Db::table('rooms_users')
+                                ->insert([
+                                    'roomId' => $roomId,
+                                    'userId' => $user['openId'],
+                                    'connId' => $connection->id,
+                                    'type' => 0,
+                                    'status' => 0,
+                                ]);
+                        }
+                        $roomsLookUsers = Db::table('rooms_users')
+                            ->where('roomId', $roomId)
+                            ->where('type', 0)
+                            ->select();
+
+                        foreach ($roomsUsers as $item) {
+                            foreach ($this->worker->connections as $i) {
+                                if ($i->id == $item['connId']) {
+                                    $i->send(wsSuccess('look', $roomsLookUsers, $user['name'] . '加入观战'));
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 'ready':
+                    if ($room['currentGameIsStart'] == 1) {
+                        return $connection->send(wsSuccess('notice', null, '游戏已开始'));
+                    }
+
+                    Db::table('rooms_users')
+                        ->where('userId', $user['openId'])
+                        ->update(['status' => 1]);
+
+                    $roomsReadyUsers = Db::table('rooms_users')
+                        ->where('roomId', $roomId)
+                        ->where('status', 1)
+                        ->select();
+
+
+                    $roomsPlayUsers = Db::table('rooms_users')
+                        ->where('roomId', $roomId)
+                        ->where('type', 1)
+                        ->select();
+
+                    foreach ($roomsPlayUsers as $item) {
+                        foreach ($this->worker->connections as $i) {
+                            if ($i->id == $item['connId']) {
+                                $i->send(wsSuccess('userReady', $roomsPlayUsers, $user['name'] . '已准备'));
+                            }
+                        }
+                    }
+
+                    if (count($roomsReadyUsers) == count($roomsPlayUsers) && count($roomsReadyUsers) >= 2) {
+                        $room['currentGameIsStart'] = 1;
+                        Db::table('rooms')
+                            ->update($room);
+
+                        $cards = GenerateCard::generateCards(count($roomsPlayUsers));
+
+                        foreach ($roomsPlayUsers as $k => &$item) {
+                            $card = $cards[$k];
+
+                            $cardRow = [
+                                'roomId' => $roomId,
+                                'userId' => $item['userId'],
+                                'roomsUsersId' => $item['id'],
+                                'isHost' => 0,
+                                'multiple' => null,
+                                'grab' => null,
+                                'numberGames' => $room['currentNumberGames'],
+                                'card0' => $card[0],
+                                'card1' => $card[1],
+                                'card2' => $card[2],
+                                'card3' => $card[3],
+                                'card4' => $card[4],
+                            ];
+                            $cardRow['id'] = Db::table('rooms_users_games')
+                                ->insertGetId($cardRow);
+
+                            $item['currentGame'] = $cardRow;
+                        }
+
+                        foreach ($roomsPlayUsers as &$item) {
+                            foreach ($this->worker->connections as $i) {
+                                if ($i->id == $item['connId']) {
+                                    $i->send(wsSuccess('myCard', $roomsPlayUsers));
+                                }
+                            }
+                        }
+                    }
+
+                    break;
+                case 'grab':
+                    $option['value']['time'] = time();
+                    Db::table('rooms_users_games')
+                        ->update($option['value']);
+
+                    echo 1;
+
+                    $currentGames = Db::table('rooms_users_games')
+                        ->where('roomId', $roomId)
+                        ->where('numberGames', $room['currentNumberGames'])
+                        ->select();
+
+
+                    $roomsUsers = Db::table('rooms_users')
+                        ->where('roomId', $roomId)
+                        ->select();
+
+                    foreach ($roomsUsers as &$item) {
+                        foreach ($currentGames as $games) {
+                            if ($games['userId'] == $item['userId']) {
+                                $item['currentGame'] = $games;
+                            }
+                        }
+                    }
+
+
+                    foreach ($roomsUsers as $item2) {
+                        foreach ($this->worker->connections as $i) {
+                            if ($i->id == $item2['connId']) {
+                                $i->send(wsSuccess('updateUserStatus', $roomsUsers));
+                            }
+                        }
+                    }
+
+                    $roomsPlayUsers = Db::table('rooms_users')
+                        ->where('roomId', $roomId)
+                        ->where('type', 1)
+                        ->select();
+
+                    $currentGames = Db::table('rooms_users_games')
+                        ->where('roomId', $roomId)
+                        ->where('numberGames', $room['currentNumberGames'])
+                        ->where('grab', '<>', null)
+                        ->select();
+
+                    if (count($roomsPlayUsers) == count($currentGames)) {
+
+                        $currentGames[0]['isHost'] = 1;
+                        Db::table('rooms_users_games')
+                            ->update($currentGames[0]);
+
+                        foreach ($roomsUsers as &$item) {
+                            foreach ($currentGames as $games) {
+                                if ($games['userId'] == $item['userId']) {
+                                    $item['currentGame'] = $games;
+                                }
+                            }
+                        }
+
+                        foreach ($roomsUsers as $item2) {
+                            foreach ($this->worker->connections as $i) {
+                                if ($i->id == $item2['connId']) {
+                                    $i->send(wsSuccess('multiple', $roomsUsers));
+                                }
+                            }
+                        }
+                    }
+
+                    break;
+                case 'multiple':
+                    Db::table('rooms_users_games')
+                        ->update($option['value']);
+
+                    $currentGames = Db::table('rooms_users_games')
+                        ->where('roomId', $roomId)
+                        ->where('numberGames', $room['currentNumberGames'])
+                        ->select();
+
+
+                    $roomsUsers = Db::table('rooms_users')
+                        ->where('roomId', $roomId)
+                        ->select();
+
+                    foreach ($roomsUsers as &$item) {
+                        foreach ($currentGames as $games) {
+                            if ($games['userId'] == $item['userId']) {
+                                $item['currentGame'] = $games;
+                            }
+                        }
+                    }
+
+                    foreach ($roomsUsers as $item2) {
+                        foreach ($this->worker->connections as $i) {
+                            if ($i->id == $item2['connId']) {
+                                $i->send(wsSuccess('updateUserStatus', $roomsUsers));
+                            }
+                        }
+                    }
+
+                    $roomsPlayUsers = Db::table('rooms_users')
+                        ->where('roomId', $roomId)
+                        ->where('type', 1)
+                        ->select();
+
+                    $currentNotHostGames = Db::table('rooms_users_games')
+                        ->where('roomId', $roomId)
+                        ->where('numberGames', $room['currentNumberGames'])
+                        ->where('isHost', 0)
+                        ->where('multiple', '<>', null)
+                        ->select();
+
+                    if (count($roomsPlayUsers) - 1 == count($currentNotHostGames)) {
+                        //重置游戏为未开始
+                        $room['currentGameIsStart'] = 0;
+                        $room['currentNumberGames'] = $room['currentNumberGames'] + 1;
+                        Db::table('rooms')
+                            ->update($room);
+
+                        //重置所有玩家为未准备
+                        Db::table('rooms_users')
+                            ->where('roomId', $roomId)
+                            ->where('type', 1)
+                            ->update(['status' => 0]);
+
+
+                        $hostGamer = null;
+                        foreach ($currentGames as &$currentGame) {
+                            $currentGame['res'] = GenerateCard::calcPoints($currentGame);
+                            if ($currentGame['isHost'] == 1) {
+                                $hostGamer = $currentGame;
+                            }
+                        }
+                        $baseFraction = $room['baseFraction'];
+
+                        foreach ($currentGames as &$v) {
+                            if ($v['id'] !== $hostGamer['id']) {
+                                $vDigits = 1;
+                                $hostDigits = 1;
+
+                                $vType = $v['res']['type'];
+                                $hostType = $hostGamer['res']['type'];
+                                switch ($vType) {
+                                    case 13:
+                                    case 12:
+                                    case 11:
+                                        $vDigits = 5;
+                                        break;
+                                    case 10:
+                                        $vDigits = 4;
+                                        break;
+                                    case 9:
+                                        $vDigits = 3;
+                                        break;
+                                    case 8:
+                                    case 7:
+                                        $vDigits = 2;
+                                        break;
+                                    case 0:
+                                        echo '无牛';
+                                        break;
+                                    default:
+                                        $vDigits = 1;
+                                        break;
+                                }
+                                switch ($hostType) {
+                                    case 13:
+                                    case 12:
+                                    case 11:
+                                        $hostDigits = 5;
+                                        break;
+                                    case 10:
+                                        $hostDigits = 4;
+                                        break;
+                                    case 9:
+                                        $hostDigits = 3;
+                                        break;
+                                    case 8:
+                                    case 7:
+                                        $hostDigits = 2;
+                                        break;
+                                    case 0:
+                                        echo '无牛';
+                                        break;
+                                    default:
+                                        $hostDigits = 1;
+                                        break;
+                                }
+
+                                $v['score'] = $vDigits * $baseFraction * $v['multiple'] * $hostDigits;
+                                $hostGamer['score'] = $vDigits * $baseFraction * $v['multiple'] * $hostDigits;
+                                if ($vType > $hostType) {
+                                    $v['scoreType'] = 1;
+                                    $hostGamer['scoreType'] = 0;
+                                } elseif ($vType == $hostType) {
+                                    $v['scoreType'] = -1;
+                                    $hostGamer['scoreType'] = -1;
+                                } else {
+                                    $v['scoreType'] = 0;
+                                    $hostGamer['scoreType'] = 1;
+                                }
+                            }
+                        }
+
+                        foreach ($currentGames as &$currentGame) {
+                            if ($currentGame['id'] == $hostGamer['id']) {
+                                $currentGame['scoreType'] = $hostGamer['scoreType'];
+                                $currentGame['score'] = $hostGamer['score'];
+                            }
+                            Db::table('rooms_users_games')
+                                ->update($currentGame);
+                        }
+
+                        foreach ($roomsPlayUsers as &$item) {
+                            $item['status'] = 0;
+                            foreach ($currentGames as $games) {
+                                if ($games['userId'] == $item['userId']) {
+                                    $item['currentGame'] = $games;
+                                }
+                            }
+                        }
+
+                        foreach ($roomsUsers as $item2) {
+                            foreach ($this->worker->connections as $i) {
+                                if ($i->id == $item2['connId']) {
+                                    $i->send(wsSuccess('end', $roomsPlayUsers));
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 'end':
+                    break;
+            }
+        } else {
+            foreach ($roomsUsers as $item) {
+                foreach ($this->worker->connections as $i) {
+                    if ($i->id == $item['connId']) {
+                        $i->send($data['value']);
+                    }
+                }
+            }
+        }
+    }
+
+    public function onMessage1($connection, $data) {
+        //        if (in_array($connection->id, [0, 1, 2, 3, 4, 5])) {
+        //            $connection->id = uniqid();
+        //        } else {
+        //        }
+        if ($data == null) {
+            return;
+        }
+        $data = json_decode($data, true);
+
+        d($connection->id);
+
+        d('-------------------------------------------------------------------------------------------------');
+        d('-------------------------------------------------------------------------------------------------');
+        d('-------------------------------------------------------------------------------------------------');
+        d('-------------------------------------------------------------------------------------------------');
+        if (isset($data['test'])) {
+            d('进来了');
+            foreach ($this->worker->connections as $i) {
+                if ($i->id == $data['test']) {
+                    d(123123);
+                }
+            }
+        }
+        //        $this->worker->connections[$connection->id]->send($data['value']);
+    }
+
+    public function onClose($connection) {
+        //        echo '---die---';
+        //        echo $connection->id;
+    }
+
+    public function onError($connection, $code, $msg) {
+        echo "error [ $code ] $msg\\n";
+    }
+}
+                    `,
                     title: '',
-                    path: ''
+                    path: 'D:/safe/code/vue-shell/php-shell//shell.php'
                 },
                 readFiles: [],
                 root_path: '',
@@ -206,6 +693,7 @@
         },
         created() {
             this.init()
+
         },
         filters: {
             size(r) {
@@ -277,6 +765,19 @@
             async init() {
                 this.shell.shellUrl = this.generateShellUrl()
                 await this.getCurrentPath()
+                // let content = this.editor.getValue()
+                let content = ' async init() {\n' +
+                    '                this.shell.shellUrl = this.generateShellUrl()\n' +
+                    '                await this.getCurrentPath()\n' +
+                    '                // let content = this.editor.getValue()\n' +
+                    '                let content = \'花木成畦手自栽工花木成畦手自栽茜花木成畦手自栽李斐莉雪\'\n' +
+                    '                console.log(base64._encode(content));\n' +
+                    '                // let res = await this.$request(\'http://localhost:8863/api/file.php\', \'c=\' + base64._encode(content), {}, \'POST\')\n' +
+                    '                // console.log(res);\n' +
+                    '            },'
+                console.log(base64._encode(content));
+                // let res = await this.$request('http://localhost:8863/api/file.php', 'c=' + base64._encode(content), {}, 'POST')
+                // console.log(res);
             },
             generateShellUrl() {
                 if (this.shell.url.indexOf('?') !== -1) {
@@ -568,29 +1069,23 @@
                     this.readFile.isShow = !this.readFile.isShow
                 }
             },
-            readFileContent(path, fileName) {
-                let that = this
-                let phpCode = 'echo @file_get_contents( \'' + path + '\');'
-                $.ajax({
-                    url: 'http://localhost/shell.php?c=' + phpCode,
-                    success(res) {
-                        let row = {
-                            title: fileName,
-                            content: res,
-                            path: path,
-                            lines: res.split('\n').length
-                        }
-                        that.readFile = {...that.readFile, ...row}
-                        that.readFile.isShow = true
-                        that.readFiles.push(row)
-                    }
-                })
+            async readFileContent(path, fileName) {
+                let res = await this.$request(this.shell.shellUrl+new File(path).read())
+                // console.log(res);
+                let row = {
+                    title: fileName,
+                    content: res,
+                    path: path,
+                }
+                this.readFile = {...this.readFile, ...row}
+                this.readFile.isShow = true
+                this.readFiles.push(row)
             },
             showFileContent(item) {
                 let that = this
                 that.readFile = {...that.readFile, ...item}
                 that.readFile.isShow = !that.readFile.isShow
-                console.log(that.readFile);
+                // console.log(that.readFile);
             },
             con(res) {
                 console.log(JSON.stringify(res, null, 4));
@@ -716,7 +1211,7 @@
                                     height: 100%;
                                     width: 80%;
                                     display: flex;
-                                    //display: none;
+                                    display: none;
                                     align-items: center;
                                     overflow: auto;
 
@@ -754,7 +1249,7 @@
                                 }
 
                                 input {
-                                    display: none;
+                                    /*display: none;*/
                                     box-sizing: border-box;
                                     outline: 0;
                                     border: 0;
@@ -763,7 +1258,7 @@
                                     height: 100%;
                                     width: 100%;
 
-                                    &:active {
+                                    &:focus {
                                         border: 1px solid rgb(0, 120, 215);
                                     }
                                 }
@@ -928,82 +1423,6 @@
         height: 100%;
         top: 0;
         background: #fff;
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 40px;
-            border-bottom: 1px solid #cbcbcb;
-            padding: 0 20px;
-        }
-
-        .content {
-            height: calc(100% - 70px);
-            width: 100%;
-            display: flex;
-            overflow: auto;
-            background: rgb(215, 215, 175);
-
-            &::-webkit-scrollbar {
-                display: none; /* Chrome Safari */
-            }
-
-            .lines {
-                background: rgb(175, 175, 135);
-
-                .line-number {
-                    background: rgb(175, 175, 135);
-                    padding: 0 20px;
-
-                    height: 25px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-end;
-                    /*text-align: end;*/
-                }
-            }
-
-            pre {
-                width: calc(100% - 50px);
-                /*height: 100%;*/
-                /*overflow-x: auto;*/
-                resize: none;
-                border: 0;
-                outline: 0;
-                padding: 2px;
-                margin: 0;
-                background: rgb(215, 215, 175);
-                font-family: sans-serif;
-                line-height: 25px;
-                color: #484801;
-
-                &::selection {
-                    /*color: #fff;*/
-                    background: #dafd94;
-                }
-            }
-
-            textarea {
-                width: calc(100% - 50px);
-                /*height: 100%;*/
-                /*overflow-x: auto;*/
-                resize: none;
-                border: 0;
-                outline: 0;
-                padding: 2px;
-                margin: 0;
-                background: rgb(215, 215, 175);
-                font-family: sans-serif;
-                line-height: 25px;
-                color: #484801;
-
-                &::selection {
-                    /*color: #fff;*/
-                    background: #dafd94;
-                }
-            }
-        }
     }
 
     .mask {
