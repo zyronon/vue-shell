@@ -741,6 +741,13 @@ class Worker extends Server {
             }
         },
         methods: {
+            save(){
+               // console.log(this.readFile.content)
+                let pre = this.$refs['pre']
+                let newContent = pre.innerText
+
+                console.log()
+            },
             async upload(e) {
                 // console.log(e);
                 let file = e.path[0].files[0]

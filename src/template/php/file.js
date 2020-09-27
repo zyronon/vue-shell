@@ -5,6 +5,24 @@ export default class File {
         // console.log(1);
     }
 
+    change(){
+        return `
+        $dir = '${this.arg1}';
+        if (!@is_dir($dir)) {
+            echo "ERROR:// Path Not Found Or No Permission!";
+        } else {
+            $res = '';
+            foreach (scandir($dir) as $value) {
+                if ($value === '.' || $value === '..') continue;
+                $file = $dir . $value;
+                $res .= $value . '\`\`' . (is_dir($file) ? '1' : '0') . '\`\`' . date("Y/m/d H:i", filemtime($file)) . '\`\`' . @filesize($file);
+                $res .= "\\n";
+            }
+            echo $res;
+        }
+        `
+    }
+
     dir() {
         return `
         header("Content-Type: text/html;charset=GBK");
