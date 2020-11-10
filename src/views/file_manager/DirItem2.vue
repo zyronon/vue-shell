@@ -20,7 +20,7 @@
                 <span class="name">{{item.name}}&nbsp;&nbsp;&nbsp;&nbsp;</span>
             </div>
             <dir-item style="width: 100%;" class="children" :class="item.isClose?'close':''" :deep="deep+1"
-                      :path="(path?path+'/':'')+item.name" v-if="item.children && item.children.length"
+                      :path="(path?path+'/':'')+item.name" v-if="item.children"
                       :list="item.children"></dir-item>
         </div>
     </div>
@@ -64,15 +64,13 @@
     $folder-color: #87939A;
 
     .folder {
-        min-width: 200px;
-
         float: left;
 
         .content {
             display: flex;
             padding: 5px;
             align-items: center;
-            /*cursor: pointer;*/
+            cursor: pointer;
 
             .icons {
                 margin: 0 5px;
@@ -84,7 +82,7 @@
                     height: 0;
                     border: 7px solid transparent;
                     border-left: 12px solid $folder-color;
-                    transform: translate(-4px, 3px) rotate(90deg);
+                    transform: translate(-3px, 5px) rotate(90deg);
 
                     &.close {
                         transform: rotate(0deg);
@@ -111,11 +109,6 @@
             &:hover {
                 background: $active-color;
             }
-        }
-
-        .active {
-            background: $active-color;
-
         }
     }
 

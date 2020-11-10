@@ -1,5 +1,7 @@
-
 export default {
+    $console(v) {
+        console.log(JSON.stringify(v, null, 4));
+    },
     // 解析url
     $parseURL(url) {
         const a = document.createElement('a')
@@ -80,7 +82,7 @@ export default {
         }
         return itemArr
     },
-    
+
     $mConfirm(type, msg, onConfirm) {
         MessageBox.confirm(msg === '' ? '确定删除这条数据？' : msg, '提示', {
             confirmButtonText: '确定',
@@ -91,7 +93,7 @@ export default {
         }).catch(() => {
         })
     },
-    
+
     $success(msg) {
 
     },
@@ -108,7 +110,7 @@ export default {
         // const isIOS = /(iphone|ipod|ipad|ios)/i.test(navigator.userAgent)
         // const isAndroid = /android/i.test(navigator.userAgent)
     },
-    
+
     // 倒计时时间格式化
     $countdownFormatTime(timeStamp) {
         const day = Math.floor(timeStamp / (24 * 3600 * 1000))

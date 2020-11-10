@@ -1,5 +1,5 @@
 <template>
-    <div class="content" @click="contextMenu.isShow = false">
+    <div class="content" @click="contextMenu.isShow = false" >
         <div class="tabs">
             <div class="tab">
                 code11111
@@ -10,9 +10,10 @@
         </div>
         <div class="tab-content">
             <div class="left-dir">
-                <dir-item :list="dirs" class="drive"></dir-item>
+                <folders :shell="shell"></folders>
             </div>
             <div class="dir-content">
+                <div class="gutter-vertical" @mousemove="mousemove"></div>
                 <div class="float-top">
                     <div class="nav-bar">
                         <div class="option-container">
@@ -20,7 +21,7 @@
                                 <div class="breadcrumb">
                                     <div v-for="item of current_parse_path">{{item}}</div>
                                 </div>
-                                <input type="text" :value="current_path">
+                                <input type="text" :value="currentPath">
                             </div>
                             <div class="options">
                                 <div>
@@ -32,11 +33,11 @@
                                 </div>
                                 <div>
                                     <img class="home" src="@/assets/images/home.png" alt=""
-                                         @click="gotoPath(home_path)">
+                                         @click="gotoPath(homePath)">
                                 </div>
                                 <div>
                                     <img class="refresh" src="@/assets/images/refresh.png" alt=""
-                                         @click="gotoPath(current_path)">
+                                         @click="gotoPath(currentPath)">
                                 </div>
                             </div>
                         </div>
@@ -84,10 +85,9 @@
                   :path="readFile.path">
         </CodeEdit>
 
-
         <div v-if="contextMenu.isShow" :style="{top:contextMenu.top+'px',left:contextMenu.left+'px'}"
              class="contextmenu">
-            <div class="item" @click="gotoPath(current_path)">
+            <div class="item" @click="gotoPath(currentPath)">
                 <img src="@/assets/images/file.png" alt="">
                 <span>刷新目录</span>
             </div>
@@ -136,6 +136,7 @@
 <script>
     import axios from 'axios'
     import DirItem from "./DirItem"
+    import folders from "./folders"
     import File from '../../template/php/file.js'
     import CONSTANT from "../../utils/const_var";
     import CodeEdit from "./CodeEdit";
@@ -145,7 +146,8 @@
     export default {
         components: {
             'dir-item': DirItem,
-            'CodeEdit': CodeEdit
+            'CodeEdit': CodeEdit,
+            folders
         },
         data() {
             return {
@@ -664,36 +666,13 @@ class Worker extends Server {
                 readFiles: [],
                 root_path: '',
                 current_dir: [],
-                current_path: '',
+                currentPath: '',
                 current_parse_path: [],
-                home_path: '',
-                dirs: [],
-                dirs2: [
-                    {
-                        "name": "D:",
-                        "children": [
-                            {
-                                "name": "code",
-                                "children": [
-                                    {
-                                        "name": "php",
-                                        "children": [
-                                            {
-                                                "name": "niuniu",
-                                                'children': []
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
+                homePath: '',
             }
         },
         created() {
             this.init()
-
         },
         filters: {
             size(r) {
@@ -741,8 +720,11 @@ class Worker extends Server {
             }
         },
         methods: {
-            save(){
-               // console.log(this.readFile.content)
+            mousemove(){
+              console.log(1);
+            },
+            save() {
+                // console.log(this.readFile.content)
                 let pre = this.$refs['pre']
                 let newContent = pre.innerText
 
@@ -756,7 +738,7 @@ class Worker extends Server {
                 let res = await axios.post(this.shell.shellUrl + new File(file.name).upload(), formData, {
                     headers: {'Content-type': 'multipart/form-data'}
                 })
-                await this.gotoPath(this.current_path)
+                await this.gotoPath(this.currentPath)
                 // console.log(res);
 
             },
@@ -771,7 +753,6 @@ class Worker extends Server {
             },
             async init() {
                 this.shell.shellUrl = this.generateShellUrl()
-                await this.getCurrentPath()
                 // let content = this.editor.getValue()
                 let content = ' async init() {\n' +
                     '                this.shell.shellUrl = this.generateShellUrl()\n' +
@@ -782,232 +763,18 @@ class Worker extends Server {
                     '                // let res = await this.$request(\'http://localhost:8863/api/file.php\', \'c=\' + base64._encode(content), {}, \'POST\')\n' +
                     '                // console.log(res);\n' +
                     '            },'
-                console.log(base64._encode(content));
+                // console.log(base64._encode(content));
                 // let res = await this.$request('http://localhost:8863/api/file.php', 'c=' + base64._encode(content), {}, 'POST')
                 // console.log(res);
             },
+
             generateShellUrl() {
                 if (this.shell.url.indexOf('?') !== -1) {
                     return this.shell.url + '&' + this.shell.pwd + '='
                 }
                 return this.shell.url + '?' + this.shell.pwd + '='
             },
-            async getCurrentPath() {
-                let res = await this.$request(this.shell.shellUrl + new File().pwd()) + '/'
-                res = res.split('``')
-                this.home_path = this.current_path = res[1]
-                res[0].split('|').map(v => {
-                    if (v) {
-                        this.dirs.push({
-                            name: v,
-                            isClose: true,
-                            children: []
-                        })
-                    }
-                })
-                this.parsePath(this.current_path)
-                await this.gotoPath(this.current_path)
-            },
-            async download() {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.path).download()
-                console.log(s);
-                let res = await this.request(s)
-                console.log(res);
-            },
-            async createFile() {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.path + this.createFileName).create()
-                console.log(s);
-                let res = await this.request(s)
-                console.log(res);
-                await this.gotoPath(this.current_path)
-                this.isShowDialog = false
-            },
-            async deleteFile() {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.file).delete()
-                console.log(s);
-                let res = await this.request(s)
-                console.log(res);
-                await this.gotoPath(this.current_path)
-            },
-            async rename() {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.file, this.contextMenu.file + '2').rename()
-                console.log(s);
-                let res = await this.request(s)
-                console.log(res);
-            },
-            onContextMenu(e, item) {
-                console.log(e, item);
-                // console.log(e.clientX, '----', e.clientY);
-                // console.log(e.pageX, '----', e.pageY);
-                // console.log(e.offsetX, '----', e.offsetY);
-                // console.log(e.screenX, '----', e.screenY);
-                // console.log(e.x, '----', e.y);
-                this.contextMenu.isShow = true
-                this.contextMenu.top = e.y
-                this.contextMenu.left = e.x
-                this.contextMenu.file = this.current_path + item.name
-                this.contextMenu.path = this.current_path
-            },
-            parsePath(path) {
-                path = path.replace(/\\/g, '/')
-                if (path.endsWith('/')) {
-                    path = path.substr(0, path.length - 1)
-                }
-                let paths
-                if (path.startsWith('/')) {
-                    paths = path.split('/')
-                    paths[0] = '/'
-                } else {
-                    paths = path.split('/')
-                }
-                this.current_parse_path = paths
-                this.diffChild(paths)
-            },
-            diffChild(paths) {
-                // this.con(paths);
-                let deepNodeIndex = []
-                for (let i = 0; i < paths.length; i++) {
-                    let v = paths[i]
-                    if (deepNodeIndex.length) {
-                        let node = {}
-                        deepNodeIndex.map(v => {
-                            if (node.children && node.children.length) {
-                                node = node.children[v]
-                            } else {
-                                node = this.dirs[v]
-                            }
-                        })
-                        // this.con(node);
-                        let index = node.children.findIndex(w => w.name === v)
-                        if (index !== -1) {
-                            deepNodeIndex.push(index)
-                        } else {
-                            break
-                        }
-                    } else {
-                        let index = this.dirs.findIndex(w => w.name === v)
-                        if (index !== -1) {
-                            deepNodeIndex.push(index)
-                        } else {
-                            break
-                        }
-                    }
-                }
-                // console.log(deepNodeIndex);
 
-                let pathDir = {}
-                for (let i = paths.length - 1; i >= deepNodeIndex.length; i--) {
-                    let v = paths[i]
-                    if (i === paths.length - 1) {
-                        pathDir.name = v
-                        pathDir.children = []
-                        pathDir.isClose = false
-                    } else {
-                        let temp = {}
-                        temp.name = v
-                        temp.isClose = false
-                        temp.children = [pathDir]
-                        pathDir = temp
-                    }
-                }
-                // this.con(pathDir)
-                // this.con(paths6)
-                if (deepNodeIndex.length) {
-                    let node = {}
-                    deepNodeIndex.map(v => {
-                        if (node.children && node.children.length) {
-                            node = node.children[v]
-                        } else {
-                            node = this.dirs[v]
-                        }
-                        node.isClose = false
-                    })
-                    // console.log(node);
-                    if (Object.keys(pathDir).length) {
-                        node.children.push(pathDir)
-                    } else {
-                        this.current_dir.map(v => {
-                            if (v.type && v.name !== '..' && v.name !== '.') {
-                                if (node.children.findIndex(w => w.name === v.name) === -1) {
-                                    node.children.push({
-                                        name: v.name,
-                                        children: [],
-                                        isClose: true
-                                    })
-                                }
-                            }
-                        })
-                    }
-                } else {
-                    this.dirs.push(pathDir)
-                }
-                // this.con(this.dirs)
-            },
-            closeChildren(path) {
-                path = path.replace(/\\/g, '/')
-                if (path.endsWith('/')) {
-                    path = path.substr(0, path.length - 1)
-                }
-                let paths
-                if (path.startsWith('/')) {
-                    paths = path.split('/')
-                    paths[0] = '/'
-                } else {
-                    paths = path.split('/')
-                }
-                console.log(path);
-                console.log(paths);
-                let deepNodeIndex = []
-                for (let i = 0; i < paths.length; i++) {
-                    let v = paths[i]
-                    if (deepNodeIndex.length) {
-                        let node = {}
-                        deepNodeIndex.map(v => {
-                            if (node.children && node.children.length) {
-                                node = node.children[v]
-                            } else {
-                                node = this.dirs[v]
-                            }
-                        })
-                        // this.con(node);
-                        let index = node.children.findIndex(w => w.name === v)
-                        if (index !== -1) {
-                            deepNodeIndex.push(index)
-                        } else {
-                            break
-                        }
-                    } else {
-                        let index = this.dirs.findIndex(w => w.name === v)
-                        if (index !== -1) {
-                            deepNodeIndex.push(index)
-                        } else {
-                            break
-                        }
-                    }
-                }
-
-                if (deepNodeIndex.length) {
-                    let node = {}
-                    deepNodeIndex.map(v => {
-                        if (node.children && node.children.length) {
-                            node = node.children[v]
-                        } else {
-                            node = this.dirs[v]
-                        }
-                    })
-                    console.log(node);
-                    node.isClose = !node.isClose
-                } else {
-                    this.dirs.map(v => {
-
-                    })
-                }
-                // this.con(this.dirs)
-            },
             dirClick(item) {
                 this.current_dir = this.current_dir.map(v => {
                     v.isActive = false;
@@ -1015,26 +782,8 @@ class Worker extends Server {
                 })
                 item.isActive = true
             },
-            async gotoPath(path) {
-                let res = await this.$request(this.shell.shellUrl + new File(path + '/').dir())
-                let row = res.split('\n')
-                this.current_dir = []
-                row.map(v => {
-                    if (v) {
-                        let row = v.split('``')
-                        this.current_dir.push({
-                            name: row[0],
-                            type: Number(row[1]),
-                            change_date: row[2],
-                            file_size: row[3],
-                        })
-                    }
-                })
-                this.current_path = path
-                this.parsePath(this.current_path)
-            },
             dbClick(item) {
-                let gotoPath = this.current_path + '/' + item.name
+                let gotoPath = this.currentPath + '/' + item.name
                 if (item.type) {
                     this.gotoPath(gotoPath)
                 } else {
@@ -1076,8 +825,52 @@ class Worker extends Server {
                     this.readFile.isShow = !this.readFile.isShow
                 }
             },
+            async download() {
+                console.log(this.contextMenu.path);
+                let s = new File(this.contextMenu.path).download()
+                console.log(s);
+                let res = await this.request(s)
+                console.log(res);
+            },
+            async createFile() {
+                console.log(this.contextMenu.path);
+                let s = new File(this.contextMenu.path + this.createFileName).create()
+                console.log(s);
+                let res = await this.request(s)
+                console.log(res);
+                await this.gotoPath(this.currentPath)
+                this.isShowDialog = false
+            },
+            async deleteFile() {
+                console.log(this.contextMenu.path);
+                let s = new File(this.contextMenu.file).delete()
+                console.log(s);
+                let res = await this.request(s)
+                console.log(res);
+                await this.gotoPath(this.currentPath)
+            },
+            async rename() {
+                console.log(this.contextMenu.path);
+                let s = new File(this.contextMenu.file, this.contextMenu.file + '2').rename()
+                console.log(s);
+                let res = await this.request(s)
+                console.log(res);
+            },
+            onContextMenu(e, item) {
+                console.log(e, item);
+                // console.log(e.clientX, '----', e.clientY);
+                // console.log(e.pageX, '----', e.pageY);
+                // console.log(e.offsetX, '----', e.offsetY);
+                // console.log(e.screenX, '----', e.screenY);
+                // console.log(e.x, '----', e.y);
+                this.contextMenu.isShow = true
+                this.contextMenu.top = e.y
+                this.contextMenu.left = e.x
+                this.contextMenu.file = this.currentPath + item.name
+                this.contextMenu.path = this.currentPath
+            },
             async readFileContent(path, fileName) {
-                let res = await this.$request(this.shell.shellUrl+new File(path).read())
+                let res = await this.$request(this.shell.shellUrl + new File(path).read())
                 // console.log(res);
                 let row = {
                     title: fileName,
@@ -1094,9 +887,7 @@ class Worker extends Server {
                 that.readFile.isShow = !that.readFile.isShow
                 // console.log(that.readFile);
             },
-            con(res) {
-                console.log(JSON.stringify(res, null, 4));
-            },
+
             async request(phpCode) {
                 return new Promise(resolve => {
                     $.ajax({
@@ -1110,12 +901,12 @@ class Worker extends Server {
         },
         mounted() {
             this.$bus.$on('gotoPath', v => {
-                console.log(v);
-                this.gotoPath(v)
+                // console.log(v);
+                // this.gotoPath(v)
             })
             this.$bus.$on('closeChildren', v => {
-                console.log(v);
-                this.closeChildren(v)
+                // console.log(v);
+                // this.closeChildren(v)
             })
         }
     }
@@ -1123,12 +914,14 @@ class Worker extends Server {
 
 <style lang="scss" scoped>
 
-    $hover-color: rgb(229, 243, 255);
+    $hover-color: rgb(75, 110, 175);
     $border-color: rgb(229, 229, 229);
     .content {
         height: 100%;
         width: 100%;
         position: relative;
+        background: rgb(60, 63, 65);
+        color: rgb(147, 186, 186);
 
         img {
             height: 15px;
@@ -1179,9 +972,37 @@ class Worker extends Server {
             .left-dir {
                 width: 20%;
                 overflow: auto;
+                position: relative;
 
-                .drive {
-                    margin: 2px;
+
+                &::-webkit-scrollbar {
+                    cursor: col-resize;
+
+                    width: 8px;
+                    height: 10px;
+                    background: #F1F1F1;
+                }
+
+                &::-webkit-scrollbar-button {
+                    display: none;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    border-radius: 10px;
+                    background: #C1C1C1;
+
+                    &:hover {
+                        background: #a8a8a8;
+                    }
+
+                    &:active {
+                        background: #787878;
+                    }
+                }
+
+                &::-webkit-scrollbar-track {
+                    border-radius: 10px;
+                    background: #F1F1F1;
                 }
             }
 
@@ -1189,6 +1010,24 @@ class Worker extends Server {
                 width: 80%;
                 height: 100%;
                 position: relative;
+
+                .gutter-vertical {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 1px;
+                    height: 100%;
+                    &::after {
+                        content: "";
+                        cursor: ew-resize;
+                        display: block;
+                        height: 100%;
+                        width: 8px;
+                        position: fixed;
+                        margin-left: -3px;
+                        z-index: 10;
+                    }
+                }
 
                 .float-top {
                     width: 100%;

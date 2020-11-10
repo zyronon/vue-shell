@@ -215,7 +215,8 @@
                     .float-pwd {
                         background: #000;
                         position: absolute;
-                        left: 0px;
+                        /*left: 0px;*/
+                        left: -1px;
                         top: 0px;
                         color: $font-color;
                         font-size: $font-size;

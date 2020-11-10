@@ -7,12 +7,7 @@ Vue.use(VueRouter)
 
 // 静态路由表
 export const constantRouterMap = [
-    {
-        path: '/login',
-        name: 'login',
-        component: _import('pages/login'),
-        hidden: true,
-    }, {
+     {
         path: '/terminal',
         name: 'terminal',
         component: _import('pages/terminal'),
@@ -21,6 +16,11 @@ export const constantRouterMap = [
         path: '/file',
         name: 'file',
         component: _import('file_manager/file'),
+        hidden: true,
+    }, {
+        path: '/folders',
+        name: 'folders',
+        component: _import('file_manager/folders'),
         hidden: true,
     }, {
         path: '/home',
@@ -36,8 +36,7 @@ export const constantRouterMap = [
     {
         path: '',
         name: '',
-        // redirect: '/article/index',
-        redirect: '/file'
+        redirect: '/home'
     },
 
 ]
