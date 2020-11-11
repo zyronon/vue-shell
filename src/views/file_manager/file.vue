@@ -1,5 +1,5 @@
 <template>
-    <div class="content" @click="contextMenu.isShow = false" >
+    <div class="content" @click="contextMenu.isShow = false" @mousemove="mousemove" @mouseup="isResizing = false">
         <div class="tabs">
             <div class="tab">
                 code11111
@@ -9,11 +9,11 @@
             </div>
         </div>
         <div class="tab-content">
-            <div class="left-dir">
+            <div :style="leftWidth" class="left-dir">
                 <folders :shell="shell"></folders>
             </div>
-            <div class="dir-content">
-                <div class="gutter-vertical" @mousemove="mousemove"></div>
+            <div :style="rightWidth" class="dir-content">
+                <div class="gutter-vertical" @mousedown="isResizing = true"></div>
                 <div class="float-top">
                     <div class="nav-bar">
                         <div class="option-container">
@@ -56,7 +56,7 @@
                 <div class="dirs">
                     <div class="dir "
                          :class="item.isActive?'active':''"
-                         v-for="item of current_dir"
+                         v-for="item of currentDir"
                          @click="dirClick(item)"
                          @dblclick="dbClick(item)"
                          @contextmenu.prevent="onContextMenu($event,item)">
@@ -138,9 +138,8 @@
     import DirItem from "./DirItem"
     import folders from "./folders"
     import File from '../../template/php/file.js'
-    import CONSTANT from "../../utils/const_var";
     import CodeEdit from "./CodeEdit";
-    import base64 from "../../utils/base64";
+    import {mapState} from 'vuex'
 
 
     export default {
@@ -151,6 +150,8 @@
         },
         data() {
             return {
+                viewWidth: 1000,
+                width: 1000 * 0.2,
                 isShowDialog: false,
                 createFileName: '',
                 shell: {
@@ -665,14 +666,22 @@ class Worker extends Server {
                 },
                 readFiles: [],
                 root_path: '',
-                current_dir: [],
                 currentPath: '',
                 current_parse_path: [],
                 homePath: '',
             }
         },
-        created() {
-            this.init()
+        computed: {
+            ...mapState('file', [
+                'currentDir'
+            ]),
+            rightWidth() {
+                return {width: (this.viewWidth - this.width) + 'px'}
+            },
+            leftWidth() {
+                return {width: this.width + 'px'}
+
+            }
         },
         filters: {
             size(r) {
@@ -719,9 +728,14 @@ class Worker extends Server {
                 }
             }
         },
+        created() {
+            this.init()
+        },
         methods: {
-            mousemove(){
-              console.log(1);
+            mousemove(e) {
+                if (!this.isResizing) return;
+                if (e.clientX < 120) return;
+                this.width = e.clientX
             },
             save() {
                 // console.log(this.readFile.content)
@@ -767,16 +781,14 @@ class Worker extends Server {
                 // let res = await this.$request('http://localhost:8863/api/file.php', 'c=' + base64._encode(content), {}, 'POST')
                 // console.log(res);
             },
-
             generateShellUrl() {
                 if (this.shell.url.indexOf('?') !== -1) {
                     return this.shell.url + '&' + this.shell.pwd + '='
                 }
                 return this.shell.url + '?' + this.shell.pwd + '='
             },
-
             dirClick(item) {
-                this.current_dir = this.current_dir.map(v => {
+                this.currentDir = this.currentDir.map(v => {
                     v.isActive = false;
                     return v
                 })
@@ -887,7 +899,6 @@ class Worker extends Server {
                 that.readFile.isShow = !that.readFile.isShow
                 // console.log(that.readFile);
             },
-
             async request(phpCode) {
                 return new Promise(resolve => {
                     $.ajax({
@@ -917,6 +928,7 @@ class Worker extends Server {
     $hover-color: rgb(75, 110, 175);
     $border-color: rgb(229, 229, 229);
     .content {
+        -webkit-user-select:none;//禁止文字被选中
         height: 100%;
         width: 100%;
         position: relative;
@@ -970,7 +982,6 @@ class Worker extends Server {
 
 
             .left-dir {
-                width: 20%;
                 overflow: auto;
                 position: relative;
 
@@ -1007,7 +1018,6 @@ class Worker extends Server {
             }
 
             .dir-content {
-                width: 80%;
                 height: 100%;
                 position: relative;
 
@@ -1017,6 +1027,7 @@ class Worker extends Server {
                     top: 0;
                     width: 1px;
                     height: 100%;
+
                     &::after {
                         content: "";
                         cursor: ew-resize;
@@ -1031,7 +1042,6 @@ class Worker extends Server {
 
                 .float-top {
                     width: 100%;
-                    background: #ffffff;
                     position: absolute;
                     top: 0;
                     left: 0;
@@ -1206,11 +1216,11 @@ class Worker extends Server {
                         padding: 6px;
 
                         &.active {
-                            background: rgb(204, 232, 255);
+                            background: $hover-color;
                         }
 
                         &:hover {
-                            background: rgb(229, 243, 255);
+                            background: $hover-color;
                         }
 
                         .name {

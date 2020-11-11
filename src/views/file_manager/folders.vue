@@ -7,6 +7,7 @@
 <script>
     import DirItem from "./DirItem"
     import File from "../../template/php/file";
+    import {types} from "../../store/mutation-types";
 
     export default {
         components: {
@@ -166,6 +167,8 @@
                 })
                 this.currentPath = path
                 this.parsePath(this.currentPath)
+                // this.$emit('updateCurrentDir',this.currentDir)
+                this.$store.commit('file/'+this.types.SET_CURRENT_DIR, this.currentDir)
             },
             closeChildren(path) {
                 path = path.replace(/\\/g, '/')
@@ -242,7 +245,7 @@
 </script>
 
 <style lang="scss" scoped>
-    .folders{
+    .folders {
         float: left;
     }
 

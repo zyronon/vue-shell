@@ -2,11 +2,13 @@ import filters from './filters'
 import globalMethods from './global-methods'
 import Config from '../config'
 import CONSTANT from './const_var'
+import {types} from '../store/mutation-types'
 
 // 全局混入
 export default {
     data() {
         return {
+            types,
             CONFIG: Config,
             CONSTANT,
         }

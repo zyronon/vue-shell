@@ -1,20 +1,22 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { types } from './mutation-types'
-import { layout } from './modules/layout'
-import { user } from './modules/user'
+import {types} from './mutation-types'
+import {layout} from './modules/layout'
+import {user} from './modules/user'
+import {file} from './modules/file'
 
 Vue.use(Vuex)
 const store = new Vuex.Store({
     modules: {
         layout,
         user,
+        file
     },
     state: {
         historyQuery: new Map(),
     },
     mutations: {
-        [types.ADD_HISTORY_QUERY](state, { path, params }) {
+        [types.ADD_HISTORY_QUERY](state, {path, params}) {
             state.historyQuery.set(path, params)
         },
         // 设置 配置文件
@@ -23,8 +25,8 @@ const store = new Vuex.Store({
         },
     },
     actions: {
-        addHistoryQuery({ commit }, { path, params }) {
-            commit(types.ADD_HISTORY_QUERY, { path, params })
+        addHistoryQuery({commit}, {path, params}) {
+            commit(types.ADD_HISTORY_QUERY, {path, params})
         },
     },
 })
