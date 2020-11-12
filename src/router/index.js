@@ -18,11 +18,6 @@ export const constantRouterMap = [
         component: _import('file_manager/file'),
         hidden: true,
     }, {
-        path: '/folders',
-        name: 'folders',
-        component: _import('file_manager/folders'),
-        hidden: true,
-    }, {
         path: '/home',
         name: 'home',
         component: _import('pages/home'),

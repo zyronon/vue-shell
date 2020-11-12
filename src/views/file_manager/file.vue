@@ -8,75 +8,25 @@
                 asdfasdfasd
             </div>
         </div>
-        <div class="tab-content">
+        <div class="file-tab" v-if="readFiles.length">
+            <div class="tab" v-for="(item,index) of readFiles" @click="showFileContent(item)">
+                <img src="@/assets/images/txt-file.png" alt="">
+                <span>{{item.title}}</span>
+                <img class="cp" src="@/assets/images/close.png" alt="" @click="removeFile(index)">
+            </div>
+        </div>
+        <div class="tab-content" :style="tabContentHeight">
             <div :style="leftWidth" class="left-dir">
-                <folders :shell="shell"></folders>
+                <directory :shell="shell"></directory>
             </div>
             <div :style="rightWidth" class="dir-content">
                 <div class="gutter-vertical" @mousedown="isResizing = true"></div>
-                <div class="float-top">
-                    <div class="nav-bar">
-                        <div class="option-container">
-                            <div class="breadcrumb-container">
-                                <div class="breadcrumb">
-                                    <div v-for="item of current_parse_path">{{item}}</div>
-                                </div>
-                                <input type="text" :value="currentPath">
-                            </div>
-                            <div class="options">
-                                <div>
-                                    <img class="arrow-right" src="@/assets/images/arrow.png" alt="">
-                                </div>
-                                <div>
-                                    <img class="arrow-up" src="@/assets/images/arrow.png" alt=""
-                                         @click="back()">
-                                </div>
-                                <div>
-                                    <img class="home" src="@/assets/images/home.png" alt=""
-                                         @click="gotoPath(homePath)">
-                                </div>
-                                <div>
-                                    <img class="refresh" src="@/assets/images/refresh.png" alt=""
-                                         @click="gotoPath(currentPath)">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="search">
-                            <img class="arrow-right" src="@/assets/images/search.png" alt="">
-                            <input type="text" value="" placeholder="搜索">
-                        </div>
-                    </div>
-                    <div class="dir-des">
-                        <div class="name">名称</div>
-                        <div class="change-date">修改日期</div>
-                        <div class="type">类型</div>
-                        <div class="size">大小</div>
-                    </div>
-                </div>
-                <div class="dirs">
-                    <div class="dir "
-                         :class="item.isActive?'active':''"
-                         v-for="item of currentDir"
-                         @click="dirClick(item)"
-                         @dblclick="dbClick(item)"
-                         @contextmenu.prevent="onContextMenu($event,item)">
-                        <img src="@/assets/images/file.png" alt="" v-if="item.type">
-                        <img src="@/assets/images/txt-file.png" alt="" v-else>
-                        <div class="name">{{item.name}}</div>
-                        <div class="change-date">{{item.change_date}}</div>
-                        <div class="type">{{item|fileType}}</div>
-                        <div class="size">{{item.file_size|size}}</div>
-                    </div>
-                </div>
-                <div class="file-tab">
-                    <div class="tab" v-for="(item,index) of readFiles" @click="showFileContent(item)">
-                        <img src="@/assets/images/txt-file.png" alt="">
-                        <span>{{item.title}}</span>
-                        <img class="cp" src="@/assets/images/close.png" alt="" @click="removeFile(index)">
-                    </div>
-                </div>
+                <option-bar></option-bar>
+                <folder></folder>
             </div>
         </div>
+
+
         <CodeEdit class="file-content"
                   @close="readFile.isShow = false"
                   v-if="readFile.isShow"
@@ -136,17 +86,21 @@
 <script>
     import axios from 'axios'
     import DirItem from "./DirItem"
-    import folders from "./folders"
+    import OptionBar from "./OptionBar"
+    import directory from "./directory"
+    import folder from "./folder"
     import File from '../../template/php/file.js'
     import CodeEdit from "./CodeEdit";
-    import {mapState} from 'vuex'
+    import {mapActions, mapState} from 'vuex'
 
 
     export default {
         components: {
             'dir-item': DirItem,
             'CodeEdit': CodeEdit,
-            folders
+            directory,
+            folder,
+            OptionBar
         },
         data() {
             return {
@@ -665,73 +619,32 @@ class Worker extends Server {
                     path: 'D:/safe/code/vue-shell/php-shell//shell.php'
                 },
                 readFiles: [],
-                root_path: '',
-                currentPath: '',
                 current_parse_path: [],
-                homePath: '',
             }
         },
         computed: {
             ...mapState('file', [
-                'currentDir'
+                'currentDir',
+                'homePath',
+                'currentPath'
             ]),
             rightWidth() {
                 return {width: (this.viewWidth - this.width) + 'px'}
             },
             leftWidth() {
                 return {width: this.width + 'px'}
-
-            }
-        },
-        filters: {
-            size(r) {
-                if (!r) return ''
-                let kb = r / 1024
-                if (kb > 1024 * 1024) {
-                    let gb = kb / (1024 * 1024)
-                    return gb.toFixed(2) + ' GB'
-                } else if (kb > 1024) {
-                    let mb = kb / 1024
-                    return Math.ceil(mb) + ' MB'
-                } else {
-                    return Math.ceil(kb) + ' KB'
-                }
             },
-            fileType(r) {
-                if (!r) return ''
-                if (r.type) {
-                    if (r.name === '.' || r.name === '..') {
-                        return ''
-                    }
-                    return '文件夹'
-                } else {
-                    let suffix = r.name.split('.').pop()
-                    switch (suffix) {
-                        case 'txt':
-                            return '文本'
-                        case 'doc':
-                        case 'docx':
-                            return 'DOC 文档'
-                        case 'pdf':
-                            return 'PDF 文档'
-                        case 'exe':
-                            return '应用程序'
-                        case 'php':
-                            return 'PHP文件'
-                        case 'asp':
-                            return 'ASP文件'
-                        case 'jsp':
-                            return 'JSP文件'
-                        default:
-                            return '未知文件'
-                    }
-                }
+            tabContentHeight() {
+                return {height: !this.readFiles.length?'100%':'calc(100% -30px)'}
             }
         },
         created() {
             this.init()
         },
         methods: {
+            ...mapActions('file', {
+                gotoPath: 'gotoPath'
+            }),
             mousemove(e) {
                 if (!this.isResizing) return;
                 if (e.clientX < 120) return;
@@ -787,40 +700,7 @@ class Worker extends Server {
                 }
                 return this.shell.url + '?' + this.shell.pwd + '='
             },
-            dirClick(item) {
-                this.currentDir = this.currentDir.map(v => {
-                    v.isActive = false;
-                    return v
-                })
-                item.isActive = true
-            },
-            dbClick(item) {
-                let gotoPath = this.currentPath + '/' + item.name
-                if (item.type) {
-                    this.gotoPath(gotoPath)
-                } else {
-                    let suffixIndex = gotoPath.lastIndexOf('.')
-                    let suffix = gotoPath.substr(suffixIndex + 1).toLowerCase();
-                    let allowReadSuffix = [
-                        'txt',
-                        'php',
-                        'php4',
-                        'php5',
-                        'asp',
-                        'aspx',
-                        'jsp',
-                        'jspx',
-                        'htaccess',
-                    ]
-                    console.log(item);
-                    if (allowReadSuffix.find(v => v === suffix) && (item.file_size < 1024 * 1024)) {
-                        // console.log('在其中');
-                        this.readFileContent(gotoPath, item.name)
-                    } else {
-                        // console.log('不在其中');
-                    }
-                }
-            },
+
             removeFile(i) {
                 console.log(i);
                 let fileTab = this.readFiles[i]
@@ -911,14 +791,6 @@ class Worker extends Server {
             }
         },
         mounted() {
-            this.$bus.$on('gotoPath', v => {
-                // console.log(v);
-                // this.gotoPath(v)
-            })
-            this.$bus.$on('closeChildren', v => {
-                // console.log(v);
-                // this.closeChildren(v)
-            })
         }
     }
 </script>
@@ -927,12 +799,14 @@ class Worker extends Server {
 
     $hover-color: rgb(75, 110, 175);
     $border-color: rgb(229, 229, 229);
+    $bg-color: rgb(60, 63, 65);
+
     .content {
-        -webkit-user-select:none;//禁止文字被选中
+        -webkit-user-select: none; //禁止文字被选中
         height: 100%;
         width: 100%;
         position: relative;
-        background: rgb(60, 63, 65);
+        background: $bg-color;
         color: rgb(147, 186, 186);
 
         img {
@@ -978,7 +852,8 @@ class Worker extends Server {
         .tab-content {
             //border-top: 1px solid gray;
             display: flex;
-            height: 100%;
+            //height: 100%;
+            height: calc(100% - 30px);
 
 
             .left-dir {
@@ -1039,236 +914,28 @@ class Worker extends Server {
                         z-index: 10;
                     }
                 }
+            }
+        }
 
-                .float-top {
-                    width: 100%;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    height: 60px;
+        .file-tab {
+            height: 30px;
+            z-index: 9;
+            width: 100%;
+            display: flex;
+            overflow: auto;
 
-                    .nav-bar {
-                        height: 30px;
-                        display: flex;
+            .tab {
+                cursor: pointer;
+                padding: 5px;
+                display: flex;
+                margin-right: 1px;
+                align-items: center;
+                background: rgb(78, 82, 84);
 
-
-                        .option-container {
-                            display: flex;
-                            width: 66%;
-
-                            border: 1px solid $border-color;
-                            height: 100%;
-
-                            .breadcrumb-container {
-                                height: 100%;
-                                width: calc(100% - 120px);
-
-                                .breadcrumb {
-                                    height: 100%;
-                                    width: 80%;
-                                    display: flex;
-                                    display: none;
-                                    align-items: center;
-                                    overflow: auto;
-
-                                    &::-webkit-scrollbar {
-                                        display: none; /* Chrome Safari */
-                                    }
-
-                                    div {
-                                        height: 100%;
-                                        display: flex;
-                                        align-items: center;
-                                        padding: 0 8px;
-                                        white-space: nowrap; //强制文本不换行
-
-                                        &::after {
-                                            margin-left: 10px;
-                                            content: "";
-                                            width: 5px;
-                                            height: 5px;
-                                            border: solid gray;
-                                            border-width: 1px 1px 0 0;
-                                            transform: translateY(2px) rotate(45deg);
-                                        }
-
-                                        &:nth-last-child(1) {
-                                            &::after {
-                                                display: none;
-                                            }
-                                        }
-
-                                        &:hover {
-                                            background: $hover-color;
-                                        }
-                                    }
-                                }
-
-                                input {
-                                    /*display: none;*/
-                                    box-sizing: border-box;
-                                    outline: 0;
-                                    border: 0;
-                                    margin: 0;
-                                    padding: 0 15px;
-                                    height: 100%;
-                                    width: 100%;
-
-                                    &:focus {
-                                        border: 1px solid rgb(0, 120, 215);
-                                    }
-                                }
-                            }
-
-                            .options {
-                                //width: 20%;
-                                width: 120px;
-                                display: flex;
-                                justify-content: space-around;
-                                align-items: center;
-
-                                div {
-                                    border-left: 1px solid $border-color;
-                                    height: 100%;
-                                    width: 30px;
-                                    display: flex;
-                                    justify-content: center;
-                                    align-items: center;
-
-                                    &:hover {
-                                        background: $hover-color;
-                                    }
-                                }
-
-                                img {
-                                    height: 15px;
-                                }
-
-                                .arrow-right {
-                                    transform: rotate(-90deg);
-                                }
-
-                                .arrow-up {
-                                    transform: rotate(180deg);
-                                }
-                            }
-                        }
-
-                        .search {
-                            margin-left: 10px;
-                            border: 1px solid $border-color;
-                            width: 33%;
-                            display: flex;
-                            align-items: center;
-
-                            img {
-                                margin: 0 10px;
-                                height: 15px;
-                            }
-
-                            input {
-                                box-sizing: border-box;
-                                outline: 0;
-                                border: 0;
-                                margin: 0;
-                                height: 100%;
-                                width: 100%;
-                            }
-                        }
-                    }
-
-                    .dir-des {
-                        display: flex;
-                        /*margin: 3px;*/
-                        padding: 6px;
-
-                        .name {
-                            width: 50%;
-                            margin-left: 10px;
-                        }
-
-                        .change-date {
-                            width: 20%;
-                        }
-
-                        .type {
-                            width: 15%;
-                        }
-
-                        .size {
-                            width: 15%;
-                        }
-                    }
+                img {
+                    margin: 2px 5px;
+                    height: 15px;
                 }
-
-                .dirs {
-                    overflow: auto;
-                    height: 100%;
-                    padding: 60px 0 30px 0;
-                    box-sizing: border-box;
-                    /*height: calc(100% - 60px);*/
-                    /*margin-top: 60px;*/
-                    /*margin-bottom: 30px;*/
-
-                    .dir {
-                        display: flex;
-                        /*margin: 3px;*/
-                        padding: 6px;
-
-                        &.active {
-                            background: $hover-color;
-                        }
-
-                        &:hover {
-                            background: $hover-color;
-                        }
-
-                        .name {
-                            width: 50%;
-                            margin-left: 10px;
-                        }
-
-                        .change-date {
-                            width: 20%;
-                        }
-
-                        .type {
-                            width: 15%;
-                        }
-
-                        .size {
-                            width: 15%;
-                        }
-                    }
-
-                }
-
-                .file-tab {
-                    /*height: 30px;*/
-                    z-index: 9;
-                    position: absolute;
-                    bottom: 0;
-                    width: 100%;
-                    background: #e8e7e7;
-                    display: flex;
-                    overflow: auto;
-
-                    .tab {
-                        cursor: pointer;
-                        padding: 5px;
-                        display: flex;
-                        align-items: center;
-                        background: lightgray;
-                        margin-right: 5px;
-                        border-radius: 4px 4px 0 0;
-
-                        img {
-                            margin: 2px 5px;
-                            height: 15px;
-                        }
-                    }
-                }
-
             }
         }
     }

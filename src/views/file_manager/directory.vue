@@ -8,6 +8,8 @@
     import DirItem from "./DirItem"
     import File from "../../template/php/file";
     import {types} from "../../store/mutation-types";
+    import {mapActions, mapState} from "vuex";
+
 
     export default {
         components: {
@@ -22,20 +24,26 @@
         data() {
             return {
                 dirs: [],
-                currentDir: [],
-                homePath: '',
-                currentPath: '',
-                currentParsePath: '',
+                currentParsePath: '',//未使用
             }
         },
         created: async function () {
             await this.getCurrentPath()
         },
+        computed: {
+            ...mapState('file', [
+                'currentDir',
+                'homePath'
+            ]),
+        },
         methods: {
+            ...mapActions('file', {
+                gotoPath: 'gotoPath'
+            }),
             async getCurrentPath() {
                 let res = await this.$request(this.shell.shellUrl + new File().pwd()) + '/'
                 res = res.split('``')
-                this.homePath = this.currentPath = res[1]
+                let currentPath = res[1]
                 res[0].split('|').map(v => {
                     if (v) {
                         this.dirs.push({
@@ -46,8 +54,9 @@
                         })
                     }
                 })
-                this.parsePath(this.currentPath)
-                // await this.gotoPath(this.currentPath)
+                this.parsePath(currentPath)
+                this.$store.commit('file/' + this.types.SET_HOME_PATH, currentPath)
+                await this.gotoPath({url: this.shell.shellUrl + new File(currentPath + '/').dir(), path: currentPath})
             },
             //D:/safe/code/vue-shell/php-shell解析成数组
             parsePath(path) {
@@ -150,26 +159,6 @@
                 }
                 // this.con(this.dirs)
             },
-            async gotoPath(path) {
-                let res = await this.$request(this.shell.shellUrl + new File(path + '/').dir())
-                let row = res.split('\n')
-                this.currentDir = []
-                row.map(v => {
-                    if (v) {
-                        let row = v.split('``')
-                        this.currentDir.push({
-                            name: row[0],
-                            type: Number(row[1]),
-                            change_date: row[2],
-                            file_size: row[3],
-                        })
-                    }
-                })
-                this.currentPath = path
-                this.parsePath(this.currentPath)
-                // this.$emit('updateCurrentDir',this.currentDir)
-                this.$store.commit('file/'+this.types.SET_CURRENT_DIR, this.currentDir)
-            },
             closeChildren(path) {
                 path = path.replace(/\\/g, '/')
                 if (path.endsWith('/')) {
@@ -233,12 +222,16 @@
             },
         },
         mounted() {
-            this.$bus.$on('gotoPath', v => {
-                this.gotoPath(v)
+            this.$bus.$on('gotoPath', async path => {
+                await this.gotoPath({url: this.shell.shellUrl + new File(path + '/').dir(), path})
+                this.parsePath(path)
             })
             this.$bus.$on('closeChildren', v => {
-                console.log(v);
+                // console.log(v);
                 this.closeChildren(v)
+            })
+            this.$bus.$on('parsePath', path => {
+                this.parsePath(path)
             })
         }
     }
