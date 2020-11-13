@@ -16,13 +16,39 @@
             </div>
         </div>
         <div class="tab-content" :style="tabContentHeight">
-            <div :style="leftWidth" class="left-dir">
-                <directory :shell="shell"></directory>
+            <div :style="{'width':widths.directoryWidth+'px'}" class="left-dir">
+                <directory></directory>
             </div>
-            <div :style="rightWidth" class="dir-content">
-                <div class="gutter-vertical" @mousedown="isResizing = true"></div>
+            <div :style="{'width':viewWidth - widths.directoryWidth+'px'}" class="dir-content">
+                <div class="gutter-vertical"
+                     @mousedown="resize.directory = true"
+                     @mouseup="resize.directory = false"
+                ></div>
                 <option-bar></option-bar>
-                <folder></folder>
+                <folder>
+                    <div class="dir-des">
+                        <div class="name"
+                             :style="{'width':widths.rowOne+'px'}"
+                             @mousedown="resize.rowOne = true"
+                             @mouseup="test"
+                        >名称</div>
+                        <div class="change-date"
+                             :style="{'width':widths.rowTwo+'px'}"
+                             @mousedown="resize.rowTwo = true"
+                             @mouseup="resize.rowTwo = false"
+                        >修改日期</div>
+                        <div class="type"
+                             :style="{'width':widths.rowThree+'px'}"
+                             @mousedown="resize.rowThree = true"
+                             @mouseup="resize.rowThree = false"
+                        >类型</div>
+                        <div class="size"
+                             :style="{'width':widths.rowFour+'px'}"
+                             @mousedown="resize.rowFour = true"
+                             @mouseup="resize.rowFour = false"
+                        >大小</div>
+                    </div>
+                </folder>
             </div>
         </div>
 
@@ -91,7 +117,8 @@
     import folder from "./folder"
     import File from '../../template/php/file.js'
     import CodeEdit from "./CodeEdit";
-    import {mapActions, mapState} from 'vuex'
+    import {mapActions, mapMutations, mapState} from 'vuex'
+    import {TYPES} from "../../store/mutation-types";
 
 
     export default {
@@ -105,14 +132,8 @@
         data() {
             return {
                 viewWidth: 1000,
-                width: 1000 * 0.2,
                 isShowDialog: false,
                 createFileName: '',
-                shell: {
-                    url: 'api/shell.php',
-                    pwd: 'c',
-                    shellUrl: 'api/shell.php?c=',
-                },
                 contextMenu: {
                     isShow: false,
                     top: 0,
@@ -620,35 +641,76 @@ class Worker extends Server {
                 },
                 readFiles: [],
                 current_parse_path: [],
+                resize: {
+                    directory: false,
+                    table: false,
+                    rowOne: false,
+                    rowTwo: false,
+                    rowThree: false,
+                    rowFour: false,
+                },
+                widths: {
+                    rowOne: 1000 * .5,
+                    rowTwo: 1000 * .2,
+                    rowThree: 1000 * .15,
+                    rowFour: 1000 * .15,
+                    directoryWidth: 1000 * .2,
+                }
             }
         },
         computed: {
             ...mapState('file', [
                 'currentDir',
                 'homePath',
-                'currentPath'
+                'currentPath',
+                'shell'
             ]),
-            rightWidth() {
-                return {width: (this.viewWidth - this.width) + 'px'}
-            },
-            leftWidth() {
-                return {width: this.width + 'px'}
-            },
             tabContentHeight() {
-                return {height: !this.readFiles.length?'100%':'calc(100% -30px)'}
+                return {height: !this.readFiles.length ? '100%' : 'calc(100% -30px)'}
+            }
+        },
+        watch: {
+            'widths.directoryWidth'() {
+                if (!this.resize.table) {
+                    let rightWidth = this.viewWidth - this.widths.directoryWidth
+                    this.widths.rowOne = rightWidth * 0.5
+                    this.widths.rowTwo = rightWidth * 0.2
+                    this.widths.rowThree = rightWidth * 0.15
+                    this.widths.rowFour = rightWidth * 0.15
+                }
             }
         },
         created() {
             this.init()
+            let rightWidth = this.viewWidth - this.widths.directoryWidth
+            this.widths.rowOne = rightWidth * 0.5
+            this.widths.rowTwo = rightWidth * 0.2
+            this.widths.rowThree = rightWidth * 0.15
+            this.widths.rowFour = rightWidth * 0.15
         },
         methods: {
+            test(){
+              console.log(1);
+              this.resize.rowOne = false
+            },
             ...mapActions('file', {
                 gotoPath: 'gotoPath'
             }),
+            ...mapMutations('file', {
+                setShell: TYPES.SET_SHELL + '',
+            }),
             mousemove(e) {
-                if (!this.isResizing) return;
-                if (e.clientX < 120) return;
-                this.width = e.clientX
+                // console.log(e.clientX);
+                if (this.resize.directory) {
+                    if (e.clientX < 120) return this.resize.directory = false
+                    this.widths.directoryWidth = e.clientX
+                }
+                console.log(this.resize.rowOne);
+                if (this.resize.rowOne) {
+                    if (e.clientX < 320) return this.resize.rowOne = false
+                    this.widths.rowOne = e.clientX - this.widths.directoryWidth
+                }
+
             },
             save() {
                 // console.log(this.readFile.content)
@@ -669,17 +731,12 @@ class Worker extends Server {
                 // console.log(res);
 
             },
-            back() {
-                let backUrl = JSON.parse(JSON.stringify(this.current_parse_path))
-                backUrl.pop()
-                if (backUrl.length) {
-                    backUrl = backUrl.join('/')
-                    console.log(backUrl);
-                    this.gotoPath(backUrl)
-                }
-            },
+
             async init() {
-                this.shell.shellUrl = this.generateShellUrl()
+                let shell = {url: 'api/shell.php', pwd: 'c'}
+                shell.shellUrl = this.generateShellUrl(shell)
+                this.setShell(shell)
+
                 // let content = this.editor.getValue()
                 let content = ' async init() {\n' +
                     '                this.shell.shellUrl = this.generateShellUrl()\n' +
@@ -694,11 +751,11 @@ class Worker extends Server {
                 // let res = await this.$request('http://localhost:8863/api/file.php', 'c=' + base64._encode(content), {}, 'POST')
                 // console.log(res);
             },
-            generateShellUrl() {
-                if (this.shell.url.indexOf('?') !== -1) {
-                    return this.shell.url + '&' + this.shell.pwd + '='
+            generateShellUrl(shell) {
+                if (shell.url.indexOf('?') !== -1) {
+                    return shell.url + '&' + shell.pwd + '='
                 }
-                return this.shell.url + '?' + this.shell.pwd + '='
+                return shell.url + '?' + shell.pwd + '='
             },
 
             removeFile(i) {
@@ -800,6 +857,7 @@ class Worker extends Server {
     $hover-color: rgb(75, 110, 175);
     $border-color: rgb(229, 229, 229);
     $bg-color: rgb(60, 63, 65);
+    //$bg-color: #AFB1B3;
 
     .content {
         -webkit-user-select: none; //禁止文字被选中
@@ -862,8 +920,6 @@ class Worker extends Server {
 
 
                 &::-webkit-scrollbar {
-                    cursor: col-resize;
-
                     width: 8px;
                     height: 10px;
                     background: #F1F1F1;

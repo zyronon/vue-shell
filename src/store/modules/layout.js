@@ -1,4 +1,4 @@
-import { types } from '../mutation-types'
+import { TYPES } from '../mutation-types'
 
 export const layout = {
     // namespaced: true,
@@ -7,10 +7,10 @@ export const layout = {
         isRightCollapse: true,
     },
     mutations: {
-        [types.COLLAPSE_LEFT](state) {
+        [TYPES.COLLAPSE_LEFT](state) {
             state.isLeftCollapse = !state.isLeftCollapse
         },
-        [types.COLLAPSE_RIGHT](state) {
+        [TYPES.COLLAPSE_RIGHT](state) {
             state.isRightCollapse = !state.isRightCollapse
         },
     },

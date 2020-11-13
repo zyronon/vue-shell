@@ -1,5 +1,6 @@
-import {types} from '../mutation-types'
+import {TYPES} from '../mutation-types'
 import request from "../../utils/http";
+import File from "../../template/php/file";
 
 export const file = {
     namespaced: true,
@@ -7,24 +8,36 @@ export const file = {
         currentDir: [],
         homePath: '',
         currentPath: '',
+        currentParsePath: '',
+        shell: {
+            url: '',
+            pwd: '',
+            shellUrl: '',
+        },
     },
     mutations: {
-        [types.SET_CURRENT_DIR](state, v) {
+        [TYPES.SET_CURRENT_DIR](state, v) {
             state.currentDir = v
         },
-        [types.SET_HOME_PATH](state, v) {
+        [TYPES.SET_HOME_PATH](state, v) {
             state.homePath = v
         },
-        [types.SET_CURRENT_PATH](state, v) {
+        [TYPES.SET_CURRENT_PATH](state, v) {
             state.currentPath = v
+        },
+        [TYPES.SET_SHELL](state, v) {
+            state.shell = v
+        },
+        [TYPES.SET_CURRENT_PARSE_PATH](state, v) {
+            state.currentParsePath = v
         },
 
     },
     getters: {},
     actions: {
-        async gotoPath({commit}, value) {
+        async gotoPath({state, commit}, path) {
             // console.log(value)
-            let res = await request(value.url)
+            let res = await request(state.shell.shellUrl + new File(path + '/').dir())
             let row = res.split('\n')
             let currentDir = []
             row.map(v => {
@@ -38,8 +51,8 @@ export const file = {
                     })
                 }
             })
-            commit(types.SET_CURRENT_DIR, currentDir)
-            commit(types.SET_CURRENT_PATH, value.path)
+            commit(TYPES.SET_CURRENT_DIR, currentDir)
+            commit(TYPES.SET_CURRENT_PATH, path)
         }
     },
 }

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {types} from './mutation-types'
+import {TYPES} from './mutation-types'
 import {layout} from './modules/layout'
 import {user} from './modules/user'
 import {file} from './modules/file'
@@ -16,17 +16,17 @@ const store = new Vuex.Store({
         historyQuery: new Map(),
     },
     mutations: {
-        [types.ADD_HISTORY_QUERY](state, {path, params}) {
+        [TYPES.ADD_HISTORY_QUERY](state, {path, params}) {
             state.historyQuery.set(path, params)
         },
         // 设置 配置文件
-        [types.SET_CONFIG](state, config) {
+        [TYPES.SET_CONFIG](state, config) {
             state.config = config
         },
     },
     actions: {
         addHistoryQuery({commit}, {path, params}) {
-            commit(types.ADD_HISTORY_QUERY, {path, params})
+            commit(TYPES.ADD_HISTORY_QUERY, {path, params})
         },
     },
 })

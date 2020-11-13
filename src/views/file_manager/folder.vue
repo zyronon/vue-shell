@@ -1,11 +1,6 @@
 <template>
     <div class="folder">
-        <div class="dir-des">
-            <div class="name">名称</div>
-            <div class="change-date">修改日期</div>
-            <div class="type">类型</div>
-            <div class="size">大小</div>
-        </div>
+        <slot></slot>
         <div class="list">
             <div class="item"
                  :class="item.isActive?'active':''"
@@ -13,14 +8,17 @@
                  @click="dirClick(item)"
                  @dblclick="dbClick(item)"
                  @contextmenu.prevent="onContextMenu($event,item)">
-                <img src="@/assets/images/file.png" alt="" v-if="item.type">
-                <img src="@/assets/images/txt-file.png" alt="" v-else>
-                <div class="name">{{item.name}}</div>
+                <div class="name">
+                    <img src="@/assets/images/file.png" alt="" v-if="item.type">
+                    <img src="@/assets/images/txt-file.png" alt="" v-else>
+                    {{item.name}}
+                </div>
                 <div class="change-date">{{item.change_date}}</div>
                 <div class="type">{{item|fileType}}</div>
                 <div class="size">{{item.file_size|size}}</div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -30,230 +28,10 @@
 
     export default {
         name: "folder",
-        data(){
-          return{
-              currentDir23:[
-                  {
-                      "name": ".idea",
-                      "type": 1,
-                      "change_date": "2020/10/23 20:21",
-                      "file_size": "4096"
-                  },
-                  {
-                      "name": "cmd.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:41",
-                      "file_size": "4036"
-                  },],
-              currentDir2:[
-                  {
-                      "name": ".idea",
-                      "type": 1,
-                      "change_date": "2020/10/23 20:21",
-                      "file_size": "4096"
-                  },
-                  {
-                      "name": "cmd.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:41",
-                      "file_size": "4036"
-                  },
-                  {
-                      "name": "file.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:27",
-                      "file_size": "7370"
-                  },
-                  {
-                      "name": "shell.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 18:25",
-                      "file_size": "370"
-                  },
-                  {
-                      "name": "test2.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:32",
-                      "file_size": "1453"
-                  },
-                  {
-                      "name": ".idea",
-                      "type": 1,
-                      "change_date": "2020/10/23 20:21",
-                      "file_size": "4096"
-                  },
-                  {
-                      "name": "cmd.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:41",
-                      "file_size": "4036"
-                  },
-                  {
-                      "name": "file.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:27",
-                      "file_size": "7370"
-                  },
-                  {
-                      "name": "shell.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 18:25",
-                      "file_size": "370"
-                  },
-                  {
-                      "name": "test2.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:32",
-                      "file_size": "1453"
-                  },
-                  {
-                      "name": ".idea",
-                      "type": 1,
-                      "change_date": "2020/10/23 20:21",
-                      "file_size": "4096"
-                  },
-                  {
-                      "name": "cmd.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:41",
-                      "file_size": "4036"
-                  },
-                  {
-                      "name": "file.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:27",
-                      "file_size": "7370"
-                  },
-                  {
-                      "name": "shell.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 18:25",
-                      "file_size": "370"
-                  },
-                  {
-                      "name": "test2.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:32",
-                      "file_size": "1453"
-                  },{
-                      "name": ".idea",
-                      "type": 1,
-                      "change_date": "2020/10/23 20:21",
-                      "file_size": "4096"
-                  },
-                  {
-                      "name": "cmd.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:41",
-                      "file_size": "4036"
-                  },
-                  {
-                      "name": "file.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:27",
-                      "file_size": "7370"
-                  },
-                  {
-                      "name": "shell.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 18:25",
-                      "file_size": "370"
-                  },
-                  {
-                      "name": "test2.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:32",
-                      "file_size": "1453"
-                  },{
-                      "name": ".idea",
-                      "type": 1,
-                      "change_date": "2020/10/23 20:21",
-                      "file_size": "4096"
-                  },
-                  {
-                      "name": "cmd.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:41",
-                      "file_size": "4036"
-                  },
-                  {
-                      "name": "file.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:27",
-                      "file_size": "7370"
-                  },
-                  {
-                      "name": "shell.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 18:25",
-                      "file_size": "370"
-                  },
-                  {
-                      "name": "test2.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:32",
-                      "file_size": "1453"
-                  },{
-                      "name": ".idea",
-                      "type": 1,
-                      "change_date": "2020/10/23 20:21",
-                      "file_size": "4096"
-                  },
-                  {
-                      "name": "cmd.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:41",
-                      "file_size": "4036"
-                  },
-                  {
-                      "name": "file.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:27",
-                      "file_size": "7370"
-                  },
-                  {
-                      "name": "shell.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 18:25",
-                      "file_size": "370"
-                  },
-                  {
-                      "name": "test2.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:32",
-                      "file_size": "1453"
-                  },{
-                      "name": ".idea",
-                      "type": 1,
-                      "change_date": "2020/10/23 20:21",
-                      "file_size": "4096"
-                  },
-                  {
-                      "name": "cmd.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:41",
-                      "file_size": "4036"
-                  },
-                  {
-                      "name": "file.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:27",
-                      "file_size": "7370"
-                  },
-                  {
-                      "name": "shell.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 18:25",
-                      "file_size": "370"
-                  },
-                  {
-                      "name": "test2.php",
-                      "type": 0,
-                      "change_date": "2020/09/27 17:32",
-                      "file_size": "1453"
-                  }
-              ]
-          }
+        data() {
+            return {
+
+            }
         },
         computed: {
             ...mapState('file', [
@@ -323,7 +101,7 @@
             async dbClick(item) {
                 let gotoPath = this.currentPath + '/' + item.name
                 if (item.type) {
-                    await this.gotoPath({url: this.shell.shellUrl + new File(gotoPath + '/').dir(), path: gotoPath})
+                    await this.gotoPath(gotoPath)
                     this.$bus.$emit('parsePath', gotoPath)
                 } else {
                     let suffixIndex = gotoPath.lastIndexOf('.')
@@ -363,11 +141,12 @@
     .folder {
         /*padding: 30px 0 0px 0;*/
         /*height: 100%;*/
-        height:calc(100% - 30px);
+        height: calc(100% - 30px);
         box-sizing: border-box;
         overflow: auto;
         position: relative;
         width: 100%;
+        color: rgb(186, 173, 180);
         background: rgb(43, 43, 43);
 
         img {
@@ -380,11 +159,10 @@
             //width: 100%;
             display: flex;
             /*margin: 3px;*/
-            padding: 6px;
 
             .name {
                 width: 50%;
-                margin-left: 10px;
+                //margin-left: 10px;
             }
 
             .change-date {
@@ -397,6 +175,38 @@
 
             .size {
                 width: 15%;
+            }
+
+            .name, .change-date, .type, .size {
+                position: relative;
+                padding: 6px;
+                box-sizing: border-box;
+
+                &:hover {
+                    background: rgb(76, 76, 76);
+                }
+
+                &::after {
+                    content: '';
+                    width: 5px;
+                    height: 5px;
+                    border-top: 1px solid #ccc;
+                    border-left: 1px solid #ccc;
+                    transform: rotate(45deg) translateY(7px);
+                    position: absolute;
+                    left: 50%;
+                    top: 0;
+                }
+
+                &::before {
+                    content: '';
+                    height: 100%;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    cursor: ew-resize;
+                    width: 5px;
+                }
             }
         }
 
@@ -423,7 +233,6 @@
 
                 .name {
                     width: 50%;
-                    margin-left: 10px;
                 }
 
                 .change-date {
@@ -439,6 +248,36 @@
                 }
             }
 
+
+
+        }
+
+        &::-webkit-scrollbar {
+            width: 8px;
+            height: 10px;
+            background: #F1F1F1;
+        }
+
+        &::-webkit-scrollbar-button {
+            display: none;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background: #C1C1C1;
+
+            &:hover {
+                background: #a8a8a8;
+            }
+
+            &:active {
+                background: #787878;
+            }
+        }
+
+        &::-webkit-scrollbar-track {
+            border-radius: 10px;
+            background: #F1F1F1;
         }
 
     }

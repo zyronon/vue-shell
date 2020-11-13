@@ -7,7 +7,7 @@
 <script>
     import DirItem from "./DirItem"
     import File from "../../template/php/file";
-    import {types} from "../../store/mutation-types";
+    import {TYPES} from "../../store/mutation-types";
     import {mapActions, mapState} from "vuex";
 
 
@@ -15,25 +15,18 @@
         components: {
             'dir-item': DirItem,
         },
-        props: {
-            shell: {
-                type: Object
-            },
-
-        },
         data() {
             return {
                 dirs: [],
                 currentParsePath: '',//未使用
             }
         },
-        created: async function () {
-            await this.getCurrentPath()
-        },
+
         computed: {
             ...mapState('file', [
                 'currentDir',
-                'homePath'
+                'homePath',
+                'shell'
             ]),
         },
         methods: {
@@ -55,8 +48,8 @@
                     }
                 })
                 this.parsePath(currentPath)
-                this.$store.commit('file/' + this.types.SET_HOME_PATH, currentPath)
-                await this.gotoPath({url: this.shell.shellUrl + new File(currentPath + '/').dir(), path: currentPath})
+                this.$store.commit('file/' + this.TYPES.SET_HOME_PATH, currentPath)
+                await this.gotoPath(currentPath)
             },
             //D:/safe/code/vue-shell/php-shell解析成数组
             parsePath(path) {
@@ -221,9 +214,11 @@
                 // this.con(this.dirs)
             },
         },
-        mounted() {
+        mounted: async function () {
+            await this.getCurrentPath()
+
             this.$bus.$on('gotoPath', async path => {
-                await this.gotoPath({url: this.shell.shellUrl + new File(path + '/').dir(), path})
+                await this.gotoPath(path)
                 this.parsePath(path)
             })
             this.$bus.$on('closeChildren', v => {
@@ -240,6 +235,8 @@
 <style lang="scss" scoped>
     .folders {
         float: left;
+        color: rgb(186,173,180);
+
     }
 
 </style>

@@ -19,7 +19,7 @@
 </template>
 
 <script>
-    import {types} from '../../store/mutation-types'
+    import {TYPES} from '../../store/mutation-types'
 
     export default {
         data() {
