@@ -1,5 +1,10 @@
 <template>
-    <div class="content" @click="contextMenu.isShow = false" @mousemove="mousemove" @mouseup="isResizing = false">
+    <div class="content"
+         @click="contextMenu.isShow = false"
+         @mouseup="resize.directory = false"
+         @mousemove="mousemove"
+         @contextmenu="$event.preventDefault()"
+    >
         <div class="tabs">
             <div class="tab">
                 code11111
@@ -22,33 +27,9 @@
             <div :style="{'width':viewWidth - widths.directoryWidth+'px'}" class="dir-content">
                 <div class="gutter-vertical"
                      @mousedown="resize.directory = true"
-                     @mouseup="resize.directory = false"
                 ></div>
                 <option-bar></option-bar>
-                <folder>
-                    <div class="dir-des">
-                        <div class="name"
-                             :style="{'width':widths.rowOne+'px'}"
-                             @mousedown="resize.rowOne = true"
-                             @mouseup="test"
-                        >名称</div>
-                        <div class="change-date"
-                             :style="{'width':widths.rowTwo+'px'}"
-                             @mousedown="resize.rowTwo = true"
-                             @mouseup="resize.rowTwo = false"
-                        >修改日期</div>
-                        <div class="type"
-                             :style="{'width':widths.rowThree+'px'}"
-                             @mousedown="resize.rowThree = true"
-                             @mouseup="resize.rowThree = false"
-                        >类型</div>
-                        <div class="size"
-                             :style="{'width':widths.rowFour+'px'}"
-                             @mousedown="resize.rowFour = true"
-                             @mouseup="resize.rowFour = false"
-                        >大小</div>
-                    </div>
-                </folder>
+                <folder :directory-width="widths.directoryWidth"></folder>
             </div>
         </div>
 
@@ -61,38 +42,6 @@
                   :path="readFile.path">
         </CodeEdit>
 
-        <div v-if="contextMenu.isShow" :style="{top:contextMenu.top+'px',left:contextMenu.left+'px'}"
-             class="contextmenu">
-            <div class="item" @click="gotoPath(currentPath)">
-                <img src="@/assets/images/file.png" alt="">
-                <span>刷新目录</span>
-            </div>
-            <div class="item" @click="$refs.file.click()">
-                <input type="file" ref="file" id="file" style="display: none" @change="upload($event)">
-                <img src="@/assets/images/file.png" alt="">
-                <span>上传文件</span>
-            </div>
-            <div class="item" @click="download()">
-                <img src="@/assets/images/file.png" alt="">
-                <span>下载文件</span>
-            </div>
-            <div class="item" @click="deleteFile()">
-                <img src="@/assets/images/file.png" alt="">
-                <span>删除</span>
-            </div>
-            <div class="item" @click="rename">
-                <img src="@/assets/images/file.png" alt="">
-                <span>重命名</span>
-            </div>
-            <div class="item" @click="isShowDialog = true">
-                <img src="@/assets/images/file.png" alt="">
-                <span>新建</span>
-            </div>
-            <div class="item">
-                <img src="@/assets/images/file.png" alt="">
-                <span>在此处打开终端</span>
-            </div>
-        </div>
         <div class="mask" v-if="isShowDialog"></div>
         <div class="dialog" v-if="isShowDialog">
             <div class="header">
@@ -643,17 +592,8 @@ class Worker extends Server {
                 current_parse_path: [],
                 resize: {
                     directory: false,
-                    table: false,
-                    rowOne: false,
-                    rowTwo: false,
-                    rowThree: false,
-                    rowFour: false,
                 },
                 widths: {
-                    rowOne: 1000 * .5,
-                    rowTwo: 1000 * .2,
-                    rowThree: 1000 * .15,
-                    rowFour: 1000 * .15,
                     directoryWidth: 1000 * .2,
                 }
             }
@@ -669,30 +609,11 @@ class Worker extends Server {
                 return {height: !this.readFiles.length ? '100%' : 'calc(100% -30px)'}
             }
         },
-        watch: {
-            'widths.directoryWidth'() {
-                if (!this.resize.table) {
-                    let rightWidth = this.viewWidth - this.widths.directoryWidth
-                    this.widths.rowOne = rightWidth * 0.5
-                    this.widths.rowTwo = rightWidth * 0.2
-                    this.widths.rowThree = rightWidth * 0.15
-                    this.widths.rowFour = rightWidth * 0.15
-                }
-            }
-        },
+
         created() {
             this.init()
-            let rightWidth = this.viewWidth - this.widths.directoryWidth
-            this.widths.rowOne = rightWidth * 0.5
-            this.widths.rowTwo = rightWidth * 0.2
-            this.widths.rowThree = rightWidth * 0.15
-            this.widths.rowFour = rightWidth * 0.15
         },
         methods: {
-            test(){
-              console.log(1);
-              this.resize.rowOne = false
-            },
             ...mapActions('file', {
                 gotoPath: 'gotoPath'
             }),
@@ -700,17 +621,10 @@ class Worker extends Server {
                 setShell: TYPES.SET_SHELL + '',
             }),
             mousemove(e) {
-                // console.log(e.clientX);
                 if (this.resize.directory) {
                     if (e.clientX < 120) return this.resize.directory = false
                     this.widths.directoryWidth = e.clientX
                 }
-                console.log(this.resize.rowOne);
-                if (this.resize.rowOne) {
-                    if (e.clientX < 320) return this.resize.rowOne = false
-                    this.widths.rowOne = e.clientX - this.widths.directoryWidth
-                }
-
             },
             save() {
                 // console.log(this.readFile.content)
@@ -719,19 +633,6 @@ class Worker extends Server {
 
                 console.log()
             },
-            async upload(e) {
-                // console.log(e);
-                let file = e.path[0].files[0]
-                let formData = new FormData()
-                formData.append('file', file)
-                let res = await axios.post(this.shell.shellUrl + new File(file.name).upload(), formData, {
-                    headers: {'Content-type': 'multipart/form-data'}
-                })
-                await this.gotoPath(this.currentPath)
-                // console.log(res);
-
-            },
-
             async init() {
                 let shell = {url: 'api/shell.php', pwd: 'c'}
                 shell.shellUrl = this.generateShellUrl(shell)
@@ -758,66 +659,6 @@ class Worker extends Server {
                 return shell.url + '?' + shell.pwd + '='
             },
 
-            removeFile(i) {
-                console.log(i);
-                let fileTab = this.readFiles[i]
-                if (fileTab.path === this.readFile.path) {
-                    this.readFile = {
-                        isShow: false,
-                        content: '',
-                        title: '',
-                        path: ''
-                    }
-                }
-                this.readFiles.splice(i, 1)
-                if (this.readFiles.length === 0) {
-                    this.readFile.isShow = !this.readFile.isShow
-                }
-            },
-            async download() {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.path).download()
-                console.log(s);
-                let res = await this.request(s)
-                console.log(res);
-            },
-            async createFile() {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.path + this.createFileName).create()
-                console.log(s);
-                let res = await this.request(s)
-                console.log(res);
-                await this.gotoPath(this.currentPath)
-                this.isShowDialog = false
-            },
-            async deleteFile() {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.file).delete()
-                console.log(s);
-                let res = await this.request(s)
-                console.log(res);
-                await this.gotoPath(this.currentPath)
-            },
-            async rename() {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.file, this.contextMenu.file + '2').rename()
-                console.log(s);
-                let res = await this.request(s)
-                console.log(res);
-            },
-            onContextMenu(e, item) {
-                console.log(e, item);
-                // console.log(e.clientX, '----', e.clientY);
-                // console.log(e.pageX, '----', e.pageY);
-                // console.log(e.offsetX, '----', e.offsetY);
-                // console.log(e.screenX, '----', e.screenY);
-                // console.log(e.x, '----', e.y);
-                this.contextMenu.isShow = true
-                this.contextMenu.top = e.y
-                this.contextMenu.left = e.x
-                this.contextMenu.file = this.currentPath + item.name
-                this.contextMenu.path = this.currentPath
-            },
             async readFileContent(path, fileName) {
                 let res = await this.$request(this.shell.shellUrl + new File(path).read())
                 // console.log(res);
@@ -875,25 +716,6 @@ class Worker extends Server {
             cursor: pointer;
         }
 
-        .contextmenu {
-            /*width: 100px;*/
-            /*height: 200px;*/
-            background: darkgray;
-            border-radius: 4px;
-            position: absolute;
-            top: 50px;
-
-            .item {
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                padding: 10px;
-
-                img {
-                    margin-right: 10px;
-                }
-            }
-        }
 
 
         .tabs {
