@@ -3,6 +3,7 @@ import globalMethods from './global-methods'
 import Config from '../config'
 import CONSTANT from './const_var'
 import {TYPES} from '../store/mutation-types'
+import myDialog from '../components/dialog'
 
 // 全局混入
 export default {
@@ -41,6 +42,8 @@ export default {
                         p-id="4545" fill="#87939A"></path>
                 </svg>
             }
-        }
+        },
+        myDialog
+
     }
 }

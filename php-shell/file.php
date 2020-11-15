@@ -18,6 +18,15 @@ class File {
         header('Content-Length:' . filesize('file.php'));
         header('Content-Disposition:attachment;filename=' . basename('file.php'));
         echo @file_get_contents('file.php');
+//        $F = 'file.php';
+//        $fp = @fopen('file.php', "r");
+//        if (@fgetc($fp)) {
+//            @fclose($fp);
+//            @readfile($F);
+//        } else {
+//            echo("ERROR:// Can Not Read");
+//        }
+
     }
 
     function upload() {
@@ -191,5 +200,5 @@ class File {
 }
 
 $f = new File();
-$f->change();
+$f->download();
 ?>

@@ -42,19 +42,6 @@
                   :path="readFile.path">
         </CodeEdit>
 
-        <div class="mask" v-if="isShowDialog"></div>
-        <div class="dialog" v-if="isShowDialog">
-            <div class="header">
-                新建
-            </div>
-            <div class="content">
-                名称:<input type="text" v-model="createFileName">
-            </div>
-            <div class="footer">
-                <div class="button primary" @click="isShowDialog = false">取消</div>
-                <div class="button primary" @click="createFile()">确定</div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -81,8 +68,6 @@
         data() {
             return {
                 viewWidth: 1000,
-                isShowDialog: false,
-                createFileName: '',
                 contextMenu: {
                     isShow: false,
                     top: 0,
@@ -686,7 +671,24 @@ class Worker extends Server {
                         }
                     })
                 })
-            }
+            },
+
+            removeFile(i) {
+                console.log(i);
+                let fileTab = this.readFiles[i]
+                if (fileTab.path === this.readFile.path) {
+                    this.readFile = {
+                        isShow: false,
+                        content: '',
+                        title: '',
+                        path: ''
+                    }
+                }
+                this.readFiles.splice(i, 1)
+                if (this.readFiles.length === 0) {
+                    this.readFile.isShow = !this.readFile.isShow
+                }
+            },
         },
         mounted() {
         }

@@ -39,15 +39,19 @@
         <div class="list">
             <div class="item"
                  :class="item.isActive?'active':''"
-                 v-for="item of currentDir"
-                 @click.stop="dirClick(item)"
-                 @dblclick="dbClick(item)"
+                 v-for="item of currentDirCopy"
+                 @dblclick.stop="dbClick(item)"
                  @contextmenu.prevent="onContextMenu($event,item)">
                 <div class="name"
                      :style="{'width':widths.rowOne+'px'}">
                     <folder-icon v-if="item.type"></folder-icon>
                     <img src="@/assets/images/txt-file.png" alt="" v-else>
-                    <input type="text" :value="item.name" v-if="true">
+                    <input autofocus type="text"
+                           :value="item.name"
+                           v-if="item.isEdit"
+                           @keyup.enter="rename"
+                           @blur="item.isEdit = false"
+                    >
                     <span v-else>{{item.name}}</span>
                 </div>
                 <div class="change-date"
@@ -67,8 +71,24 @@
         <context-menu v-if="contextMenu.isShow"
                       :style="contextMenuStyle"
                       :context-menu="contextMenu"
+                      @editItem="editItem"
+                      @new="isShowDialog = true"
         >
         </context-menu>
+        <my-dialog title="新建" :visible.sync="isShowDialog">
+            <template v-slot:content>
+                <div class="form">
+                    <div class="form-row">
+                        <span>名称：</span>
+                        <input type="text" v-model="createFileName">
+                    </div>
+                </div>
+            </template>
+            <template v-slot:footer>
+                <div class="button primary" @click="isShowDialog = false">取消</div>
+                <div class="button primary" @click="createFile()">确定</div>
+            </template>
+        </my-dialog>
     </div>
 </template>
 
@@ -90,6 +110,10 @@
         },
         data() {
             return {
+                createFileName: '',
+                isShowDialog: false,
+
+                chooseItem: null,
                 viewWidth: 1000,
                 viewHeight: 700,
                 resize: {
@@ -121,6 +145,7 @@
                     path: '',
                     file: '',
                 },
+                currentDirCopy: [],
             }
         },
         watch: {
@@ -132,13 +157,18 @@
                     this.widths.rowThree = rightWidth * 0.15
                     this.widths.rowFour = rightWidth * 0.15
                 }
+            },
+            currentDir() {
+                this.currentDirCopy = JSON.parse(JSON.stringify(this.currentDir))
+                this.currentDirCopy.map(v => v.isEdit = false)
             }
         },
         computed: {
             ...mapState('file', [
                 'currentDir',
                 'homePath',
-                'currentPath'
+                'currentPath',
+                'shell'
             ]),
             isResizing() {
                 return this.resize.rowOne || this.resize.rowTwo || this.resize.rowThree || this.resize.rowFour
@@ -217,6 +247,31 @@
             ...mapActions('file', {
                 gotoPath: 'gotoPath'
             }),
+            async createFile() {
+                console.log(this.contextMenu.path);
+                let cmd = new File(this.contextMenu.path + this.createFileName).create()
+                console.log(cmd);
+                let res = await this.$request(this.shell.shellUrl + cmd)
+                console.log(res);
+                await this.gotoPath(this.currentPath)
+                this.isShowDialog = false
+            },
+            async rename($event) {
+                let file = this.currentPath + this.chooseItem.name
+                let cmd = new File(file, $event.target.value).rename()
+                this.$console(cmd);
+                let res = await this.$request(this.shell.shellUrl + cmd)
+                this.gotoPath(this.currentPath)
+                console.log(res);
+            },
+            editItem() {
+                let res = this.currentDirCopy.findIndex(v => v.name === this.chooseItem.name)
+                if (res !== -1) {
+                    this.currentDirCopy.map(v => v.isEdit = false)
+                    this.currentDirCopy[res].isEdit = true
+                    this.contextMenu.isShow = false
+                }
+            },
             onContextMenu(e, item) {
                 this.contextMenu.isShow = true
                 if (this.viewHeight - e.clientY < 250) {
@@ -236,10 +291,13 @@
                 if (item) {
                     this.contextMenu.file = this.currentPath + item.name
                     this.contextMenu.path = this.currentPath
+                    this.contextMenu.item = item
                     this.contextMenu.onFile = true
+                    this.chooseItem = item
                     e.stopPropagation();
                     e.preventDefault()
                 } else {
+                    this.chooseItem = null
                     this.contextMenu.onFile = false
                 }
             },
@@ -284,9 +342,6 @@
                         break;
                 }
 
-            },
-            test() {
-                console.log('pppp');
             },
             dirClick(item) {
                 console.log(item);
@@ -440,14 +495,14 @@
                         border-radius: 2px;
                         -webkit-box-sizing: border-box;
                         box-sizing: border-box;
-                        color:  $text-color;
+                        color: $text-color;
                         display: inline-block;
                         font-size: inherit;
                         height: 30px;
                         line-height: 30px;
                         outline: none;
                         padding: 0 10px;
-                         width: 90%;
+                        width: 90%;
                         -webkit-box-flex: 9;
                         -ms-flex: 9;
                         flex: 9;

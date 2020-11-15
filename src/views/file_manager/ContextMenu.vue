@@ -17,11 +17,11 @@
             <folderIcon></folderIcon>
             <span>删除</span>
         </div>
-        <div class="item" :class="contextMenu.onFile?'':'disabled'" @click.stop="rename($event)">
+        <div class="item" :class="contextMenu.onFile?'':'disabled'" @click.stop="$emit('editItem')">
             <folderIcon></folderIcon>
             <span>重命名</span>
         </div>
-        <div class="item" @click="isShowDialog = true">
+        <div class="item" @click.stop="$emit('new')">
             <folderIcon></folderIcon>
             <span>新建</span>
         </div>
@@ -67,54 +67,22 @@
                 })
                 await this.gotoPath(this.currentPath)
                 // console.log(res);
+            },
 
-            },
-            removeFile(i) {
-                console.log(i);
-                let fileTab = this.readFiles[i]
-                if (fileTab.path === this.readFile.path) {
-                    this.readFile = {
-                        isShow: false,
-                        content: '',
-                        title: '',
-                        path: ''
-                    }
-                }
-                this.readFiles.splice(i, 1)
-                if (this.readFiles.length === 0) {
-                    this.readFile.isShow = !this.readFile.isShow
-                }
-            },
+            //接口不行，浏览器直接访问可以。vue里面不可以
             async download() {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.path).download()
-                console.log(s);
-                let res = await this.request(s)
+                let cmd = new File(this.contextMenu.file).download()
+                console.log(cmd);
+                let res = await this.$request(this.shell.shellUrl + cmd)
                 console.log(res);
             },
-            async createFile() {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.path + this.createFileName).create()
-                console.log(s);
-                let res = await this.request(s)
-                console.log(res);
-                await this.gotoPath(this.currentPath)
-                this.isShowDialog = false
-            },
+            //ok
             async deleteFile() {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.file).delete()
-                console.log(s);
-                let res = await this.request(s)
+                let cmd = new File(this.contextMenu.file).delete()
+                console.log(cmd);
+                let res = await this.$request(this.shell.shellUrl + cmd)
                 console.log(res);
                 await this.gotoPath(this.currentPath)
-            },
-            async rename(e) {
-                console.log(this.contextMenu.path);
-                let s = new File(this.contextMenu.file, this.contextMenu.file + '2').rename()
-                console.log(s);
-                let res = await this.request(s)
-                console.log(res);
             },
         }
     }
