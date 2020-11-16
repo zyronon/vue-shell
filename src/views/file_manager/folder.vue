@@ -72,9 +72,10 @@
                       :style="contextMenuStyle"
                       :context-menu="contextMenu"
                       @editItem="editItem"
-                      @new="isShowDialog = true"
+                      @new="isShowDialog = true;contextMenu.isShow = false"
         >
         </context-menu>
+
         <my-dialog title="新建" :visible.sync="isShowDialog">
             <template v-slot:content>
                 <div class="form">
@@ -352,13 +353,13 @@
                 // item.isActive = true
             },
             async dbClick(item) {
-                let gotoPath = this.currentPath + '/' + item.name
+                let filePath = this.currentPath + '/' + item.name
                 if (item.type) {
-                    await this.gotoPath(gotoPath)
-                    this.$bus.$emit('parsePath', gotoPath)
+                    await this.gotoPath(filePath)
+                    this.$bus.$emit('parsePath', filePath)
                 } else {
-                    let suffixIndex = gotoPath.lastIndexOf('.')
-                    let suffix = gotoPath.substr(suffixIndex + 1).toLowerCase();
+                    let suffixIndex = filePath.lastIndexOf('.')
+                    let suffix = filePath.substr(suffixIndex + 1).toLowerCase();
                     let allowReadSuffix = [
                         'txt',
                         'php',
@@ -373,7 +374,9 @@
                     console.log(item);
                     if (allowReadSuffix.find(v => v === suffix) && (item.file_size < 1024 * 1024)) {
                         // console.log('在其中');
+                        this.$emit('openFile', {filePath, fileName: item.name})
                         // this.readFileContent(gotoPath, item.name)
+
                     } else {
                         // console.log('不在其中');
                     }
@@ -384,11 +387,9 @@
 </script>
 
 <style scoped lang="scss">
-
-    $hover-color: rgb(75, 110, 175);
-    $border-color: rgb(229, 229, 229);
+    @import "../../assets/scss/color";
+ 
     $bg-color: rgb(43, 43, 43);
-    $text-color: rgb(186, 173, 180);
     .folder {
         /*padding: 30px 0 0px 0;*/
         /*height: 100%;*/

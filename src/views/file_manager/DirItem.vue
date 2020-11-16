@@ -59,9 +59,8 @@
 </script>
 
 <style scoped lang="scss">
-    $hover-color: rgb(229, 243, 255);
-    $active-color: rgb(75, 110, 175);
-    $folder-color: #87939A;
+    @import "../../assets/scss/color";
+
 
     .folder {
         min-width: 200px;

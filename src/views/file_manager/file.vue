@@ -13,26 +13,24 @@
                 asdfasdfasd
             </div>
         </div>
-        <div class="file-tab" v-if="readFiles.length">
-            <div class="tab" v-for="(item,index) of readFiles" @click="showFileContent(item)">
-                <img src="@/assets/images/txt-file.png" alt="">
-                <span>{{item.title}}</span>
-                <img class="cp" src="@/assets/images/close.png" alt="" @click="removeFile(index)">
-            </div>
-        </div>
-        <div class="tab-content" :style="tabContentHeight">
+        <div class="tab-content" :class="readFiles.length?'show-file-tab':''">
             <div :style="{'width':widths.directoryWidth+'px'}" class="left-dir">
                 <directory></directory>
             </div>
             <div :style="{'width':viewWidth - widths.directoryWidth+'px'}" class="dir-content">
-                <div class="gutter-vertical"
-                     @mousedown="resize.directory = true"
-                ></div>
+                <div class="gutter-vertical" @mousedown="resize.directory = true"></div>
                 <option-bar></option-bar>
-                <folder :directory-width="widths.directoryWidth"></folder>
+                <folder :directory-width="widths.directoryWidth" @openFile="readFileContent"></folder>
             </div>
         </div>
 
+        <div class="file-tab" v-if="readFiles.length">
+            <div class="tab" v-for="(item,index) of readFiles" @click="showFileContent(item)">
+                <img class="cp" src="@/assets/images/file.png">
+                <span :title="item.title">{{item.title}}</span>
+                <img class="cp" src="@/assets/images/close.png" alt="" @click.stop="removeFile(index)">
+            </div>
+        </div>
 
         <CodeEdit class="file-content"
                   @close="readFile.isShow = false"
@@ -41,7 +39,6 @@
                   :title="readFile.title"
                   :path="readFile.path">
         </CodeEdit>
-
     </div>
 </template>
 
@@ -574,7 +571,6 @@ class Worker extends Server {
                     path: 'D:/safe/code/vue-shell/php-shell//shell.php'
                 },
                 readFiles: [],
-                current_parse_path: [],
                 resize: {
                     directory: false,
                 },
@@ -590,9 +586,6 @@ class Worker extends Server {
                 'currentPath',
                 'shell'
             ]),
-            tabContentHeight() {
-                return {height: !this.readFiles.length ? '100%' : 'calc(100% -30px)'}
-            }
         },
 
         created() {
@@ -622,20 +615,6 @@ class Worker extends Server {
                 let shell = {url: 'api/shell.php', pwd: 'c'}
                 shell.shellUrl = this.generateShellUrl(shell)
                 this.setShell(shell)
-
-                // let content = this.editor.getValue()
-                let content = ' async init() {\n' +
-                    '                this.shell.shellUrl = this.generateShellUrl()\n' +
-                    '                await this.getCurrentPath()\n' +
-                    '                // let content = this.editor.getValue()\n' +
-                    '                let content = \'花木成畦手自栽工花木成畦手自栽茜花木成畦手自栽李斐莉雪\'\n' +
-                    '                console.log(base64._encode(content));\n' +
-                    '                // let res = await this.$request(\'http://localhost:8863/api/file.php\', \'c=\' + base64._encode(content), {}, \'POST\')\n' +
-                    '                // console.log(res);\n' +
-                    '            },'
-                // console.log(base64._encode(content));
-                // let res = await this.$request('http://localhost:8863/api/file.php', 'c=' + base64._encode(content), {}, 'POST')
-                // console.log(res);
             },
             generateShellUrl(shell) {
                 if (shell.url.indexOf('?') !== -1) {
@@ -644,17 +623,23 @@ class Worker extends Server {
                 return shell.url + '?' + shell.pwd + '='
             },
 
-            async readFileContent(path, fileName) {
-                let res = await this.$request(this.shell.shellUrl + new File(path).read())
-                // console.log(res);
-                let row = {
-                    title: fileName,
-                    content: res,
-                    path: path,
+            async readFileContent(value) {
+                let {filePath, fileName} = value
+                let files = this.readFiles.find(v => v.path === filePath)
+                if (!files) {
+                    let res = await this.$request(this.shell.shellUrl + new File(filePath).read())
+                    // console.log(res);
+                    let row = {
+                        title: fileName,
+                        content: res,
+                        path: filePath,
+                    }
+                    this.readFiles.push(row)
+                    this.readFile = {...this.readFile, ...row}
+                } else {
+                    this.readFile = {...this.readFile, ...files}
                 }
-                this.readFile = {...this.readFile, ...row}
                 this.readFile.isShow = true
-                this.readFiles.push(row)
             },
             showFileContent(item) {
                 let that = this
@@ -662,19 +647,7 @@ class Worker extends Server {
                 that.readFile.isShow = !that.readFile.isShow
                 // console.log(that.readFile);
             },
-            async request(phpCode) {
-                return new Promise(resolve => {
-                    $.ajax({
-                        url: 'http://localhost/shell.php?c=' + phpCode,
-                        success(res) {
-                            resolve(res)
-                        }
-                    })
-                })
-            },
-
             removeFile(i) {
-                console.log(i);
                 let fileTab = this.readFiles[i]
                 if (fileTab.path === this.readFile.path) {
                     this.readFile = {
@@ -686,7 +659,7 @@ class Worker extends Server {
                 }
                 this.readFiles.splice(i, 1)
                 if (this.readFiles.length === 0) {
-                    this.readFile.isShow = !this.readFile.isShow
+                    this.readFile.isShow = false
                 }
             },
         },
@@ -697,10 +670,7 @@ class Worker extends Server {
 
 <style lang="scss" scoped>
 
-    $hover-color: rgb(75, 110, 175);
-    $border-color: rgb(229, 229, 229);
-    $bg-color: rgb(60, 63, 65);
-    //$bg-color: #AFB1B3;
+    @import "../../assets/scss/color";
 
     .content {
         -webkit-user-select: none; //禁止文字被选中
@@ -719,7 +689,6 @@ class Worker extends Server {
         }
 
 
-
         .tabs {
             display: none;
 
@@ -734,9 +703,7 @@ class Worker extends Server {
         .tab-content {
             //border-top: 1px solid gray;
             display: flex;
-            //height: 100%;
-            height: calc(100% - 30px);
-
+            height: 100%;
 
             .left-dir {
                 overflow: auto;
@@ -797,14 +764,22 @@ class Worker extends Server {
             }
         }
 
+        .show-file-tab {
+            height: calc(100% - 30px);
+        }
+
         .file-tab {
-            height: 30px;
-            z-index: 9;
+            min-height: 30px;
             width: 100%;
             display: flex;
             overflow: auto;
+            position: relative;
+            z-index: 999;
 
             .tab {
+                box-sizing: border-box;
+                height: 30px;
+                max-width: 150px;
                 cursor: pointer;
                 padding: 5px;
                 display: flex;
@@ -812,10 +787,12 @@ class Worker extends Server {
                 align-items: center;
                 background: rgb(78, 82, 84);
 
-                img {
-                    margin: 2px 5px;
-                    height: 15px;
+                span {
+                    overflow: hidden; //超出的文本隐藏
+                    text-overflow: ellipsis; //溢出用省略号显示
+                    white-space: nowrap; //溢出不换行
                 }
+
             }
         }
     }
@@ -828,43 +805,4 @@ class Worker extends Server {
         background: #fff;
     }
 
-    .mask {
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        position: absolute;
-        background: rgba(0, 0, 0, 0.5);
-    }
-
-    .dialog {
-        top: calc(50% - 100px);
-        left: 25%;
-        position: absolute;
-        border-radius: 4px;
-        background: #ffffff;
-        width: 50%;
-        //height: 100px;
-        border: 1px solid $border-color;
-
-        .content {
-            padding: 30px 20px;
-            color: #606266;
-            font-size: 14px;
-            word-break: break-all;
-        }
-
-
-        .header {
-            padding: 20px;
-            padding-bottom: 10px;
-        }
-
-        .footer {
-            padding: 20px;
-            padding-top: 10px;
-            text-align: right;
-            box-sizing: border-box;
-        }
-    }
 </style>

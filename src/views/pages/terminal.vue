@@ -189,19 +189,21 @@
 </script>
 
 <style lang="scss" scoped>
+    @import "../../assets/scss/color";
+
     .content {
         $font-color: rgb(0, 255, 0);
         $font-size: 18px;
         overflow: auto;
         height: 100%;
-        background: #000;
+        background: $bg-color;
         color: $font-color;
 
 
         .terminal {
             //width: 800px;
             //height: 800px;
-            background: #000;
+            background: $bg-color;
             color: $font-color;
             font-size: $font-size;
             font-family: "Microsoft YaHei UI";
@@ -213,7 +215,7 @@
                     position: relative;
 
                     .float-pwd {
-                        background: #000;
+                        background: $bg-color;
                         position: absolute;
                         /*left: 0px;*/
                         left: -1px;
@@ -235,7 +237,7 @@
                         box-sizing: border-box;
                         border: 0;
                         outline: 0;
-                        background: #000;
+                        background: $bg-color;
                         font-size: $font-size;
                         color: $font-color;
                     }

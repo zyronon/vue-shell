@@ -103,9 +103,8 @@
 </script>
 
 <style scoped lang="scss">
-    $hover-color: rgb(75, 110, 175);
-    $border-color: rgb(229, 229, 229);
-    $bg-color: rgb(60, 63, 65);
+    @import "../../assets/scss/color";
+
 
     .option-bar {
         width: 100%;

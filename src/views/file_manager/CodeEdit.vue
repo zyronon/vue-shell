@@ -79,36 +79,15 @@
         props: {
             content: {
                 type: String,
-                default: `
-                  this.editor = CodeMirror.fromTextArea(textarea, {
-                lineNumbers: true,     // 显示行数
-                indentUnit: 4,         // 缩进单位为4
-                styleActiveLine: true, // 当前行背景高亮
-                matchBrackets: true,   // 括号匹配
-                mode: 'null',     // HMTL混合模式
-                lineWrapping: false,    // CodeMirror是否应滚动或换行以显示长行。默认为false（滚动）。
-                scrollbarStyle: 'overlay',//选择滚动条实现。默认值为"native"，显示本机滚动条。核心库还提供了"null"样式，该样式完全隐藏了滚动条。插件可以实现其他滚动条模型。
-                theme: this.theme,   //设置主题
-                // theme: "material-darker",   //设置主题
-                // theme: "idea",   //设置主题
-                autoCloseBrackets: true,//配合closebrackets.js自动关闭括号和花括号
-                foldGutter: true,
-                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-            });
-            let meta = CodeMirror.findModeByFileName(this.path)
-            if (meta) {
-                this.editor.setOption('mode', meta.mode);     //设置代码框的长宽
-            }
-                `
+                required:true
             },
             path: {
                 type: String,
-                default: 'D:/safe/code/vue-shell/php-shell//shell.php'
-
+                required:true
             },
             title: {
                 type: String,
-                default: 'shell.php'
+                required:true
             },
         },
         data() {

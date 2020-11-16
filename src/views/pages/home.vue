@@ -89,7 +89,6 @@
                 <table cellspacing="0">
                     <thead>
                     <tr>
-                        <th></th>
                         <th width="40%">路径</th>
                         <th>密码</th>
                         <th>IP</th>
@@ -100,7 +99,6 @@
                     </thead>
                     <tbody>
                     <tr v-for="(item,index) of shells">
-                        <th>{{index}}</th>
                         <td width="40%" @click="goto(item)">
                             {{item.url}}
                         </td>
@@ -112,6 +110,38 @@
                     </tr>
                     </tbody>
                 </table>
+                <el-table
+                        stripe
+                        border
+                        size="mini"
+                        :highlight-current-row="true"
+                        :data="tableData"
+                        style="width: 100%"
+                        :default-sort = "{prop: 'date', order: 'descending'}"
+                >
+                    <el-table-column
+                            prop="date"
+                            label="日期"
+                            sortable
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="name"
+                            label="姓名"
+                            sortable
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="name2"
+                            label="姓名"
+                            sortable
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="address"
+                            label="地址" >
+                    </el-table-column>
+                </el-table>
             </div>
         </div>
         <my-dialog title="添加" :visible.sync="isShowDialog">
@@ -173,39 +203,41 @@
 
 <script>
     import {TYPES} from '../../store/mutation-types'
-    import dayjs from 'dayjs'
 
     export default {
         data() {
             return {
                 form: {url: '', note: ''},
                 shells: [],
-                isShowDialog: true
+                isShowDialog: false,
+                tableData: [{
+                    date: '2016-05-02',
+                    name: '王小虎',
+                    name2: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    date: '2016-05-04',
+                    name: '王小虎',
+                    name2: '王小虎',
+
+                    address: '上海市普陀区金沙江路 1517 弄'
+                }, {
+                    date: '2016-05-01',
+                    name: '王小虎',                    name2: '王小虎',
+
+                    address: '上海市普陀区金沙江路 1519 弄'
+                }, {
+                    date: '2016-05-03',
+                    name: '王小虎',                    name2: '王小虎',
+
+                    address: '上海市普陀区金沙江路 1516 弄'
+                }]
             }
         },
         created() {
             this.shells = this.get('shell', [])
         },
         filters: {
-            // 时间转换器
-            date(v) {
-                if (!v) return ''
-                if (typeof v === 'number') {
-                    const temp = v + ''
-                    if (temp.length === 10) {
-                        return dayjs.unix(v).format('YYYY-MM-DD HH:mm:ss')
-                    }
-                    return dayjs(v).format('YYYY-MM-DD HH:mm:ss')
-                }
-                if (typeof v === 'string') {
-                    if (v.length === 10) {
-                        return dayjs.unix(parseInt(v, 10)).format('YYYY-MM-DD HH:mm:ss')
-                    }
-                    return dayjs(parseInt(v, 10)).format('YYYY-MM-DD HH:mm:ss')
-                }
-                return dayjs(v).format('YYYY-MM-DD HH:mm:ss')
-
-            },
         },
         methods: {
             goto(item) {
@@ -228,9 +260,6 @@
                 this.set('shell', this.shells)
                 this.form = {}
                 this.isShowDialog = false
-            },
-            test() {
-
             },
             set(key, value) {
                 if (typeof value === 'object') {
@@ -257,18 +286,19 @@
 </script>
 
 <style lang="scss" scoped>
+    @import "../../assets/scss/color";
+
     $border-color: gray;
-    $bg-color: #2B2B2B;
+    //$bg-color: #2B2B2B;
     $head-bg-color: rgb(33, 33, 36);
     $dialog-bg-color: rgb(54, 54, 54);
     $input-bg-color: rgb(67, 67, 67);
-    $main-bg-color: #2B2B2B;
 
     .home {
         padding: 0;
         margin: 0;
         position: relative;
-        background: $main-bg-color;
+        background: $bg-color;
         height: 100%;
 
         .toolbar {

@@ -89,8 +89,7 @@
 </script>
 
 <style scoped lang="scss">
-    $bg-color: rgb(60, 63, 65);
-    $hover-color: rgb(75, 110, 175);
+    @import "../../assets/scss/color";
 
 
     .contextmenu {
