@@ -97,6 +97,7 @@
     import {mapActions, mapState} from "vuex";
     import File from "../../template/php/file";
     import ContextMenu from "./ContextMenu";
+    import {TYPES} from "../../store/mutation-types";
 
     export default {
         name: "folder",

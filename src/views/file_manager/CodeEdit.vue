@@ -73,6 +73,7 @@
     // import Base64 from 'crypto-js/enc-base64';
     import base64 from '../../utils/base64.js'
     import File from '../../template/php/file.js'
+    import {TYPES} from "../../store/mutation-types";
 
     export default {
         name: 'CodeEdit',  //组件命名

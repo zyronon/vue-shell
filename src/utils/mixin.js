@@ -4,6 +4,7 @@ import Config from '../config'
 import CONSTANT from './const_var'
 import {TYPES} from '../store/mutation-types'
 import myDialog from '../components/dialog'
+import arrowIcon from '../components/arrowIcon';
 
 // 全局混入
 export default {
@@ -43,7 +44,8 @@ export default {
                 </svg>
             }
         },
-        myDialog
+        myDialog,
+        arrowIcon
 
     }
 }

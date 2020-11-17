@@ -110,38 +110,6 @@
                     </tr>
                     </tbody>
                 </table>
-                <el-table
-                        stripe
-                        border
-                        size="mini"
-                        :highlight-current-row="true"
-                        :data="tableData"
-                        style="width: 100%"
-                        :default-sort = "{prop: 'date', order: 'descending'}"
-                >
-                    <el-table-column
-                            prop="date"
-                            label="日期"
-                            sortable
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            prop="name"
-                            label="姓名"
-                            sortable
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            prop="name2"
-                            label="姓名"
-                            sortable
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            prop="address"
-                            label="地址" >
-                    </el-table-column>
-                </el-table>
             </div>
         </div>
         <my-dialog title="添加" :visible.sync="isShowDialog">
@@ -198,47 +166,55 @@
                 <div class="button primary" @click="add()">添加</div>
             </template>
         </my-dialog>
+        <context-menu>
+
+        </context-menu>
     </div>
 </template>
 
 <script>
-    import {TYPES} from '../../store/mutation-types'
+    import ContextMenu from '../../components/ContextMenu'
+
+    import {TYPES} from "../../store/mutation-types";
 
     export default {
+        components: {
+            ContextMenu
+        },
         data() {
             return {
                 form: {url: '', note: ''},
                 shells: [],
                 isShowDialog: false,
-                tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    name2: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    name2: '王小虎',
+                tableData: [
+                    {
+                        date: '2016-05-02',
+                        name: '王小虎',
+                        name2: '王小虎',
+                        address: '上海市普陀区金沙江路 1518 弄'
+                    }, {
+                        date: '2016-05-04',
+                        name: '王小虎',
+                        name2: '王小虎',
 
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',                    name2: '王小虎',
+                        address: '上海市普陀区金沙江路 1517 弄'
+                    }, {
+                        date: '2016-05-01',
+                        name: '王小虎', name2: '王小虎',
 
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',                    name2: '王小虎',
+                        address: '上海市普陀区金沙江路 1519 弄'
+                    }, {
+                        date: '2016-05-03',
+                        name: '王小虎', name2: '王小虎',
 
-                    address: '上海市普陀区金沙江路 1516 弄'
-                }]
+                        address: '上海市普陀区金沙江路 1516 弄'
+                    }]
             }
         },
         created() {
             this.shells = this.get('shell', [])
         },
-        filters: {
-        },
+        filters: {},
         methods: {
             goto(item) {
                 console.log(item);
@@ -298,7 +274,8 @@
         padding: 0;
         margin: 0;
         position: relative;
-        background: $bg-color;
+        //background: $bg-color;
+        background: $head-bg-color;
         height: 100%;
 
         .toolbar {

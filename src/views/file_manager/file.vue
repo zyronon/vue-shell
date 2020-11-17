@@ -678,7 +678,7 @@ class Worker extends Server {
         width: 100%;
         position: relative;
         background: $bg-color;
-        color: rgb(147, 186, 186);
+        color: $text-color;
 
         img {
             height: 15px;

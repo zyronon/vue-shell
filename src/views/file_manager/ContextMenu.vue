@@ -36,6 +36,8 @@
     import {mapActions, mapState} from "vuex";
     import axios from "axios";
     import File from "../../template/php/file";
+    import {TYPES} from "../../store/mutation-types";
+
 
     export default {
         name: 'ContextMenu',  //组件命名

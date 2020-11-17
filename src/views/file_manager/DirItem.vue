@@ -27,6 +27,8 @@
 </template>
 
 <script>
+    import {TYPES} from "../../store/mutation-types";
+
     export default {
         name: 'DirItem',  //组件命名
         props: {

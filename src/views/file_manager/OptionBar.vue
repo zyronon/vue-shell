@@ -54,6 +54,7 @@
 
 <script>
     import {mapActions, mapState} from "vuex";
+    import {TYPES} from "../../store/mutation-types";
 
     export default {
         name: 'OptionBar',
