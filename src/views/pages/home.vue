@@ -1,5 +1,8 @@
 <template>
-    <div class="home" ref="content">
+    <div class="home" ref="content"
+         @contextmenu="onContextMenu()"
+         @click="location.show = false"
+    >
         <div class="toolbar">
             <div class="left">
                 <img src="@/assets/images/close.png" alt="">
@@ -85,7 +88,9 @@
                     <div class="name">所有</div>
                 </div>
             </div>
-            <div class="content">
+            <div class="content"
+                 @contextmenu="onContextMenu($event)"
+            >
                 <table cellspacing="0">
                     <thead>
                     <tr>
@@ -166,21 +171,34 @@
                 <div class="button primary" @click="add()">添加</div>
             </template>
         </my-dialog>
-        <context-menu>
 
-        </context-menu>
+        <c-menu :location="location">
+            <c-item>刷新目录</c-item>
+            <c-item>上传文件</c-item>
+            <c-item>下载文件</c-item>
+            <c-item :is-disabled="true">删除</c-item>
+            <c-item>重命名</c-item>
+            <c-item>
+                新增
+                <template v-slot:children>
+                    <c-item>新增文件</c-item>
+                    <c-item>新增文件夹
+                        <template v-slot:children>
+                            <c-item>新增文件</c-item>
+                            <c-item>新增文件夹</c-item>
+                        </template>
+                    </c-item>
+                </template>
+            </c-item>
+            <c-item>在此处打开终端</c-item>
+        </c-menu>
     </div>
 </template>
 
 <script>
-    import ContextMenu from '../../components/ContextMenu'
-
     import {TYPES} from "../../store/mutation-types";
 
     export default {
-        components: {
-            ContextMenu
-        },
         data() {
             return {
                 form: {url: '', note: ''},
@@ -208,7 +226,12 @@
                         name: '王小虎', name2: '王小虎',
 
                         address: '上海市普陀区金沙江路 1516 弄'
-                    }]
+                    }],
+                location: {
+                    show: false,
+                    x: 0,
+                    y: 0
+                }
             }
         },
         created() {
@@ -216,6 +239,20 @@
         },
         filters: {},
         methods: {
+            onContextMenu(e, item) {
+                if (e) {
+                    // console.log(e.clientX,e.clientY);
+                    // console.log(e.layerX,e.layerY);
+                    // console.log(e.offsetX,e.offsetY);
+                    // console.log(e.pageX,e.pageY);
+                    // console.log(e.screenX,e.screenY);
+                    // console.log(e.x, e.y);
+                    e.stopPropagation();
+                    e.preventDefault()
+                    let {x, y} = e
+                    this.location = {x, y, show: true}
+                }
+            },
             goto(item) {
                 console.log(item);
                 // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);

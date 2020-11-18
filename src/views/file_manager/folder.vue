@@ -2,7 +2,7 @@
     <div class="folder"
          @mousemove="mousemove"
          @mouseup="setResizeStatusFalse"
-         @click="contextMenu.isShow = false"
+         @click="location.show = false"
          @contextmenu="onContextMenu($event)"
     >
         <slot></slot>
@@ -76,6 +76,22 @@
         >
         </context-menu>
 
+        <c-menu :location="location">
+            <c-item>刷新目录</c-item>
+            <c-item>上传文件</c-item>
+            <c-item>下载文件</c-item>
+            <c-item :is-disabled="true">删除</c-item>
+            <c-item @click="editItem">重命名</c-item>
+            <c-item>
+                新增
+                <template v-slot:children>
+                    <c-item @click="isShowDialog = true;">新增文件</c-item>
+                    <c-item>新增文件夹</c-item>
+                </template>
+            </c-item>
+            <c-item>在此处打开终端</c-item>
+        </c-menu>
+
         <my-dialog title="新建" :visible.sync="isShowDialog">
             <template v-slot:content>
                 <div class="form">
@@ -112,6 +128,11 @@
         },
         data() {
             return {
+                location: {
+                    show: false,
+                    x: 0,
+                    y: 0
+                },
                 createFileName: '',
                 isShowDialog: false,
 
@@ -275,6 +296,12 @@
                 }
             },
             onContextMenu(e, item) {
+                // if (e) {
+                //     e.stopPropagation();
+                //     e.preventDefault()
+                //     let {x, y} = e
+                //     this.location = {x, y, show: true}
+                // }
                 this.contextMenu.isShow = true
                 if (this.viewHeight - e.clientY < 250) {
                     this.contextMenu.bottom = this.viewHeight - e.clientY
@@ -389,7 +416,7 @@
 
 <style scoped lang="scss">
     @import "../../assets/scss/color";
- 
+
     $bg-color: rgb(43, 43, 43);
     .folder {
         /*padding: 30px 0 0px 0;*/

@@ -5,11 +5,15 @@ import CONSTANT from './const_var'
 import {TYPES} from '../store/mutation-types'
 import myDialog from '../components/dialog'
 import arrowIcon from '../components/arrowIcon';
+import cMenu from '../components/menu'
+import cItem from '../components/menu/item'
 
 // 全局混入
 export default {
     data() {
         return {
+            viewWidth: 1000,
+            viewHeight: 700,
             TYPES,
             CONFIG: Config,
             CONSTANT,
@@ -45,7 +49,9 @@ export default {
             }
         },
         myDialog,
-        arrowIcon
+        arrowIcon,
+        cMenu,
+        cItem
 
     }
 }
