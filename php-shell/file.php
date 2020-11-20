@@ -42,8 +42,14 @@ class File {
         @file_put_contents('D:\safe\code\vue-shell\php-shell\test2.php', '');
     }
 
+    function createFolder() {
+        mkdir('123123');
+    }
+
     function delete() {
-        unlink('D:\safe\code\vue-shell\php-shell\test.txt');
+        @unlink('D:\safe\code\vue-shell\php-shell\test2 - 副本.php');
+
+//        rmdir('1');
     }
 
     function rename() {
@@ -200,5 +206,5 @@ class File {
 }
 
 $f = new File();
-$f->download();
+$f->delete();
 ?>

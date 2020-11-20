@@ -1,5 +1,5 @@
 <template>
-    <div ref="menu" class="menu" :style="style" @contextmenu="e => e.preventDefault()">
+    <div ref="menu" class="menu" :style="style" @contextmenu="e => {e.preventDefault();e.stopPropagation()}">
         <slot></slot>
     </div>
 </template>

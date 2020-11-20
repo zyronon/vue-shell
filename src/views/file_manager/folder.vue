@@ -2,7 +2,7 @@
     <div class="folder"
          @mousemove="mousemove"
          @mouseup="setResizeStatusFalse"
-         @click="location.show = false"
+         @click="menu.location.show = false"
          @contextmenu="onContextMenu($event)"
     >
         <slot></slot>
@@ -68,36 +68,29 @@
                 </div>
             </div>
         </div>
-        <context-menu v-if="contextMenu.isShow"
-                      :style="contextMenuStyle"
-                      :context-menu="contextMenu"
-                      @editItem="editItem"
-                      @new="isShowDialog = true;contextMenu.isShow = false"
-        >
-        </context-menu>
 
-        <c-menu :location="location">
-            <c-item>刷新目录</c-item>
+        <c-menu :location="menu.location">
+            <c-item @click="gotoPath(currentPath)">刷新目录</c-item>
             <c-item>上传文件</c-item>
             <c-item>下载文件</c-item>
-            <c-item :is-disabled="true">删除</c-item>
-            <c-item @click="editItem">重命名</c-item>
+            <c-item @click="deleteFile" :is-disabled="!menu.onFile">删除</c-item>
+            <c-item @click="editItem" :is-disabled="!menu.onFile">重命名</c-item>
             <c-item>
                 新增
                 <template v-slot:children>
-                    <c-item @click="isShowDialog = true;">新增文件</c-item>
-                    <c-item>新增文件夹</c-item>
+                    <c-item @click="isShowDialog = true;menu.createType = 0">新增文件</c-item>
+                    <c-item @click="isShowDialog = true;menu.createType = 1">新增文件夹</c-item>
                 </template>
             </c-item>
             <c-item>在此处打开终端</c-item>
         </c-menu>
 
-        <my-dialog title="新建" :visible.sync="isShowDialog">
+        <my-dialog :title="menu.createType?'新增文件夹':'新增文件'" :visible.sync="isShowDialog">
             <template v-slot:content>
                 <div class="form">
                     <div class="form-row">
                         <span>名称：</span>
-                        <input type="text" v-model="createFileName">
+                        <input type="text" v-model="menu.createName">
                     </div>
                 </div>
             </template>
@@ -128,15 +121,19 @@
         },
         data() {
             return {
-                location: {
+                menu: {
+                    location: {
+                        x: 0,
+                        y: 0,
+                    },
                     show: false,
-                    x: 0,
-                    y: 0
+                    onFile: false,
+                    file: '',
+                    createType: 0,
+                    createName: '',
+                    chooseItem: null,
                 },
-                createFileName: '',
                 isShowDialog: false,
-
-                chooseItem: null,
                 viewWidth: 1000,
                 viewHeight: 700,
                 resize: {
@@ -158,16 +155,6 @@
                     rowThree: null,
                     rowFour: null,
                 },
-                contextMenu: {
-                    isShow: false,
-                    onFile: true,
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    path: '',
-                    file: '',
-                },
                 currentDirCopy: [],
             }
         },
@@ -182,8 +169,10 @@
                 }
             },
             currentDir() {
-                this.currentDirCopy = JSON.parse(JSON.stringify(this.currentDir))
-                this.currentDirCopy.map(v => v.isEdit = false)
+                this.currentDirCopy = this.currentDir.map(v => {
+                    v.isEdit = false
+                    return v
+                })
             }
         },
         computed: {
@@ -196,23 +185,6 @@
             isResizing() {
                 return this.resize.rowOne || this.resize.rowTwo || this.resize.rowThree || this.resize.rowFour
             },
-            contextMenuStyle() {
-                let style = {}
-                if (this.contextMenu.top) {
-                    style.top = this.contextMenu.top + 'px'
-                }
-                if (this.contextMenu.bottom) {
-                    style.bottom = this.contextMenu.bottom + 'px'
-                }
-                if (this.contextMenu.right) {
-                    style.right = this.contextMenu.right + 'px'
-                }
-                if (this.contextMenu.left) {
-                    style.left = this.contextMenu.left + 'px'
-                }
-                return style
-            }
-
         },
         filters: {
             size(r) {
@@ -271,8 +243,12 @@
                 gotoPath: 'gotoPath'
             }),
             async createFile() {
-                console.log(this.contextMenu.path);
-                let cmd = new File(this.contextMenu.path + this.createFileName).create()
+                let cmd
+                if (this.menu.createType) {
+                    cmd = new File(this.currentPath + this.menu.createName).createFolder()
+                } else {
+                    cmd = new File(this.currentPath + this.menu.createName).createFile()
+                }
                 console.log(cmd);
                 let res = await this.$request(this.shell.shellUrl + cmd)
                 console.log(res);
@@ -280,7 +256,7 @@
                 this.isShowDialog = false
             },
             async rename($event) {
-                let file = this.currentPath + this.chooseItem.name
+                let file = this.currentPath + this.menu.chooseItem.name
                 let cmd = new File(file, $event.target.value).rename()
                 this.$console(cmd);
                 let res = await this.$request(this.shell.shellUrl + cmd)
@@ -288,46 +264,37 @@
                 console.log(res);
             },
             editItem() {
-                let res = this.currentDirCopy.findIndex(v => v.name === this.chooseItem.name)
-                if (res !== -1) {
-                    this.currentDirCopy.map(v => v.isEdit = false)
-                    this.currentDirCopy[res].isEdit = true
-                    this.contextMenu.isShow = false
-                }
+                this.currentDirCopy = this.currentDirCopy.map(v => {
+                    v.isEdit = v.name === this.menu.chooseItem.name;
+                    return v
+                })
             },
+            async deleteFile() {
+                let cmd
+                if(this.menu.chooseItem.type){
+                    cmd = new File(this.currentPath + this.menu.chooseItem.name).deleteFolder()
+                }else {
+                    cmd = new File(this.currentPath + this.menu.chooseItem.name).deleteFile()
+                }
+                console.log(cmd);
+                let res = await this.$request(this.shell.shellUrl + cmd)
+                console.log(res);
+                await this.gotoPath(this.currentPath)
+            },
+
             onContextMenu(e, item) {
-                // if (e) {
-                //     e.stopPropagation();
-                //     e.preventDefault()
-                //     let {x, y} = e
-                //     this.location = {x, y, show: true}
-                // }
-                this.contextMenu.isShow = true
-                if (this.viewHeight - e.clientY < 250) {
-                    this.contextMenu.bottom = this.viewHeight - e.clientY
-                    this.contextMenu.top = null
-                } else {
-                    this.contextMenu.top = e.clientY - 30
-                    this.contextMenu.bottom = null
-                }
-                if (this.viewWidth - e.clientX < 180) {
-                    this.contextMenu.right = this.viewWidth - e.clientX
-                    this.contextMenu.left = null
-                } else {
-                    this.contextMenu.left = e.clientX - this.directoryWidth
-                    this.contextMenu.right = null
-                }
-                if (item) {
-                    this.contextMenu.file = this.currentPath + item.name
-                    this.contextMenu.path = this.currentPath
-                    this.contextMenu.item = item
-                    this.contextMenu.onFile = true
-                    this.chooseItem = item
+                if (e) {
                     e.stopPropagation();
                     e.preventDefault()
+                    let {x, y} = e
+                    this.menu.location = {x, y, show: true}
+                }
+                if (item) {
+                    this.menu.onFile = true
+                    this.menu.chooseItem = item
                 } else {
-                    this.chooseItem = null
-                    this.contextMenu.onFile = false
+                    this.menu.chooseItem = null
+                    this.menu.onFile = false
                 }
             },
             mousemove(e) {
@@ -353,7 +320,6 @@
                 this.resize.rowTwo = false
                 this.resize.rowThree = false
                 this.resize.rowFour = false
-                // this.contextMenu.isShow = false
             },
             sort(row) {
                 switch (row) {

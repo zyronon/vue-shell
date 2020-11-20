@@ -57,7 +57,7 @@ module.exports = {
                 target: 'http://localhost',  // 后台接口域名
                 changeOrigin: true,  //是否跨域
                 pathRewrite: {
-                    '^/api': '/'
+                    '^/api': ''
                 }
             }
         }
