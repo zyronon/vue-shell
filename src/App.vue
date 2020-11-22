@@ -8,7 +8,10 @@
     export default {
         name: 'app',
         created() {
-        }
+        },
+        methods: {
+        },
+
     }
 </script>
 

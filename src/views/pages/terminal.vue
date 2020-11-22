@@ -1,17 +1,32 @@
 <template>
-    <div class="content" ref="content">
-        <div class="terminal" ref="terminal">
+    <div class="content"
+         ref="content"
+         :style="fontSizeStyle"
+         :themes="currentColor"
+         @wheel="zoomFontSize">
+        <div class="themes">
+            <span>主题：</span>
+            <div class="theme" v-for="item of themes" :style="{background:item.color}"
+                 @click="currentColor = item.class"></div>
+        </div>
+        <div class="terminal" ref="terminal" :themes="currentColor">
             <div class="row" v-for="type of row">
-                <div class="type-history">{{type.history}}</div>
+                <div class="input-history">
+                    <span class="path">{{type.path}}</span>
+                    <span class="cmd">{{type.cmd}}</span>
+                </div>
                 <pre class="result">{{type.result}}</pre>
             </div>
             <div class="row">
                 <div class="type-container">
-                <textarea class="type"
-                          @input="input($event,type)"
-                          @keydown="keydown($event,type)"
-                          v-model="type.tmpPwd"></textarea>
-                    <span class="float-pwd">{{type.pwd}}</span>
+                    <textarea class="type"
+                              :style="fontSizeStyle"
+                              :themes="currentColor"
+                              @input="input($event,type)"
+                              @keydown="keydown($event,type)"
+                              v-model="type.input">
+                    </textarea>
+                    <span class="float-pwd" :themes="currentColor">{{type.path}}</span>
                 </div>
             </div>
         </div>
@@ -19,12 +34,12 @@
 </template>
 
 <script>
-    import {TYPES} from "../../store/mutation-types";
 
     export default {
         data() {
             return {
-                pwd: 'D:\\safe\\hw\\2020_09_18',
+                fontSize: 18,
+                path: 'D:\\safe\\hw\\2020_09_18',
                 row: [],
                 type: {},
                 urlencode: [
@@ -35,7 +50,18 @@
                         k: '&',
                         v: '%26'
                     },
-                ]
+                ],
+                themes: [
+                    {
+                        class: 'green',
+                        color: '#00FF00',
+                    },
+                    {
+                        class: 'win',
+                        color: '#cccccc',
+                    },
+                ],
+                currentColor: 'green'
             }
         },
         created() {
@@ -54,7 +80,27 @@
                 }
             }
         },
+        computed: {
+            fontSizeStyle() {
+                return {fontSize: this.fontSize + 'px'}
+            }
+        },
         methods: {
+            zoomFontSize(e) {
+                if (e.ctrlKey) {
+                    let deltaY = e.deltaY
+                    if (deltaY > 0) {
+                        this.fontSize--
+                        if (this.fontSize < 12) {
+                            this.fontSize = 12
+                        }
+                    } else {
+                        this.fontSize++
+                    }
+                    e.stopPropagation();
+                    e.preventDefault()
+                }
+            },
             getPwd() {
                 let that = this
                 let cmd = 'echo %25cd%25'
@@ -65,20 +111,21 @@
                         console.log(JSON.stringify(res));
                         res = res.replace('\r\n', '')
                         console.log(JSON.stringify(res));
-                        that.pwd = res
+                        that.path = res
                         that.type = {
-                            tmpPwd: that.pwd + '>',
-                            pwd: that.pwd + '>',
+                            path: that.path + '>',
+                            input: that.path + '>',
                             id: '',
                         }
                     }
                 })
             },
             exec(event, cmd) {
+                console.log(cmd === 'cls');
                 if (cmd === '') return
-                if (cmd === 'cls') {
+                if (cmd === 'cls' || cmd === 'clear') {
                     this.row = []
-                    this.type.tmpPwd = this.type.pwd
+                    this.type.input = this.type.path
                     this.type.id = ''
                     return
                 }
@@ -89,12 +136,13 @@
                     success(res) {
                         that.row.push({
                             cmd: cmd,
-                            // history: that.$clone(that.type.tmpPwd),
-                            history: that.type.tmpPwd,
+                            historyInput: that.type.input,
+                            path: that.type.path,
                             result: res,
                         })
-                        console.log(that.row);
-                        that.type.tmpPwd = that.type.pwd
+                        that.type.input = that.type.path
+                        // that.$console(that.row)
+
                         that.$nextTick(() => {
                             that.$refs.content.scrollTop = that.$refs.terminal.scrollHeight;
                         })
@@ -116,53 +164,57 @@
 
             },
             keydown(event, type) {
-                let cmd = type.tmpPwd.substr(type.pwd.length, type.tmpPwd.length)
-                this.$console(type)
                 // console.log(event.keyCode);
+
+                let cmd = type.input.substr(type.path.length, type.input.length)
                 if (event.keyCode === 13) {
                     event.returnValue = false;
                     this.exec(event, cmd)
                 }
+                //tab键
                 if (event.keyCode === 9) {
                     console.log('tab键');
                     this.cmdAutoComplete(type, cmd)
                     event.returnValue = false;
                 }
+                //上键
                 if (event.keyCode === 38) {
                     this.$console(this.row)
                     if (this.type.id !== '') {
                         if (this.type.id !== 0) {
                             this.type.id = this.type.id - 1
-                            this.type.tmpPwd = this.row[this.type.id].history
+                            this.type.input = this.row[this.type.id].history
                         } else {
-                            this.type.tmpPwd = this.row[this.row.length - 1].history
+                            this.type.input = this.row[this.row.length - 1].history
                             this.type.id = this.row.length - 1
                         }
                     } else {
                         if (this.row.length) {
-                            this.type.tmpPwd = this.row[this.row.length - 1].history
+                            this.type.input = this.row[this.row.length - 1].history
                             this.type.id = this.row.length - 1
                         }
                     }
                     console.log(this.type.id);
                     return
                 }
+                //下键
                 if (event.keyCode === 40) {
                     console.log(JSON.stringify(this.row, null, 4))
                     console.log(this.type.id);
                     if (this.type.id !== '') {
                         if (this.type.id !== this.row.length - 1) {
                             this.type.id = this.type.id + 1
-                            this.type.tmpPwd = this.row[this.type.id].history
+                            this.type.input = this.row[this.type.id].history
                         } else {
                             this.type.id = 0
-                            this.type.tmpPwd = this.row[this.type.id].history
+                            this.type.input = this.row[this.type.id].history
                         }
                     }
                     return
                 }
+                //删除键
                 if (event.keyCode === 8) {
-                    if (type.tmpPwd === type.pwd) {
+                    if (type.input === type.path) {
                         event.returnValue = false;
                     }
                 }
@@ -173,13 +225,13 @@
                     textArea.style.height = textArea.scrollHeight + 'px'
                 }
                 if (event.target.value === '') {
-                    type.tmpPwd = type.pwd
+                    type.input = type.path
                 }
-                if (type.tmpPwd.length < type.pwd.length) {
-                    type.tmpPwd = type.pwd
+                if (type.input.length < type.path.length) {
+                    type.input = type.path
                 }
-                if (type.tmpPwd.substr(0, type.pwd.length) !== type.pwd) {
-                    type.tmpPwd = type.pwd
+                if (type.input.substr(0, type.path.length) !== type.path) {
+                    type.input = type.path
                 }
             },
         }
@@ -190,20 +242,34 @@
     @import "../../assets/scss/color";
 
     $font-color: rgb(0, 255, 0);
-    $font-size: 18px;
+
     .content {
         overflow: auto;
         height: 100%;
-        background: $bg-color;
-        color: $font-color;
+
+        &[themes=green] {
+            color: #00FF00;
+            background: $bg-color;
+        }
+
+        &[themes=win] {
+            color: #CCCCCC;
+            background: #47494A;
+        }
+
+        .themes {
+            display: flex;
+
+            .theme {
+                margin: 1px;
+                width: 20px;
+                height: 20px;
+                border-radius: 2px;
+            }
+        }
 
 
         .terminal {
-            //width: 800px;
-            //height: 800px;
-            background: $bg-color;
-            color: $font-color;
-            font-size: $font-size;
             font-family: "Microsoft YaHei UI";
 
             .row {
@@ -213,14 +279,20 @@
                     position: relative;
 
                     .float-pwd {
-                        background: $bg-color;
                         position: absolute;
                         /*left: 0px;*/
                         left: -1px;
-                        top: 0px;
-                        color: $font-color;
-                        font-size: $font-size;
-                        //background: #fffffb;
+                        top: 0;
+                        color: #CCCCCC;
+
+
+                        &[themes=green] {
+                            background: $bg-color;
+                        }
+
+                        &[themes=win] {
+                            background: #47494A;
+                        }
                     }
 
                     textarea {
@@ -236,13 +308,26 @@
                         border: 0;
                         outline: 0;
                         background: $bg-color;
-                        font-size: $font-size;
-                        color: $font-color;
+
+                        &[themes=green] {
+                            color: #00FF00;
+                            background: $bg-color;
+                        }
+
+                        &[themes=win] {
+                            color: #CCCCCC;
+                            background: #47494A;
+                        }
                     }
                 }
 
-                .type-history {
+                .input-history {
                     word-break: break-all;
+
+                    .path {
+                        // color: rgb(131,148,150);
+                        color: #CCCCCC;
+                    }
                 }
 
                 .result {
