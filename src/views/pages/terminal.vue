@@ -1,5 +1,5 @@
 <template>
-    <div class="content">
+    <div class="content" ref="content">
         <div class="terminal" ref="terminal">
             <div class="row" v-for="type of row">
                 <div class="type-history">{{type.history}}</div>
@@ -74,9 +74,6 @@
                     }
                 })
             },
-            clone(obj) {
-                return JSON.parse(JSON.stringify(obj))
-            },
             exec(event, cmd) {
                 if (cmd === '') return
                 if (cmd === 'cls') {
@@ -92,7 +89,8 @@
                     success(res) {
                         that.row.push({
                             cmd: cmd,
-                            history: that.clone(that.type.tmpPwd),
+                            // history: that.$clone(that.type.tmpPwd),
+                            history: that.type.tmpPwd,
                             result: res,
                         })
                         console.log(that.row);
@@ -119,7 +117,7 @@
             },
             keydown(event, type) {
                 let cmd = type.tmpPwd.substr(type.pwd.length, type.tmpPwd.length)
-                console.log(type);
+                this.$console(type)
                 // console.log(event.keyCode);
                 if (event.keyCode === 13) {
                     event.returnValue = false;
@@ -131,7 +129,7 @@
                     event.returnValue = false;
                 }
                 if (event.keyCode === 38) {
-                    console.log(JSON.stringify(this.row, null, 4))
+                    this.$console(this.row)
                     if (this.type.id !== '') {
                         if (this.type.id !== 0) {
                             this.type.id = this.type.id - 1
@@ -191,9 +189,9 @@
 <style lang="scss" scoped>
     @import "../../assets/scss/color";
 
+    $font-color: rgb(0, 255, 0);
+    $font-size: 18px;
     .content {
-        $font-color: rgb(0, 255, 0);
-        $font-size: 18px;
         overflow: auto;
         height: 100%;
         background: $bg-color;

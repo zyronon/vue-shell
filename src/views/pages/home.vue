@@ -1,6 +1,6 @@
 <template>
     <div class="home" ref="content"
-         @contextmenu="onContextMenu()"
+         @contextmenu="$event.preventDefault()"
          @click="location.show = false"
     >
         <div class="toolbar">
@@ -88,9 +88,7 @@
                     <div class="name">所有</div>
                 </div>
             </div>
-            <div class="content"
-                 @contextmenu="onContextMenu($event)"
-            >
+            <div class="content" @contextmenu="onContextMenu($event)">
                 <table cellspacing="0">
                     <thead>
                     <tr>
@@ -174,23 +172,10 @@
 
         <c-menu :location="location">
             <c-item>刷新目录</c-item>
-            <c-item>上传文件</c-item>
-            <c-item>下载文件</c-item>
+            <c-item>新增</c-item>
+            <c-item>打开</c-item>
+            <c-item>编辑</c-item>
             <c-item :is-disabled="true">删除</c-item>
-            <c-item>重命名</c-item>
-            <c-item>
-                新增
-                <template v-slot:children>
-                    <c-item>新增文件</c-item>
-                    <c-item>新增文件夹
-                        <template v-slot:children>
-                            <c-item>新增文件</c-item>
-                            <c-item>新增文件夹</c-item>
-                        </template>
-                    </c-item>
-                </template>
-            </c-item>
-            <c-item>在此处打开终端</c-item>
         </c-menu>
     </div>
 </template>
@@ -241,12 +226,6 @@
         methods: {
             onContextMenu(e, item) {
                 if (e) {
-                    // console.log(e.clientX,e.clientY);
-                    // console.log(e.layerX,e.layerY);
-                    // console.log(e.offsetX,e.offsetY);
-                    // console.log(e.pageX,e.pageY);
-                    // console.log(e.screenX,e.screenY);
-                    // console.log(e.x, e.y);
                     e.stopPropagation();
                     e.preventDefault()
                     let {x, y} = e

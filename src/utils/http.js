@@ -29,78 +29,21 @@ instance.interceptors.response.use(
         // console.log(response)
         // // console.log(response.data)
         const {data} = response
-        if (data.indexOf('ERROR//') !== -1) {
+        console.log(typeof data);
+        let temp = data
+        if (typeof data === 'object') {
+            temp = JSON.stringify(data)
+        }
+        if (temp.indexOf('ERROR//') !== -1) {
             alert('ERROR')
             return Promise.resolve('')
         }
-        // if (response.status !== 200) {
-        //     globalMethods.$warning(response.statusText)
-        //     if (data.code === '000000') {
-        //         // 接口自定义错误代码
-        //         // 移除登陆token 显示接口错误消息
-        //     }
-        //     return Promise.reject(data)
-        // }
-        // if (data === null) {
-        //     return Promise.resolve({
-        //         code: '009900',
-        //         msg: '系统出现错误',
-        //         data: {},
-        //     })
-        // }
-        // // console.log(data.resultCode)
-        // if (data.code === undefined) {
-        //     if (data.msg !== undefined) {
-        //         return Promise.resolve({
-        //             code: '009900',
-        //             msg: data.msg,
-        //             data: null,
-        //         })
-        //     }
-        //     return Promise.resolve({
-        //         code: '009900',
-        //         msg: data.message !== null ? data.message : '',
-        //         data: null,
-        //     })
-        // }
+
         return Promise.resolve(data)
     },
     // 请求出错的处理
     (error) => {
         console.log(error)
-        // if (error.response === undefined && error.status === undefined) {
-        //     return Promise.resolve({
-        //         code: '009900',
-        //         msg: '服务器响应超时',
-        //         data: null,
-        //     })
-        // }
-        // if (error.response.status >= 500) {
-        //     return Promise.resolve({
-        //         code: '009900',
-        //         msg: '服务器出现错误',
-        //         data: null,
-        //     })
-        // }
-        // if (error.response.status === 401) {
-        //     return Promise.resolve({
-        //         code: '009900',
-        //         msg: '用户名或密码不正确',
-        //         data: null,
-        //     })
-        // }
-        // const { data } = error.response
-        // if (data.code !== undefined) {
-        //     return Promise.resolve({
-        //         code: data.code,
-        //         msg: data.msg,
-        //     })
-        // }
-        // return Promise.resolve({
-        //     code: '009900',
-        //     msg: data.msg,
-        //     data: null,
-        // })
     },
 )
 

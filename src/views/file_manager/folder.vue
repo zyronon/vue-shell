@@ -5,8 +5,8 @@
          @click="menu.location.show = false"
          @contextmenu="onContextMenu($event)"
     >
-        <slot></slot>
-        <div class="dir-des" :class="isResizing?'no-hover':''">
+        <div class="dir-des" :class="isResizing?'no-hover':''"
+             @contextmenu.prevent="onContextMenu($event,null,false)">
             <div class="name"
                  :class="sortStatus.rowOne?sortStatus.rowOne:''"
                  :style="{'width':widths.rowOne+'px'}"
@@ -105,14 +105,10 @@
 <script>
     import {mapActions, mapState} from "vuex";
     import File from "../../template/php/file";
-    import ContextMenu from "./ContextMenu";
     import {TYPES} from "../../store/mutation-types";
 
     export default {
         name: "folder",
-        components: {
-            ContextMenu
-        },
         props: {
             directoryWidth: {
                 type: Number,
@@ -271,9 +267,9 @@
             },
             async deleteFile() {
                 let cmd
-                if(this.menu.chooseItem.type){
+                if (this.menu.chooseItem.type) {
                     cmd = new File(this.currentPath + this.menu.chooseItem.name).deleteFolder()
-                }else {
+                } else {
                     cmd = new File(this.currentPath + this.menu.chooseItem.name).deleteFile()
                 }
                 console.log(cmd);
@@ -282,12 +278,16 @@
                 await this.gotoPath(this.currentPath)
             },
 
-            onContextMenu(e, item) {
+            onContextMenu(e, item, isShow = true) {
                 if (e) {
                     e.stopPropagation();
                     e.preventDefault()
-                    let {x, y} = e
-                    this.menu.location = {x, y, show: true}
+                    if (isShow) {
+                        let {x, y} = e
+                        this.menu.location = {x, y, show: true}
+                    } else {
+                        this.menu.location.show = false
+                    }
                 }
                 if (item) {
                     this.menu.onFile = true
@@ -338,14 +338,6 @@
                 }
 
             },
-            dirClick(item) {
-                console.log(item);
-                // this.currentDir = this.currentDir.map(v => {
-                //     v.isActive = false;
-                //     return v
-                // })
-                // item.isActive = true
-            },
             async dbClick(item) {
                 let filePath = this.currentPath + '/' + item.name
                 if (item.type) {
@@ -364,15 +356,18 @@
                         'jsp',
                         'jspx',
                         'htaccess',
+                        'js',
+                        'json',
+                        'md',
                     ]
                     console.log(item);
-                    if (allowReadSuffix.find(v => v === suffix) && (item.file_size < 1024 * 1024)) {
-                        // console.log('在其中');
+                    if (allowReadSuffix.find(v => v === suffix)) {
+                        if (item.file_size > 1024 * 1024) {
+                            return console.log('文件太大', item.file_size);
+                        }
                         this.$emit('openFile', {filePath, fileName: item.name})
-                        // this.readFileContent(gotoPath, item.name)
-
                     } else {
-                        // console.log('不在其中');
+                        console.log('不在其中');
                     }
                 }
             },
