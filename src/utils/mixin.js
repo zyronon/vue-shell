@@ -7,6 +7,7 @@ import myDialog from '../components/dialog'
 import arrowIcon from '../components/arrowIcon';
 import cMenu from '../components/menu'
 import cItem from '../components/menu/item'
+import cTable from '../components/table'
 
 // 全局混入
 export default {
@@ -51,7 +52,8 @@ export default {
         myDialog,
         arrowIcon,
         cMenu,
-        cItem
+        cItem,
+        cTable
 
     }
 }

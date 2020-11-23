@@ -102,7 +102,7 @@
                     </thead>
                     <tbody>
                     <tr v-for="(item,index) of shells">
-                        <td width="40%" @click="goto(item)">
+                        <td width="40%" @click="goto('file')">
                             {{item.url}}
                         </td>
                         <td>{{item.pwd}}</td>
@@ -113,6 +113,7 @@
                     </tr>
                     </tbody>
                 </table>
+                <c-table></c-table>
             </div>
         </div>
         <my-dialog title="添加" :visible.sync="isShowDialog">
@@ -171,8 +172,9 @@
         </my-dialog>
 
         <c-menu :location="location">
-            <c-item>刷新目录</c-item>
+            <c-item @click="reload">刷新目录</c-item>
             <c-item>新增</c-item>
+            <c-item @click="goto('terminal')">终端</c-item>
             <c-item>打开</c-item>
             <c-item>编辑</c-item>
             <c-item :is-disabled="true">删除</c-item>
@@ -224,6 +226,9 @@
         },
         filters: {},
         methods: {
+            reload() {
+                window.location.reload()
+            },
             onContextMenu(e, item) {
                 if (e) {
                     e.stopPropagation();
@@ -232,12 +237,24 @@
                     this.location = {x, y, show: true}
                 }
             },
-            goto(item) {
-                console.log(item);
-                // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);
-                this.$router.push({
-                    path: '/file'
-                })
+            goto(type, item) {
+                switch (type) {
+                    case 'terminal':
+                        console.log(item);
+                        // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);
+                        this.$router.push({
+                            path: '/terminal'
+                        })
+                        break;
+                    case 'file':
+
+                        console.log(item);
+                        // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);
+                        this.$router.push({
+                            path: '/file'
+                        })
+                        break;
+                }
             },
             add() {
                 this.shells.push({
