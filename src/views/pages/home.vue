@@ -89,31 +89,15 @@
                 </div>
             </div>
             <div class="content" @contextmenu="onContextMenu($event)">
-                <table cellspacing="0">
-                    <thead>
-                    <tr>
-                        <th width="40%">路径</th>
-                        <th>密码</th>
-                        <th>IP</th>
-                        <th>备注</th>
-                        <!--                       <th>创建时间</th>-->
-                        <th width="22%">修改时间</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(item,index) of shells">
-                        <td width="40%" @click="goto('file')">
-                            {{item.url}}
-                        </td>
-                        <td>{{item.pwd}}</td>
-                        <td>{{item.ip}}</td>
-                        <td>{{item.note}}</td>
-                        <!--                        <td>{{item.createDate|date}}</td>-->
-                        <td>{{item.changeDate|date}}</td>
-                    </tr>
-                    </tbody>
-                </table>
-                <c-table></c-table>
+                <c-table>
+                    <c-table-item prop="url" label="路径"></c-table-item>
+                    <c-table-item prop="pwd" label="密码"></c-table-item>
+                    <c-table-item prop="ip" label="IP"></c-table-item>
+                    <c-table-item prop="note" label="备注"></c-table-item>
+                    <c-table-item prop="changeDate" label="修改时间"></c-table-item>
+                </c-table>
+
+
             </div>
         </div>
         <my-dialog title="添加" :visible.sync="isShowDialog">
@@ -183,7 +167,6 @@
 </template>
 
 <script>
-    import {TYPES} from "../../store/mutation-types";
 
     export default {
         data() {
@@ -422,56 +405,7 @@
                 box-sizing: border-box;
                 color: white;
 
-                table {
-                    word-wrap: break-word;
-                    word-break: break-all;
-                    table-layout: fixed;
-                    width: 100%;
-                    border-collapse: collapse;
-                    //border: 1px solid $border-color;
 
-                    thead {
-                        color: rgb(136, 136, 136);
-
-                        tr {
-                            height: 30px;
-                        }
-
-                        th {
-                            border-right: 1px solid $border-color;
-
-                            &:nth-last-child(1) {
-                                border-right: none;
-                            }
-                        }
-                    }
-
-                    tbody {
-                        /*text-align: center;*/
-                        tr {
-                            background-color: rgb(46, 46, 46);
-
-                            height: 30px;
-                            //border-bottom: 1px solid $border-color;
-                            &:nth-child(even) {
-                                background-color: rgb(43, 43, 43);
-                            }
-
-                            &:hover {
-                                background-color: rgb(55, 55, 55);
-                            }
-
-                            &:active {
-                                background-color: rgb(63, 63, 63);
-                            }
-                        }
-
-                        td {
-                            //border-right: 1px solid $border-color;
-                            //width: 50%;
-                        }
-                    }
-                }
             }
         }
     }

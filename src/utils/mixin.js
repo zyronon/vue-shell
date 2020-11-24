@@ -8,6 +8,7 @@ import arrowIcon from '../components/arrowIcon';
 import cMenu from '../components/menu'
 import cItem from '../components/menu/item'
 import cTable from '../components/table'
+import cTableItem from '../components/table/item'
 
 // 全局混入
 export default {
@@ -53,7 +54,8 @@ export default {
         arrowIcon,
         cMenu,
         cItem,
-        cTable
+        cTable,
+        cTableItem,
 
     }
 }
