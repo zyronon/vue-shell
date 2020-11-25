@@ -9,6 +9,7 @@ import cMenu from '../components/menu'
 import cItem from '../components/menu/item'
 import cTable from '../components/table'
 import cTableItem from '../components/table/item'
+import cTableTbody from '../components/table/tbody'
 
 // 全局混入
 export default {
@@ -56,6 +57,7 @@ export default {
         cItem,
         cTable,
         cTableItem,
+        cTableTbody,
 
     }
 }

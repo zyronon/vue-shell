@@ -89,12 +89,16 @@
                 </div>
             </div>
             <div class="content" @contextmenu="onContextMenu($event)">
-                <c-table>
+                <c-table :list="shells" @row-click="t">
                     <c-table-item prop="url" label="路径"></c-table-item>
                     <c-table-item prop="pwd" label="密码"></c-table-item>
                     <c-table-item prop="ip" label="IP"></c-table-item>
                     <c-table-item prop="note" label="备注"></c-table-item>
-                    <c-table-item prop="changeDate" label="修改时间"></c-table-item>
+                    <c-table-item prop="changeDate" label="修改时间">
+                        <template slot-scope="scope">
+                            {{scope.changeDate|date}}
+                        </template>
+                    </c-table-item>
                 </c-table>
 
 
@@ -174,29 +178,6 @@
                 form: {url: '', note: ''},
                 shells: [],
                 isShowDialog: false,
-                tableData: [
-                    {
-                        date: '2016-05-02',
-                        name: '王小虎',
-                        name2: '王小虎',
-                        address: '上海市普陀区金沙江路 1518 弄'
-                    }, {
-                        date: '2016-05-04',
-                        name: '王小虎',
-                        name2: '王小虎',
-
-                        address: '上海市普陀区金沙江路 1517 弄'
-                    }, {
-                        date: '2016-05-01',
-                        name: '王小虎', name2: '王小虎',
-
-                        address: '上海市普陀区金沙江路 1519 弄'
-                    }, {
-                        date: '2016-05-03',
-                        name: '王小虎', name2: '王小虎',
-
-                        address: '上海市普陀区金沙江路 1516 弄'
-                    }],
                 location: {
                     show: false,
                     x: 0,
@@ -209,6 +190,10 @@
         },
         filters: {},
         methods: {
+            t(e, row) {
+                console.log(e);
+                console.log(row);
+            },
             reload() {
                 window.location.reload()
             },

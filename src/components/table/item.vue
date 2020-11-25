@@ -1,29 +1,30 @@
-<template>
-    <td >
-        <slot>12</slot>
-    </td>
-</template>
 <script>
     export default {
         name: "cTableItem",
-
-        props: {
-
-        },
+        props: {},
         data() {
-            return {
-                row: {
-                    url: 'url'
-
-                }
-            }
+            return {}
         },
         created() {
+            let columns = this.$store.state.layout.tableColumns
+            columns.push({
+                attrs: this.$attrs,
+                renderCell: (data) => {
+                    return (<div>
+                        {this.$scopedSlots.default
+                            ? this.$scopedSlots.default(data)
+                            : data[this.$attrs.prop]}
+                    </div>);
+                }
+            })
+            this.$store.commit('layout/setTableColumns', columns)
         },
         mounted() {
-            console.log(this.row);
         },
         methods: {},
+        render(createElement, context) {
+            return <div/>
+        }
 
     }
 </script>
