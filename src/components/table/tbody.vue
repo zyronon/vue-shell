@@ -12,12 +12,19 @@
             }
         },
         data() {
-            return {}
+            return {
+                columns: []
+            }
         },
         computed: {
             ...mapState('layout', [
                 'tableColumns',
             ]),
+        },
+        watch: {
+            '$store.state.layout.tableColumns'(){
+                console.log(11);
+            }
         },
         created() {
         },
@@ -29,7 +36,7 @@
                 <table cellSpacing="0">
                     <thead>
                     <tr>
-                        {this.tableColumns.map(w => {
+                        {this.columns.map(w => {
                             return <th class="up">{w.attrs.label}
                                 <div class="resize-vertical"/>
                             </th>
