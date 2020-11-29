@@ -100,8 +100,6 @@
                         </template>
                     </c-table-item>
                 </c-table>
-
-
             </div>
         </div>
         <my-dialog title="添加" :visible.sync="isShowDialog">
@@ -187,6 +185,7 @@
         },
         created() {
             this.shells = this.get('shell', [])
+            console.log(Math.random() + Date.now());
         },
         filters: {},
         methods: {
@@ -237,6 +236,15 @@
                 this.set('shell', this.shells)
                 this.form = {}
                 this.isShowDialog = false
+
+
+                // let 10条数据 = await 请求表格的接口(参数)
+                // for (let i = 0; i < 10条数据.length; i++) {
+                //     let 单条数据 = 10条数据[i]
+                //     let 图片id =  await 请求图片id的接口(单条数据id)
+                //     10条数据[i].图片id = 图片id
+                // }
+                // this.表格显示数据 = 10条数据
             },
             set(key, value) {
                 if (typeof value === 'object') {

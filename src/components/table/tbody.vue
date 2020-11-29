@@ -13,7 +13,7 @@
         },
         data() {
             return {
-                columns: []
+                columns: [],
             }
         },
         computed: {
@@ -21,23 +21,55 @@
                 'tableColumns',
             ]),
         },
-        watch: {
-            '$store.state.layout.tableColumns'(){
-                console.log(11);
-            }
-        },
+        watch: {},
         created() {
         },
         mounted() {
         },
-        methods: {},
+        methods: {
+            sort(id) {
+                let localColumns = this.tableColumns
+                // let item =  this.tableColumns.find(v => v.id === id)
+                // item.sort = item.sort !== -1 ? item.sort === 1 ? 0 : -1 : 1
+                // if (item.sort === -1) {
+                //     console.log('不排序');
+                // } else if (item.sort === 1) {
+                //     console.log('1排序');
+                // } else {
+                //     console.log('0排序');
+                // }
+                localColumns.push({
+                    id: Math.random().toString(36) + Date.now().toString(36),
+                    attrs: {prop:'test',label:'xxx'},
+                    sort: -1,
+                    renderCell: (data) => {
+                        return (<div>
+                           xxx
+                        </div>);
+                    }
+                })
+                this.$console(this.tableColumns)
+
+                // this.$store.commit('layout/setTableColumns', this.tableColumns)
+
+            }
+        },
+
         render(createElement, context) {
             return (
                 <table cellSpacing="0">
                     <thead>
                     <tr>
-                        {this.columns.map(w => {
-                            return <th class="up">{w.attrs.label}
+                        {this.tableColumns.map(w => {
+                            let sortClass = ''
+                            if (w.sort !== -1) {
+                                sortClass = w.sort === 1 ? 'up' : 'down'
+                            }
+                            return <th
+                                class={sortClass}
+                                onClick={e => this.sort(w.id)}
+                            >
+                                {w.attrs.label}
                                 <div class="resize-vertical"/>
                             </th>
                         })}
