@@ -90,15 +90,18 @@
             </div>
             <div class="content" @contextmenu="onContextMenu($event)">
                 <c-table :list="shells" @row-click="t">
-                    <c-table-item prop="url" label="路径"></c-table-item>
-                    <c-table-item prop="pwd" label="密码"></c-table-item>
-                    <c-table-item prop="ip" label="IP"></c-table-item>
-                    <c-table-item prop="note" label="备注"></c-table-item>
-                    <c-table-item prop="changeDate" label="修改时间">
+<!--                    <c-table-column prop="url" label="路径" sortable width="200px"></c-table-column>-->
+<!--                    <c-table-column prop="pwd" label="密码"  width="200px"></c-table-column>-->
+<!--                    <c-table-column prop="ip" label="IP" width="200px"></c-table-column>-->
+                    <c-table-column prop="url" label="路径" sortable  width="250px" ></c-table-column>
+                    <c-table-column prop="pwd" label="密码"></c-table-column>
+                    <c-table-column prop="ip" label="IP"></c-table-column>
+                    <c-table-column prop="note" label="备注" ></c-table-column>
+                    <c-table-column prop="changeDate" label="修改时间">
                         <template slot-scope="scope">
                             {{scope.changeDate|date}}
                         </template>
-                    </c-table-item>
+                    </c-table-column>
                 </c-table>
             </div>
         </div>
@@ -159,7 +162,7 @@
 
         <c-menu :location="location">
             <c-item @click="reload">刷新目录</c-item>
-            <c-item>新增</c-item>
+            <c-item @click="t">新增</c-item>
             <c-item @click="goto('terminal')">终端</c-item>
             <c-item>打开</c-item>
             <c-item>编辑</c-item>
@@ -169,6 +172,8 @@
 </template>
 
 <script>
+
+    import {mapState} from "vuex";
 
     export default {
         data() {
@@ -184,14 +189,318 @@
             }
         },
         created() {
-            this.shells = this.get('shell', [])
-            console.log(Math.random() + Date.now());
+            // this.shells = this.get('shell', [])
+            // this.$console(this.shells)
+            this.shells  = [
+                {
+                "url": "http://localhost/shell.php",
+                "pwd": "c",
+                "ip": "10.34.0.1",
+                "category": "php",
+                "note": "",
+                "createDate": 1605539153024,
+                "changeDate": 1605539153024
+            },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },]
+            this.shells  = [
+                {
+                    "url": "http://localhost/shell.php",
+                    "pwd": "c",
+                    "ip": "10.34.0.1",
+                    "category": "php",
+                    "note": "",
+                    "createDate": 1605539153024,
+                    "changeDate": 1605539153024
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "http://localhost/shell.php",
+                    "pwd": "c",
+                    "ip": "10.34.0.1",
+                    "category": "php",
+                    "note": "",
+                    "createDate": 1605539153024,
+                    "changeDate": 1605539153024
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "http://localhost/shell.php",
+                    "pwd": "c",
+                    "ip": "10.34.0.1",
+                    "category": "php",
+                    "note": "",
+                    "createDate": 1605539153024,
+                    "changeDate": 1605539153024
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "http://localhost/shell.php",
+                    "pwd": "c",
+                    "ip": "10.34.0.1",
+                    "category": "php",
+                    "note": "",
+                    "createDate": 1605539153024,
+                    "changeDate": 1605539153024
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "http://localhost/shell.php",
+                    "pwd": "c",
+                    "ip": "10.34.0.1",
+                    "category": "php",
+                    "note": "",
+                    "createDate": 1605539153024,
+                    "changeDate": 1605539153024
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "http://localhost/shell.php",
+                    "pwd": "c",
+                    "ip": "10.34.0.1",
+                    "category": "php",
+                    "note": "",
+                    "createDate": 1605539153024,
+                    "changeDate": 1605539153024
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "http://localhost/shell.php",
+                    "pwd": "c",
+                    "ip": "10.34.0.1",
+                    "category": "php",
+                    "note": "",
+                    "createDate": 1605539153024,
+                    "changeDate": 1605539153024
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "http://localhost/shell.php",
+                    "pwd": "c",
+                    "ip": "10.34.0.1",
+                    "category": "php",
+                    "note": "",
+                    "createDate": 1605539153024,
+                    "changeDate": 1605539153024
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "http://localhost/shell.php",
+                    "pwd": "c",
+                    "ip": "10.34.0.1",
+                    "category": "php",
+                    "note": "",
+                    "createDate": 1605539153024,
+                    "changeDate": 1605539153024
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "http://localhost/shell.php",
+                    "pwd": "c",
+                    "ip": "10.34.0.1",
+                    "category": "php",
+                    "note": "",
+                    "createDate": 1605539153024,
+                    "changeDate": 1605539153024
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+                {
+                    "url": "test",
+                    "pwd": "test",
+                    "ip": "192.169.0.1",
+                    "category": "php",
+                    "note": "你说你呢呢",
+                    "createDate": 1606317816291,
+                    "changeDate": 1606317816291
+                },
+            ]
+        },
+        computed: {
+            ...mapState('layout', [
+                'tableColumns',
+            ]),
         },
         filters: {},
         methods: {
             t(e, row) {
-                console.log(e);
-                console.log(row);
+               this.$console(row)
             },
             reload() {
                 window.location.reload()
@@ -368,7 +677,7 @@
 
         .content-container {
             display: flex;
-            height: 100%;
+            height: calc(100% - 50px);
 
             .category {
                 width: 200px;
@@ -394,6 +703,7 @@
 
             .content {
                 width: calc(100% - 200px);
+                overflow: auto;
 
                 box-sizing: border-box;
                 color: white;

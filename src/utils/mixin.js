@@ -8,7 +8,7 @@ import arrowIcon from '../components/arrowIcon';
 import cMenu from '../components/menu'
 import cItem from '../components/menu/item'
 import cTable from '../components/table'
-import cTableItem from '../components/table/item'
+import cTableColumn from '../components/table/column'
 import cTableTbody from '../components/table/tbody'
 
 // 全局混入
@@ -56,7 +56,7 @@ export default {
         cMenu,
         cItem,
         cTable,
-        cTableItem,
+        cTableColumn,
         cTableTbody,
 
     }
