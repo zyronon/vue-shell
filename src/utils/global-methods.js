@@ -3,8 +3,8 @@ export default {
         console.log(JSON.stringify(v, null, 4));
     },
     $clone(v) {
-        // return JSON.parse(JSON.stringify(v))
-        return Object.assign({},v)
+        return JSON.parse(JSON.stringify(v))
+        // return Object.assign({},v)
     },
     // 解析url
     $parseURL(url) {

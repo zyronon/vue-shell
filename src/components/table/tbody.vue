@@ -13,8 +13,8 @@
         },
         data() {
             return {
-                noSortList: this.list,
-                useList: this.list,
+                noSortList: this.$clone(this.list),
+                useList: this.$clone(this.list),
             }
         },
         computed: {
@@ -22,7 +22,11 @@
                 'tableColumns',
             ]),
         },
-        watch: {},
+        watch: {
+            'list'(){
+                console.log(1);
+            }
+        },
         created() {
         },
         mounted() {
@@ -32,33 +36,46 @@
                 let item = this.tableColumns.find(v => v.id === id)
                 if (item.attrs.sortable === undefined) return
                 item.sort = item.sort !== -1 ? item.sort === 1 ? 0 : -1 : 1
+                this.tableColumns.map(v => {
+                    if (v.id !== item.id) {
+                        v.sort = -1
+                    }
+                })
                 if (item.sort === -1) {
-                    console.log('不排序');
                     this.sortBy()
                 } else if (item.sort === 1) {
                     this.sortBy(item.attrs.prop, 'ascending')
                 } else {
                     this.sortBy(item.attrs.prop, 'descending')
                 }
-                this.$console(item)
+                // this.$console(item)
                 this.$store.commit('layout/setTableColumns', this.tableColumns)
             },
             sortBy(key, type) {
-                if (key === undefined) this.useList = this.noSortList
-                else {
+                if (key === undefined) {
+                    this.useList = this.$clone(this.noSortList)
+                } else {
                     if (type === 'ascending') {
                         console.log('升序');
-                        let list = this.tableColumns
-                        for (let i = 0; i < list.length - 1; i++) {
-                            for (let j = 0; j < list.length - 1 - i; j++) {
-                                if (list[j].value > list[j + 1].value) {
-                                    let temp = list[j]
-                                    list[j] = list[j + 1]
-                                    list[j + 1] = temp
+                        for (let i = 0; i < this.useList.length - 1; i++) {
+                            for (let j = 0; j < this.useList.length - 1 - i; j++) {
+                                if (this.useList[j][key] > this.useList[j + 1][key]) {
+                                    let temp = this.useList[j]
+                                    this.useList[j] = this.useList[j + 1]
+                                    this.useList[j + 1] = temp
                                 }
                             }
                         }
                     } else {
+                        for (let i = 0; i < this.useList.length - 1; i++) {
+                            for (let j = 0; j < this.useList.length - 1 - i; j++) {
+                                if (this.useList[j][key] < this.useList[j + 1][key]) {
+                                    let temp = this.useList[j]
+                                    this.useList[j] = this.useList[j + 1]
+                                    this.useList[j + 1] = temp
+                                }
+                            }
+                        }
                         console.log('降序');
                     }
                 }
