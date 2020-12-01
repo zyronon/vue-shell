@@ -220,34 +220,6 @@
                 overflow: auto;
                 position: relative;
 
-
-                &::-webkit-scrollbar {
-                    width: 8px;
-                    height: 10px;
-                    background: #F1F1F1;
-                }
-
-                &::-webkit-scrollbar-button {
-                    display: none;
-                }
-
-                &::-webkit-scrollbar-thumb {
-                    border-radius: 10px;
-                    background: #C1C1C1;
-
-                    &:hover {
-                        background: #a8a8a8;
-                    }
-
-                    &:active {
-                        background: #787878;
-                    }
-                }
-
-                &::-webkit-scrollbar-track {
-                    border-radius: 10px;
-                    background: #F1F1F1;
-                }
             }
 
             .dir-content {

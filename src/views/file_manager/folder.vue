@@ -384,7 +384,7 @@
         /*height: 100%;*/
         height: calc(100% - 30px);
         box-sizing: border-box;
-        overflow-y: scroll;
+        overflow-y: auto;
         overflow-x: hidden;
         position: relative;
         width: 100%;
@@ -509,34 +509,6 @@
             }
 
 
-        }
-
-        &::-webkit-scrollbar {
-            width: 8px;
-            height: 10px;
-            background: #F1F1F1;
-        }
-
-        &::-webkit-scrollbar-button {
-            display: none;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            border-radius: 10px;
-            background: #C1C1C1;
-
-            &:hover {
-                background: #a8a8a8;
-            }
-
-            &:active {
-                background: #787878;
-            }
-        }
-
-        &::-webkit-scrollbar-track {
-            border-radius: 10px;
-            background: #F1F1F1;
         }
 
     }
