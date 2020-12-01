@@ -13,7 +13,8 @@
         },
         data() {
             return {
-                columns: [],
+                noSortList: this.list,
+                useList: this.list,
             }
         },
         computed: {
@@ -29,19 +30,38 @@
         methods: {
             sort(id) {
                 let item = this.tableColumns.find(v => v.id === id)
-                if (item.attrs.sortable === undefined) {
-                    return
-                }
+                if (item.attrs.sortable === undefined) return
                 item.sort = item.sort !== -1 ? item.sort === 1 ? 0 : -1 : 1
                 if (item.sort === -1) {
                     console.log('不排序');
+                    this.sortBy()
                 } else if (item.sort === 1) {
-                    console.log('升序');
+                    this.sortBy(item.attrs.prop, 'ascending')
                 } else {
-                    console.log('降序');
+                    this.sortBy(item.attrs.prop, 'descending')
                 }
                 this.$console(item)
                 this.$store.commit('layout/setTableColumns', this.tableColumns)
+            },
+            sortBy(key, type) {
+                if (key === undefined) this.useList = this.noSortList
+                else {
+                    if (type === 'ascending') {
+                        console.log('升序');
+                        let list = this.tableColumns
+                        for (let i = 0; i < list.length - 1; i++) {
+                            for (let j = 0; j < list.length - 1 - i; j++) {
+                                if (list[j].value > list[j + 1].value) {
+                                    let temp = list[j]
+                                    list[j] = list[j + 1]
+                                    list[j + 1] = temp
+                                }
+                            }
+                        }
+                    } else {
+                        console.log('降序');
+                    }
+                }
             }
         },
 
@@ -61,10 +81,10 @@
                 tableStyle += `width: calc(100% + ${widths * .5}px);`
             } else {
                 tableStyle += `width: 100%;`
-                tableBodyStyle=`overflow-x: hidden`
+                tableBodyStyle = `overflow-x: hidden`
             }
 
-            console.log(widths);
+            // console.log(widths);
             return (
                 <div class="table-body" style={tableBodyStyle}>
                     <table cellSpacing="0" style={tableStyle}>
@@ -75,10 +95,8 @@
                                 if (w.sort !== -1) {
                                     sortClass = w.sort === 1 ? 'up' : 'down'
                                 }
-                                let style = ''
                                 return <th
                                     width={w.attrs.width}
-                                        // style={style}
                                     class={sortClass}
                                     onClick={e => this.sort(w.id)}
                                 >
@@ -90,7 +108,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {this.list.map(v => {
+                        {this.useList.map(v => {
                             return (
                                 <tr onClick={e => this.$emit('row-click', e, v)}>
                                     {this.tableColumns.map(w => {

@@ -6,7 +6,7 @@
             return {}
         },
         created() {
-            this.$console(this.$attrs)
+            // this.$console(this.$attrs)
             let columns = this.$store.state.layout.tableColumns
             columns.push({
                 id: Math.random().toString(36) + Date.now().toString(36),
