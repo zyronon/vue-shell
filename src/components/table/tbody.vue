@@ -1,5 +1,6 @@
 <script>
     import {mapState} from "vuex";
+    import {addClass, hasClass, removeClass} from "element-ui/src/utils/dom";
 
     export default {
         name: "cTableTbody",
@@ -23,7 +24,7 @@
             ]),
         },
         watch: {
-            'list'(){
+            'list'() {
                 console.log(1);
             }
         },
@@ -79,6 +80,69 @@
                         console.log('降序');
                     }
                 }
+            },
+            handleMouseMove(event) {
+                // console.log(e.clientX);
+                // console.log(e);
+                let target = event.target;
+                let rect = target.getBoundingClientRect();
+
+                const bodyStyle = document.body.style;
+                if (rect.width > 12 && rect.right - event.pageX < 8) {
+                    bodyStyle.cursor = 'col-resize';
+                } else {
+                    bodyStyle.cursor = '';
+                }
+            },
+            handleMouseOut(e) {
+                console.log('handleMouseOut');
+                document.removeEventListener('mousemove', null);
+
+            },
+            handleMouseDown(event, column) {
+                console.log('handleMouseDown');
+                this.dragging = true;
+
+                this.$parent.resizeProxyVisible = true;
+
+                const table = this.$parent;
+                const tableEl = table.$el;
+                const tableLeft = tableEl.getBoundingClientRect().left;
+
+                let columnEl = event.target;
+                let columnRect = columnEl.getBoundingClientRect();
+
+                let colEl = tableEl.querySelector('.col-' + column.id);
+
+                console.log(colEl);
+
+
+                const minLeft = columnRect.left - tableLeft + 30;
+                this.$console(minLeft)
+                this.$console(event.clientX)
+                // addClass(columnEl, 'noclick');
+                //
+                this.dragState = {
+                    startMouseLeft: event.clientX,
+                    startLeft: columnRect.right - tableLeft,
+                    startColumnLeft: columnRect.left - tableLeft,
+                    tableLeft
+                };
+                const handleMouseMove = (event) => {
+                    let deltaLeft = event.clientX - this.dragState.startMouseLeft;
+                    let columnWidth = columnRect.width + deltaLeft
+                    this.$console(columnRect.width + deltaLeft)
+                    // colEl.style.width = Math.max(columnWidth, minLeft) + 'px'
+                    colEl.style.width = columnWidth + 'px'
+                };
+
+                const handleMouseUp = () => {
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('mouseup', handleMouseUp);
+                };
+
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
             }
         },
 
@@ -100,34 +164,40 @@
                 tableStyle += `width: 100%;`
                 tableBodyStyle = `overflow-x: hidden`
             }
-
-            // console.log(widths);
             return (
-                <div class="table-body" style={tableBodyStyle}>
+                <div class="table-body"
+                     style={tableBodyStyle}>
                     <table cellSpacing="0" style={tableStyle}>
+                        <colgroup>
+                            {this.tableColumns.map(w => <col class={'col-' + w.id}/>)}
+                        </colgroup>
                         <thead>
                         <tr>
-                            {this.tableColumns.map(w => {
-                                let sortClass = ''
-                                if (w.sort !== -1) {
-                                    sortClass = w.sort === 1 ? 'up' : 'down'
+                            {this.tableColumns.map(column => {
+                                let sortClass = 'th-' + column.id
+                                if (column.sort !== -1) {
+                                    sortClass += column.sort === 1 ? 'up' : 'down'
                                 }
                                 return <th
-                                    width={w.attrs.width}
+                                    on-mousemove={this.handleMouseMove}
+                                    on-mouseout={this.handleMouseOut}
+                                    on-mousedown={e => this.handleMouseDown(e, column)}
+                                    width={column.attrs.width}
                                     class={sortClass}
-                                    onClick={e => this.sort(w.id)}
+                                    onClick={e => this.sort(column.id)}
+
                                 >
-                                    {w.attrs.label}
-                                    <div class="resize-vertical"/>
+                                    {column.attrs.label}
                                 </th>
                             })}
-
                         </tr>
                         </thead>
                         <tbody>
                         {this.useList.map(v => {
                             return (
-                                <tr onClick={e => this.$emit('row-click', e, v)}>
+                                <tr
+                                    onClick={e => this.$emit('row-click', e, v)}
+                                >
                                     {this.tableColumns.map(w => {
                                         return <td>{w.renderCell(v)}</td>
                                     })}
