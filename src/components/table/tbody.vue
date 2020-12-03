@@ -25,10 +25,12 @@
         },
         watch: {
             'list'() {
-                console.log(1);
+                this.noSortList = this.$clone(this.list)
+                this.useList = this.$clone(this.list)
             }
         },
         created() {
+            // console.log(this.list);
         },
         mounted() {
         },
@@ -95,12 +97,12 @@
                 }
             },
             handleMouseOut(e) {
-                console.log('handleMouseOut');
+                // console.log('handleMouseOut');
                 document.removeEventListener('mousemove', null);
 
             },
             handleMouseDown(event, column) {
-                console.log('handleMouseDown');
+                // console.log('handleMouseDown');
                 this.dragging = true;
 
                 this.$parent.resizeProxyVisible = true;
@@ -114,12 +116,12 @@
 
                 let colEl = tableEl.querySelector('.col-' + column.id);
 
-                console.log(colEl);
+                // console.log(colEl);
 
 
                 const minLeft = columnRect.left - tableLeft + 30;
-                this.$console(minLeft)
-                this.$console(event.clientX)
+                // this.$console(minLeft)
+                // this.$console(event.clientX)
                 // addClass(columnEl, 'noclick');
                 //
                 this.dragState = {
@@ -131,7 +133,7 @@
                 const handleMouseMove = (event) => {
                     let deltaLeft = event.clientX - this.dragState.startMouseLeft;
                     let columnWidth = columnRect.width + deltaLeft
-                    this.$console(columnRect.width + deltaLeft)
+                    // this.$console(columnRect.width + deltaLeft)
                     // colEl.style.width = Math.max(columnWidth, minLeft) + 'px'
                     colEl.style.width = columnWidth + 'px'
                 };
@@ -143,7 +145,10 @@
 
                 document.addEventListener('mousemove', handleMouseMove);
                 document.addEventListener('mouseup', handleMouseUp);
-            }
+            },
+            t(e, row) {
+                console.log(row);
+            },
         },
 
         render(createElement, context) {
@@ -176,7 +181,7 @@
                             {this.tableColumns.map(column => {
                                 let sortClass = 'th-' + column.id
                                 if (column.sort !== -1) {
-                                    sortClass += column.sort === 1 ? 'up' : 'down'
+                                    sortClass += column.sort === 1 ? ' up' : ' down'
                                 }
                                 return <th
                                     on-mousemove={this.handleMouseMove}
@@ -193,13 +198,15 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {this.useList.map(v => {
+                        {this.useList.map(row => {
                             return (
                                 <tr
-                                    onClick={e => this.$emit('row-click', e, v)}
+                                    onClick={e => this.$emit('row-click', e, row)}
+                                    ondblclick={e => this.$emit('row-dblclick', e, row)}
+                                    oncontextmenu={e => this.$emit('contextmenu', e, row)}
                                 >
                                     {this.tableColumns.map(w => {
-                                        return <td>{w.renderCell(v)}</td>
+                                        return <td>{w.renderCell(row)}</td>
                                     })}
                                 </tr>
                             )
@@ -216,7 +223,7 @@
     @import "../../assets/scss/color";
 
     $border-color: gray;
-    //$bg-color: #2B2B2B;
+    //$main-bg-color: #2B2B2B;
     $head-bg-color: rgb(33, 33, 36);
     $dialog-bg-color: rgb(54, 54, 54);
     $input-bg-color: rgb(67, 67, 67);
@@ -243,6 +250,8 @@
                 }
 
                 th {
+
+                    padding: 5px;
                     // border-right: 1px solid $border-color;
                     position: relative;
 
@@ -302,8 +311,6 @@
                 tr {
                     background-color: rgb(46, 46, 46);
 
-                    height: 30px;
-                    //border-bottom: 1px solid $border-color;
                     &:nth-child(even) {
                         // background-color: rgb(43, 43, 43);
                     }
@@ -321,6 +328,10 @@
                 td {
                     //border-right: 1px solid $border-color;
                     //width: 50%;
+
+                    div {
+                        padding: 5px;
+                    }
                 }
             }
         }

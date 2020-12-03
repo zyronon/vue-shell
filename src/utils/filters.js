@@ -19,6 +19,24 @@ export default {
         }
         return dayjs(v).format('YYYY-MM-DD HH:mm:ss')
     },
+    // 时间转换器
+    day(v) {
+        if (!v) return ''
+        if (typeof v === 'number') {
+            const temp = `${v}`
+            if (temp.length === 10) {
+                return dayjs.unix(v).format('YYYY-MM-DD')
+            }
+            return dayjs(v).format('YYYY-MM-DD')
+        }
+        if (typeof v === 'string') {
+            if (v.length === 10) {
+                return dayjs.unix(parseInt(v, 10)).format('YYYY-MM-DD')
+            }
+            return dayjs(parseInt(v, 10)).format('YYYY-MM-DD')
+        }
+        return dayjs(v).format('YYYY-MM-DD')
+    },
     // 为空判断
     $(v) {
         if (!v) return ''
@@ -26,7 +44,7 @@ export default {
         if (v === undefined) return ''
         return ''
     },
-    
+
     // 处理身份证信息，中间隐藏掉
     processIdNumber(v) {
         if (!v) return ''

@@ -69,7 +69,7 @@
 
     $context-menu-border-color: rgb(81, 81, 81);
     .menu {
-        background: $bg-color;
+        background: $main-bg-color;
         border: 1px solid $context-menu-border-color;
         position: fixed;
         color: $text-color;

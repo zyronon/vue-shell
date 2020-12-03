@@ -12,8 +12,16 @@
             </div>
             <div class="zoom">
                 <span>100%</span>
-                <svg @click="fontSize--" t="1606139969145" class="icon zoom-in" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4996" width="200" height="200"><path d="M785.06666667 473.16385185h-546.13333334c-21.35988148 0-38.83614815 17.47626667-38.83614815 38.83614815 0 10.67994075 4.36906667 20.38897778 11.40811852 27.42802963 7.03905185 7.03905185 16.74808889 11.40811852 27.42802963 11.40811852h546.13333334c21.35988148 0 38.83614815-17.47626667 38.83614815-38.83614815s-17.47626667-38.83614815-38.83614815-38.83614815z" p-id="4997" fill="#bfbfbf"></path></svg>
-                <svg @click="fontSize++" t="1606139987476" class="icon zoom-out" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5787" width="200" height="200"><path d="M950.857143 460.8H570.514286V73.142857c0-29.257143-21.942857-58.514286-58.514286-58.514286s-51.2 29.257143-51.2 58.514286v387.657143H73.142857c-29.257143 0-51.2 21.942857-51.2 51.2s21.942857 58.514286 51.2 58.514286h387.657143V950.857143c0 29.257143 21.942857 58.514286 58.514286 58.514286s58.514286-21.942857 58.514285-58.514286V570.514286H950.857143c29.257143 0 58.514286-21.942857 58.514286-58.514286s-29.257143-51.2-58.514286-51.2z" p-id="5788" fill="#bfbfbf"></path></svg>
+                <svg @click="fontSize--" t="1606139969145" class="icon zoom-in" viewBox="0 0 1024 1024" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg" p-id="4996" width="200" height="200">
+                    <path d="M785.06666667 473.16385185h-546.13333334c-21.35988148 0-38.83614815 17.47626667-38.83614815 38.83614815 0 10.67994075 4.36906667 20.38897778 11.40811852 27.42802963 7.03905185 7.03905185 16.74808889 11.40811852 27.42802963 11.40811852h546.13333334c21.35988148 0 38.83614815-17.47626667 38.83614815-38.83614815s-17.47626667-38.83614815-38.83614815-38.83614815z"
+                          p-id="4997" fill="#bfbfbf"></path>
+                </svg>
+                <svg @click="fontSize++" t="1606139987476" class="icon zoom-out" viewBox="0 0 1024 1024" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg" p-id="5787" width="200" height="200">
+                    <path d="M950.857143 460.8H570.514286V73.142857c0-29.257143-21.942857-58.514286-58.514286-58.514286s-51.2 29.257143-51.2 58.514286v387.657143H73.142857c-29.257143 0-51.2 21.942857-51.2 51.2s21.942857 58.514286 51.2 58.514286h387.657143V950.857143c0 29.257143 21.942857 58.514286 58.514286 58.514286s58.514286-21.942857 58.514285-58.514286V570.514286H950.857143c29.257143 0 58.514286-21.942857 58.514286-58.514286s-29.257143-51.2-58.514286-51.2z"
+                          p-id="5788" fill="#bfbfbf"></path>
+                </svg>
                 <div @click="fontSize = 18" class="button">重置</div>
             </div>
         </div>
@@ -251,18 +259,21 @@
 
     $font-color: rgb(0, 255, 0);
 
+    $win-bg-color: #47494A;
+    //$win-bg-color: rgb(60, 63, 65);
+    $green-bg-color: #000;
     .content {
         overflow: auto;
         height: 100%;
 
         &[themes=green] {
             color: #00FF00;
-            background: $bg-color;
+            background: $green-bg-color;
         }
 
         &[themes=win] {
             color: #CCCCCC;
-            background: #47494A;
+            background: $win-bg-color;
         }
 
         .option-bar {
@@ -288,12 +299,13 @@
             .zoom {
                 display: flex;
                 align-items: center;
-                span{
+
+                span {
                     font-size: 16px;
                     margin-right: 30px;
                 }
 
-                svg{
+                svg {
                     width: 16px;
                     height: 16px;
                     margin: 0 5px;
@@ -324,11 +336,11 @@
 
 
                         &[themes=green] {
-                            background: $bg-color;
+                            background: $green-bg-color;
                         }
 
                         &[themes=win] {
-                            background: #47494A;
+                            background: $win-bg-color;
                         }
                     }
 
@@ -344,16 +356,16 @@
                         box-sizing: border-box;
                         border: 0;
                         outline: 0;
-                        background: $bg-color;
+                        background: $green-bg-color;
 
                         &[themes=green] {
                             color: #00FF00;
-                            background: $bg-color;
+                            background: $green-bg-color;
                         }
 
                         &[themes=win] {
                             color: #CCCCCC;
-                            background: #47494A;
+                            background: $win-bg-color;
                         }
                     }
                 }

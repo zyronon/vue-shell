@@ -7,8 +7,8 @@ export default {
         }
         localStorage.setItem(key, value)
     },
-    get(key) {
-        const value = localStorage.getItem(key) || ''
+    get(key, default2 = '') {
+        const value = localStorage.getItem(key) || default2
         try {
             return JSON.parse(value)
         } catch (e) {

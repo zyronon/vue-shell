@@ -120,7 +120,7 @@
         .children {
             display: none;
             z-index: 9;
-            background: $bg-color;
+            background: $main-bg-color;
             border: 1px solid $context-menu-border-color;;
             position: absolute;
             /*left: 100%;*/
@@ -132,7 +132,7 @@
         opacity: .5;
 
         &:hover {
-            background: $bg-color;
+            background: $main-bg-color;
         }
     }
 

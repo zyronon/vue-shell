@@ -1,73 +1,38 @@
 <template>
     <div class="folder"
-         @mousemove="mousemove"
-         @mouseup="setResizeStatusFalse"
          @click="menu.location.show = false"
          @contextmenu="onContextMenu($event)"
     >
-        <div class="dir-des" :class="isResizing?'no-hover':''"
-             @contextmenu.prevent="onContextMenu($event,null,false)">
-            <div class="name"
-                 :class="sortStatus.rowOne?sortStatus.rowOne:''"
-                 :style="{'width':widths.rowOne+'px'}"
-                 @click="sort(1)"
-            >名称
-                <div @mousedown="resize.rowOne = true" class="resize-vertical"></div>
-            </div>
-            <div class="change-date"
-                 :class="sortStatus.rowTwo?sortStatus.rowTwo:''"
-                 :style="{'width':widths.rowTwo+'px'}"
-                 @click="sort(2)"
-            > 修改日期
-                <div @mousedown="resize.rowTwo = true" class="resize-vertical"></div>
-            </div>
-            <div class="type"
-                 :class="sortStatus.rowThree?sortStatus.rowThree:''"
-                 :style="{'width':widths.rowThree+'px'}"
-                 @mousedown="resize.rowThree = true"
-                 @click="sort(3)"
-            >类型
-                <div @mousedown="resize.rowThree = true" class="resize-vertical"></div>
-            </div>
-            <div class="size"
-                 :class="sortStatus.rowFour?sortStatus.rowFour:''"
-                 :style="{'width':widths.rowFour+'px'}"
-                 @click="sort(4)"
-            >大小
-            </div>
-        </div>
-        <div class="list">
-            <div class="item"
-                 :class="item.isActive?'active':''"
-                 v-for="item of currentDirCopy"
-                 @dblclick.stop="dbClick(item)"
-                 @contextmenu.prevent="onContextMenu($event,item)">
-                <div class="name"
-                     :style="{'width':widths.rowOne+'px'}">
-                    <folder-icon v-if="item.type"></folder-icon>
+        <c-table
+                :list="currentDirCopy"
+                @row-dblclick="(e,row) => dbClick(row)"
+                @contextmenu="(e,row) => onContextMenu(e,row)"
+        >
+            <c-table-column prop="name" label="名称" sortable>
+                <template slot-scope="scope">
+                    <folder-icon v-if="scope.type"></folder-icon>
                     <img src="@/assets/images/txt-file.png" alt="" v-else>
                     <input autofocus type="text"
-                           :value="item.name"
-                           v-if="item.isEdit"
+                           :value="scope.name"
+                           v-if="scope.isEdit"
                            @keyup.enter="rename"
-                           @blur="item.isEdit = false"
+                           @blur="scope.isEdit = false"
                     >
-                    <span v-else>{{item.name}}</span>
-                </div>
-                <div class="change-date"
-                     :style="{'width':widths.rowTwo+'px'}"
-                     @mousedown="resize.rowTwo = true">{{item.change_date}}
-                </div>
-                <div class="type"
-                     :style="{'width':widths.rowThree+'px'}"
-                     @mousedown="resize.rowThree = true">{{item|fileType}}
-                </div>
-                <div class="size"
-                     :style="{'width':widths.rowFour+'px'}"
-                     @mousedown="resize.rowFour = true">{{item.file_size|size}}
-                </div>
-            </div>
-        </div>
+                    <span v-else>{{scope.name}}</span>
+                </template>
+            </c-table-column>
+            <c-table-column prop="change_date" label="修改日期" sortable></c-table-column>
+            <c-table-column prop="name" label="类型" sortable>
+                <template slot-scope="scope">
+                    {{scope|fileType}}
+                </template>
+            </c-table-column>
+            <c-table-column prop="file_size" label="大小" sortable>
+                <template slot-scope="scope">
+                    {{scope.file_size|size}}
+                </template>
+            </c-table-column>
+        </c-table>
 
         <c-menu :location="menu.location">
             <c-item @click="gotoPath(currentPath)">刷新目录</c-item>
@@ -132,38 +97,10 @@
                 isShowDialog: false,
                 viewWidth: 1000,
                 viewHeight: 700,
-                resize: {
-                    custom: false,
-                    rowOne: false,
-                    rowTwo: false,
-                    rowThree: false,
-                    rowFour: false,
-                },
-                widths: {
-                    rowOne: 1000 * .5,
-                    rowTwo: 1000 * .2,
-                    rowThree: 1000 * .15,
-                    rowFour: 1000 * .15,
-                },
-                sortStatus: {
-                    rowOne: null,
-                    rowTwo: null,
-                    rowThree: null,
-                    rowFour: null,
-                },
                 currentDirCopy: [],
             }
         },
         watch: {
-            'directoryWidth'() {
-                if (!this.resize.custom) {
-                    let rightWidth = 1000 - this.directoryWidth
-                    this.widths.rowOne = rightWidth * 0.5
-                    this.widths.rowTwo = rightWidth * 0.2
-                    this.widths.rowThree = rightWidth * 0.15
-                    this.widths.rowFour = rightWidth * 0.15
-                }
-            },
             currentDir() {
                 this.currentDirCopy = this.currentDir.map(v => {
                     v.isEdit = false
@@ -178,9 +115,6 @@
                 'currentPath',
                 'shell'
             ]),
-            isResizing() {
-                return this.resize.rowOne || this.resize.rowTwo || this.resize.rowThree || this.resize.rowFour
-            },
         },
         filters: {
             size(r) {
@@ -228,11 +162,6 @@
             }
         },
         mounted() {
-            let rightWidth = this.viewWidth - this.directoryWidth
-            this.widths.rowOne = rightWidth * 0.5
-            this.widths.rowTwo = rightWidth * 0.2
-            this.widths.rowThree = rightWidth * 0.15
-            this.widths.rowFour = rightWidth * 0.15
         },
         methods: {
             ...mapActions('file', {
@@ -297,47 +226,6 @@
                     this.menu.onFile = false
                 }
             },
-            mousemove(e) {
-                // console.log(e.clientX);
-                if (this.resize.rowOne) {
-                    let rowOneWidth = e.clientX - this.directoryWidth
-                    if (rowOneWidth > 100) {
-                        let rightWidth = this.viewWidth - this.directoryWidth - rowOneWidth
-                        if (rightWidth < 250) return
-                        let rowFourWidth = rightWidth - this.widths.rowTwo - this.widths.rowThree
-                        if (rowFourWidth > 50) {
-                            this.widths.rowFour = rowFourWidth
-                        } else {
-                            this.widths.rowTwo = (rightWidth - 50) * 0.5
-                            this.widths.rowThree = (rightWidth - 50) * 0.5
-                        }
-                        this.widths.rowOne = rowOneWidth
-                    }
-                }
-            },
-            setResizeStatusFalse() {
-                this.resize.rowOne = false
-                this.resize.rowTwo = false
-                this.resize.rowThree = false
-                this.resize.rowFour = false
-            },
-            sort(row) {
-                switch (row) {
-                    case 1:
-                        this.sortStatus.rowOne = this.sortStatus.rowOne ? this.sortStatus.rowOne === 'up' ? 'down' : null : 'up';
-                        break;
-                    case 2:
-                        this.sortStatus.rowTwo = this.sortStatus.rowTwo ? this.sortStatus.rowTwo === 'up' ? 'down' : null : 'up';
-                        break;
-                    case 3:
-                        this.sortStatus.rowThree = this.sortStatus.rowThree ? this.sortStatus.rowThree === 'up' ? 'down' : null : 'up';
-                        break;
-                    case 4:
-                        this.sortStatus.rowFour = this.sortStatus.rowFour ? this.sortStatus.rowFour === 'up' ? 'down' : null : 'up';
-                        break;
-                }
-
-            },
             async dbClick(item) {
                 let filePath = this.currentPath + '/' + item.name
                 if (item.type) {
@@ -378,7 +266,6 @@
 <style scoped lang="scss">
     @import "../../assets/scss/color";
 
-    $bg-color: rgb(43, 43, 43);
     .folder {
         /*padding: 30px 0 0px 0;*/
         /*height: 100%;*/
@@ -389,16 +276,13 @@
         position: relative;
         width: 100%;
         color: $text-color;
-        background: $bg-color;
+        background: $main-bg-color;
 
         img {
             height: 15px;
         }
 
         .dir-des {
-            //position: fixed;
-            //background: $bg-color;
-            //width: 100%;
             display: flex;
             /*margin: 3px;*/
 
@@ -479,7 +363,7 @@
 
                 .name {
                     input {
-                        background-color: $bg-color;
+                        background-color: $main-bg-color;
                         background-image: none;
                         border: 2px solid $hover-color;
                         border-radius: 2px;

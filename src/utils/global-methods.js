@@ -130,4 +130,21 @@ export default {
         if (seconds) return `${seconds}秒`
         return '时间到！'
     },
+    $storageSet(key, value) {
+        if (typeof value === 'object') {
+            value = JSON.stringify(value)
+        }
+        localStorage.setItem(key, value)
+    },
+    $storageGet(key, default2 = '') {
+        const value = localStorage.getItem(key) || default2
+        try {
+            return JSON.parse(value)
+        } catch (e) {
+            return value
+        }
+    },
+    $storageRemove(key) {
+        localStorage.removeItem(key)
+    },
 }

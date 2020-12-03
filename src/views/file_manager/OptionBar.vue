@@ -123,7 +123,7 @@
                 display: flex;
                 width: 66%;
 
-                border: 1px solid $bg-color;
+                border: 1px solid $main-bg-color;
                 height: 100%;
 
                 .breadcrumb-container {
@@ -181,7 +181,7 @@
                         height: 100%;
                         width: 100%;
                         color: rgb(187, 187, 187);
-                        background: $bg-color;
+                        background: $main-bg-color;
 
                         &:focus {
                             /*border: 1px solid rgb(0, 120, 215);*/
@@ -197,7 +197,7 @@
                     align-items: center;
 
                     div {
-                        border-left: 1px solid $bg-color;
+                        border-left: 1px solid $main-bg-color;
                         height: 100%;
                         width: 30px;
                         display: flex;
@@ -205,7 +205,7 @@
                         align-items: center;
 
                         &:hover {
-                            background: $bg-color;
+                            background: $main-bg-color;
                         }
                     }
 
@@ -232,7 +232,7 @@
 
             .search {
                 margin-left: 10px;
-                border: 1px solid $bg-color;
+                border: 1px solid $main-bg-color;
                 width: 33%;
                 display: flex;
                 align-items: center;
@@ -250,7 +250,7 @@
                 }
 
                 input {
-                    background: $bg-color;
+                    background: $main-bg-color;
                     box-sizing: border-box;
                     outline: 0;
                     border: 0;

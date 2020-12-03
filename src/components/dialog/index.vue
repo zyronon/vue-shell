@@ -49,7 +49,7 @@
 
 <style scoped lang="scss">
     $border-color: gray;
-    $bg-color: #2B2B2B;
+    $main-bg-color: #2B2B2B;
     $head-bg-color: rgb(33, 33, 36);
     $dialog-bg-color: rgb(54, 54, 54);
     $input-bg-color: rgb(67, 67, 67);
@@ -80,7 +80,7 @@
         background: $dialog-bg-color;
         width: 50%;
         //height: 100px;
-        border: 1px solid $bg-color;
+        border: 1px solid $main-bg-color;
 
         .header {
             font-weight: bold;

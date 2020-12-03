@@ -188,7 +188,7 @@
         height: 100%;
         width: 100%;
         position: relative;
-        background: $bg-color;
+        background: $main-bg-color;
         color: $text-color;
 
         img {
