@@ -87,9 +87,7 @@
                         x: 0,
                         y: 0,
                     },
-                    show: false,
                     onFile: false,
-                    file: '',
                     createType: 0,
                     createName: '',
                     chooseItem: null,
@@ -207,16 +205,12 @@
                 await this.gotoPath(this.currentPath)
             },
 
-            onContextMenu(e, item, isShow = true) {
+            onContextMenu(e, item) {
                 if (e) {
                     e.stopPropagation();
                     e.preventDefault()
-                    if (isShow) {
-                        let {x, y} = e
-                        this.menu.location = {x, y, show: true}
-                    } else {
-                        this.menu.location.show = false
-                    }
+                    let {x, y} = e
+                    this.menu.location = {x, y, show: true}
                 }
                 if (item) {
                     this.menu.onFile = true

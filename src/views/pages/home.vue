@@ -1,7 +1,7 @@
 <template>
     <div class="home" ref="content"
          @contextmenu="$event.preventDefault()"
-         @click="location.show = false"
+         @click="menu.location.show = false"
     >
         <div class="toolbar">
             <div class="left">
@@ -161,13 +161,13 @@
             </template>
         </my-dialog>
 
-        <c-menu :location="location">
+        <c-menu :location="menu.location">
             <c-item @click="reload">刷新目录</c-item>
             <c-item @click="isShowDialog = true">新增</c-item>
             <c-item @click="goto('terminal')">终端</c-item>
             <c-item @click="goto('file')">打开</c-item>
             <c-item>编辑</c-item>
-            <c-item :is-disabled="true">删除</c-item>
+            <c-item :is-disabled="menu.chooseItem === null">删除</c-item>
         </c-menu>
     </div>
 </template>
@@ -182,11 +182,10 @@
                 form: {url: '', note: ''},
                 shells: [],
                 isShowDialog: false,
-                location: {
-                    show: false,
-                    x: 0,
-                    y: 0
-                }
+                menu: {
+                    location: {},
+                    chooseItem: null,
+                },
             }
         },
         created() {
@@ -203,13 +202,16 @@
                 window.location.reload()
             },
             onContextMenu(e, item) {
-                console.log(e);
-                console.log(item);
                 if (e) {
                     e.stopPropagation();
                     e.preventDefault()
                     let {x, y} = e
-                    this.location = {x, y, show: true}
+                    this.menu.location = {x, y, show: true}
+                }
+                if (item) {
+                    this.menu.chooseItem = item
+                } else {
+                    this.menu.chooseItem = null
                 }
             },
             goto(type, item) {
@@ -243,15 +245,6 @@
                 this.$storageSet('shell', this.shells)
                 this.form = {}
                 this.isShowDialog = false
-
-
-                // let 10条数据 = await 请求表格的接口(参数)
-                // for (let i = 0; i < 10条数据.length; i++) {
-                //     let 单条数据 = 10条数据[i]
-                //     let 图片id =  await 请求图片id的接口(单条数据id)
-                //     10条数据[i].图片id = 图片id
-                // }
-                // this.表格显示数据 = 10条数据
             },
         },
         mounted() {
