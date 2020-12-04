@@ -139,13 +139,25 @@
                                         <th width="10%"></th>
                                         <th>KEY</th>
                                         <th>VALUE</th>
+                                        <th width="10%"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr v-for="(item,index) of 0">
-                                        <td align="center"><input type="checkbox"></td>
-                                        <td><input type="text"></td>
-                                        <td><input type="text"></td>
+                                    <tr v-for="(item,index) of form.headers">
+                                        <td align="center"><input type="checkbox" v-model="item.checked"></td>
+                                        <td><input type="text" v-model="item.key"></td>
+                                        <td><input type="text" v-model="item.value"></td>
+                                        <td align="center" @click="removeHeader(index)">
+                                            <folderIcon></folderIcon>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center"><input type="checkbox" v-model="form.addHeader.checked"></td>
+                                        <td><input type="text" v-model="form.addHeader.key"></td>
+                                        <td><input type="text" v-model="form.addHeader.value"></td>
+                                        <td align="center" @click="addHeader">
+                                            <folderIcon></folderIcon>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -167,7 +179,11 @@
             <c-item @click="goto('terminal')">终端</c-item>
             <c-item @click="goto('file')">打开</c-item>
             <c-item>编辑</c-item>
-            <c-item :is-disabled="menu.chooseItem === null">删除</c-item>
+            <c-item
+                    :is-disabled="menu.chooseItem === null"
+                    @click="removeShell"
+            >删除
+            </c-item>
         </c-menu>
     </div>
 </template>
@@ -179,9 +195,18 @@
     export default {
         data() {
             return {
-                form: {url: '', note: ''},
+                form: {
+                    url: '',
+                    note: '',
+                    headers: [],
+                    addHeader: {
+                        checked: true,
+                        key: '',
+                        value: '',
+                    }
+                },
                 shells: [],
-                isShowDialog: false,
+                isShowDialog: true,
                 menu: {
                     location: {},
                     chooseItem: null,
@@ -190,6 +215,7 @@
         },
         created() {
             this.shells = this.$storageGet('shell', [])
+            // this.shells = []
         },
         computed: {
             ...mapState('layout', [
@@ -198,6 +224,35 @@
         },
         filters: {},
         methods: {
+            removeShell() {
+                let index = this.shells.findIndex(value => value.id === this.menu.chooseItem.id)
+                console.log(index);
+                if (index !== -1) {
+                    this.shells.splice(index, 1)
+                    this.$storageSet('shell', this.shells)
+                }
+
+            },
+            async test() {
+                let random = this.$random()
+                let phpCode = `echo%20'${random}';`
+                let url = 'http://localhost/shell.php?c=' + phpCode;
+                let res = await this.$request(url)
+                if (res === random) {
+                    console.log('成功');
+                } else {
+                    console.log('失败');
+                }
+            },
+            removeHeader(index) {
+                this.form.headers.splice(index, 1)
+            },
+            addHeader() {
+                this.form.addHeader.checked = true
+                this.form.headers.push(this.$clone(this.form.addHeader))
+                this.form.addHeader = {}
+                this.$console(this.form)
+            },
             reload() {
                 window.location.reload()
             },
@@ -234,13 +289,12 @@
             },
             add() {
                 this.shells.push({
-                    url: this.form.url,
-                    pwd: this.form.pwd,
+                    id: this.$random(),
                     ip: '',
                     category: '',
-                    note: this.form.note,
                     createDate: Date.now(),
                     changeDate: Date.now(),
+                    ...this.form
                 })
                 this.$storageSet('shell', this.shells)
                 this.form = {}
@@ -375,7 +429,6 @@
                 background: $second-bg-color;
                 width: calc(100% - 200px);
                 overflow: auto;
-
                 box-sizing: border-box;
                 color: white;
             }

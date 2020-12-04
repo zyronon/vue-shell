@@ -8,6 +8,8 @@ import request from "./utils/http";
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css'
+import Icon from 'vue-svg-icon/Icon.vue';
+
 
 Vue.use(ElementUI);
 

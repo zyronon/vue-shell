@@ -29,7 +29,7 @@ instance.interceptors.response.use(
         // console.log(response)
         // // console.log(response.data)
         const {data} = response
-        console.log(typeof data);
+        // console.log(typeof data);
         let temp = data
         if (typeof data === 'object') {
             temp = JSON.stringify(data)
