@@ -6,6 +6,7 @@
 ## 开发栈
  - [Electron][url-electron]
  - [ES6][url-es6] 
+ - [Vue][url-Vue] 
  - [Nodejs][url-nodejs]
  * 以及其他在项目中调用到的库
 

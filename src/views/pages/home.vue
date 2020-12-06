@@ -248,6 +248,9 @@
                 this.form.headers.splice(index, 1)
             },
             addHeader() {
+                if (!this.form.addHeader.key) {
+                    return console.log('不能为空');
+                }
                 this.form.addHeader.checked = true
                 this.form.headers.push(this.$clone(this.form.addHeader))
                 this.form.addHeader = {}
