@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div class="options">
-                    <svg t="1603954052053" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                    <svg @click="$message1()" t="1603954052053" class="icon" viewBox="0 0 1024 1024" version="1.1"
                          xmlns="http://www.w3.org/2000/svg" p-id="20091" width="32" height="32">
                         <path d="M342.7 516.6c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 191.8c6.2 6.2 14.4 9.4 22.6 9.4 8.2 0 16.4-3.1 22.6-9.4l192-191.8c12.5-12.5 12.5-32.7 0-45.3-12.5-12.5-32.8-12.5-45.3 0L544.1 653.8V98.2c0-17.7-14.3-32-32-32s-32 14.3-32 32v555.6L342.7 516.6z"
                               p-id="20092" fill="#8a8a8a"></path>
@@ -178,7 +178,7 @@
             <c-item @click="isShowDialog = true">新增</c-item>
             <c-item @click="goto('terminal')">终端</c-item>
             <c-item @click="goto('file')">打开</c-item>
-            <c-item>编辑</c-item>
+            <c-item @click="edit">编辑</c-item>
             <c-item
                     :is-disabled="menu.chooseItem === null"
                     @click="removeShell"
@@ -189,7 +189,9 @@
 </template>
 
 <script>
+    import Vue from 'vue';
 
+    import message from '../../components/message'
     import {mapState} from "vuex";
 
     export default {
@@ -206,16 +208,21 @@
                     }
                 },
                 shells: [],
-                isShowDialog: true,
+                isShowDialog: false,
                 menu: {
                     location: {},
                     chooseItem: null,
                 },
             }
         },
+        components: {
+            // 'mess'
+        },
         created() {
+            // this.$message.error('1213')
             this.shells = this.$storageGet('shell', [])
             // this.shells = []
+
         },
         computed: {
             ...mapState('layout', [
@@ -224,6 +231,10 @@
         },
         filters: {},
         methods: {
+            edit() {
+                this.form = this.$clone(this.menu.chooseItem)
+                this.isShowDialog = true
+            },
             removeShell() {
                 let index = this.shells.findIndex(value => value.id === this.menu.chooseItem.id)
                 console.log(index);
@@ -291,21 +302,30 @@
                 }
             },
             add() {
-                this.shells.push({
-                    id: this.$random(),
-                    ip: '',
-                    category: '',
-                    createDate: Date.now(),
-                    changeDate: Date.now(),
-                    ...this.form
-                })
-                this.$storageSet('shell', this.shells)
-                this.form = {}
+                if (this.form.id) {
+                    let index = this.shells.findIndex(v => this.form.id === v.id)
+                    if (index !== -1) {
+                        this.$set(this.shells, index, this.form)
+                        this.$storageSet('shell', this.shells)
+                    } else {
+
+                    }
+                } else {
+                    this.shells.push({
+                        id: this.$random(),
+                        ip: '',
+                        category: '',
+                        createDate: Date.now(),
+                        changeDate: Date.now(),
+                        ...this.form
+                    })
+                    this.$storageSet('shell', this.shells)
+                    this.form = {}
+                }
                 this.isShowDialog = false
             },
         },
         mounted() {
-
         }
     }
 </script>
@@ -324,6 +344,7 @@
         position: relative;
         background: $main-bg-color;
         height: 100%;
+
 
         .toolbar {
             height: 40px;
