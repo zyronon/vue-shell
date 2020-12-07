@@ -1,10 +1,8 @@
 <template>
-    <transition name="el-message-fade" @after-leave="handleAfterLeave">
+    <transition name="fade" @after-leave="handleAfterLeave">
         <div class="message"
-             v-show="visible"
+             v-if="visible"
              :style="positionStyle"
-             @mouseenter="clearTimer"
-             @mouseleave="startTimer"
         >
             <div class="message-header">
                 <div class="left">
@@ -19,15 +17,11 @@
                 <span class="close" @click="close">&times;</span>
             </div>
             <div class="message-body">
-                Hello, world! This is a toast message.
-                Hello, world! This is a toast message.
-                Hello, world! This is a toast message.
-                Hello, world! This is a toast message.
+                {{message}}
             </div>
         </div>
     </transition>
 </template>
-
 <script>
     export default {
         name: 'Message',
@@ -35,11 +29,11 @@
             return {
                 visible: true,
                 message: '',
-                duration: 3000,
+                duration: 1000,
                 type: 'info',
-                closed: false,
-                verticalOffset: 20,
+                verticalOffset: 220,
                 timer: null,
+                onClose: null,
             };
         },
         computed: {
@@ -51,11 +45,14 @@
         },
         methods: {
             handleAfterLeave() {
-                // this.$destroy(true);
-                // this.$el.parentNode.removeChild(this.$el);
+                this.$destroy(true);
+                this.$el.parentNode.removeChild(this.$el);
             },
             close() {
                 this.visible = false
+                if (typeof this.onClose === 'function') {
+                    this.onClose(this);
+                }
             },
 
             clearTimer() {
@@ -65,7 +62,7 @@
             startTimer() {
                 if (this.duration > 0) {
                     this.timer = setTimeout(() => {
-                        if (!this.visible) {
+                        if (this.visible) {
                             this.close();
                         }
                     }, this.duration);
@@ -73,7 +70,7 @@
             },
             keydown(e) {
                 if (e.keyCode === 27) { // esc关闭消息
-                    if (!this.visible) {
+                    if (this.visible) {
                         this.close();
                     }
                 }
@@ -89,20 +86,34 @@
     }
 </script>
 <style lang="scss" scoped>
-    .el-message-fade-enter, .el-message-fade-leave-active {
-        opacity: 0;
-        transform: translate(0, -100%)
+
+    .fade-enter-active, .fade-leave-active {
+        opacity: 1;
+        transform: translateY(0%)
     }
 
+    .fade-enter, .fade-leave-to {
+        transition: all .5s;
+        opacity: 0;
+        transform: translateY(-100%)
+    }
     .message {
+        color: black;
         display: inline-block;
         background: white;
         border-radius: 4px;
         position: fixed;
         right: 30px;
-        top: 50px;
+        top: 20px;
         width: 200px;
-        transition: all .5s;
+
+
+        animation: .5s slidein;
+        @keyframes slidein {
+            from { transform: translateY(-100%); }
+            to   { transform: translateY(0%);
+            }
+        }
 
         .message-header {
             display: flex;

@@ -1,8 +1,7 @@
 import Vue from 'vue';
-import Message from './index.vue';
-import {isVNode} from 'element-ui/src/utils/vdom';
+import MessageVue from './message.vue';
 
-let MessageConstructor = Vue.extend(Message);
+let MessageConstructor = Vue.extend(MessageVue);
 
 let instance;
 let instances = [];
@@ -16,15 +15,13 @@ const Message = function (options) {
         };
     }
     let id = 'message_' + seed++;
-
+    options.onClose = function () {
+        Message.close(id);
+    };
     instance = new MessageConstructor({
         data: options
     });
     instance.id = id;
-    // if (isVNode(instance.message)) {
-    //     instance.$slots.default = [instance.message];
-    //     instance.message = null;
-    // }
     instance.$mount();
     document.body.appendChild(instance.$el);
     let verticalOffset = options.offset || 20;
@@ -49,29 +46,27 @@ const Message = function (options) {
 //     };
 // });
 
-// Message.close = function (id, userOnClose) {
-//     let len = instances.length;
-//     let index = -1;
-//     let removedHeight;
-//     for (let i = 0; i < len; i++) {
-//         if (id === instances[i].id) {
-//             removedHeight = instances[i].$el.offsetHeight;
-//             index = i;
-//             if (typeof userOnClose === 'function') {
-//                 userOnClose(instances[i]);
-//             }
-//             instances.splice(i, 1);
-//             break;
-//         }
-//     }
-//     if (len <= 1 || index === -1 || index > instances.length - 1) return;
-//     for (let i = index; i < len - 1; i++) {
-//         let dom = instances[i].$el;
-//         dom.style['top'] =
-//             parseInt(dom.style['top'], 10) - removedHeight - 16 + 'px';
-//     }
-// };
-//
+Message.close = function (id, userOnClose) {
+    let len = instances.length;
+    let index = -1;
+    let removedHeight;
+    for (let i = 0; i < len; i++) {
+        if (id === instances[i].id) {
+            removedHeight = instances[i].$el.offsetHeight;
+            index = i;
+            instances.splice(i, 1);
+            break;
+        }
+    }
+    if (len <= 1 || index === -1 || index > instances.length - 1) return;
+    for (let i = index; i < len - 1; i++) {
+        let dom = instances[i].$el;
+        dom.style['transition'] = 'all .5s'
+        dom.style['top'] =
+            parseInt(dom.style['top'], 10) - removedHeight - 16 + 'px';
+    }
+};
+
 // Message.closeAll = function () {
 //     for (let i = instances.length - 1; i >= 0; i--) {
 //         instances[i].close();

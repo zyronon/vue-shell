@@ -11,6 +11,7 @@ import cTable from '../components/table'
 import cTableColumn from '../components/table/column'
 import cTableTbody from '../components/table/tbody'
 import message from '../components/message'
+// import Message2 from '../components/message2'
 
 
 // 全局混入
@@ -32,9 +33,10 @@ export default {
         // 将globalMethods里面的方法用对象展开符混入到mixin上,以方便调用，直接this.$xxx方法名就可以了
         ...globalMethods,
 
-        $message1() {
-            message(1)
-        }
+        $message1(msg) {
+            message(msg)
+        },
+
     },
     filters: {
         // //将filter里面的方法添加了vue的筛选器上

@@ -10,7 +10,7 @@
             </div>
             <div class="right">
                 <div class="search">
-                    <svg t="1603954159566" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                    <svg @click="$message1('test')" t="1603954159566" class="icon" viewBox="0 0 1024 1024" version="1.1"
                          xmlns="http://www.w3.org/2000/svg" p-id="22428" width="32" height="32">
                         <path d="M920.576 545.28h-820.736c-19.968 0-35.84-15.872-35.84-35.84s15.872-35.84 35.84-35.84h820.736c19.968 0 35.84 15.872 35.84 35.84s-15.872 35.84-35.84 35.84zM920.576 225.792h-820.736c-19.968 0-35.84-15.872-35.84-35.84s15.872-35.84 35.84-35.84h820.736c19.968 0 35.84 15.872 35.84 35.84s-15.872 35.84-35.84 35.84zM100.352 797.184h817.664c19.968 0 35.84 15.872 35.84 35.84s-15.872 35.84-35.84 35.84h-817.664c-19.968 0-35.84-15.872-35.84-35.84s15.872-35.84 35.84-35.84z"
                               p-id="22429" fill="#8a8a8a"></path>
@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div class="options">
-                    <svg @click="$message1()" t="1603954052053" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                    <svg t="1603954052053" class="icon" viewBox="0 0 1024 1024" version="1.1"
                          xmlns="http://www.w3.org/2000/svg" p-id="20091" width="32" height="32">
                         <path d="M342.7 516.6c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 191.8c6.2 6.2 14.4 9.4 22.6 9.4 8.2 0 16.4-3.1 22.6-9.4l192-191.8c12.5-12.5 12.5-32.7 0-45.3-12.5-12.5-32.8-12.5-45.3 0L544.1 653.8V98.2c0-17.7-14.3-32-32-32s-32 14.3-32 32v555.6L342.7 516.6z"
                               p-id="20092" fill="#8a8a8a"></path>
@@ -90,6 +90,7 @@
             </div>
             <div class="content" @contextmenu="onContextMenu($event)">
                 <c-table
+                        v-if="false"
                         :list="shells"
                         @row-dblclick="(e,row) => goto('file',row)"
                         @contextmenu="(e,row) => onContextMenu(e,row)"
@@ -185,18 +186,18 @@
             >删除
             </c-item>
         </c-menu>
+
+
     </div>
 </template>
 
 <script>
-    import Vue from 'vue';
-
-    import message from '../../components/message'
     import {mapState} from "vuex";
 
     export default {
         data() {
             return {
+                show: true,
                 form: {
                     url: '',
                     note: '',
@@ -214,9 +215,6 @@
                     chooseItem: null,
                 },
             }
-        },
-        components: {
-            // 'mess'
         },
         created() {
             // this.$message.error('1213')
@@ -331,6 +329,8 @@
 </script>
 
 <style lang="scss" scoped>
+
+
     @import "../../assets/scss/color";
 
     $border-color: gray;
