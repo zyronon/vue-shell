@@ -3,6 +3,8 @@
         <div class="message"
              v-if="visible"
              :style="positionStyle"
+             @mouseenter="clearTimer"
+             @mouseleave="startTimer"
         >
             <div class="message-header">
                 <div class="left">
@@ -29,7 +31,7 @@
             return {
                 visible: true,
                 message: '',
-                duration: 1000,
+                duration: 3000,
                 type: 'info',
                 verticalOffset: 220,
                 timer: null,
@@ -77,7 +79,7 @@
             }
         },
         mounted() {
-            // this.startTimer();
+            this.startTimer();
             document.addEventListener('keydown', this.keydown);
         },
         beforeDestroy() {

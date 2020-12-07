@@ -11,8 +11,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 import Icon from 'vue-svg-icon/Icon.vue';
 
 
+Vue.component('icon', Icon);
 Vue.use(ElementUI);
-
 
 Vue.config.productionTip = false
 Vue.prototype.$bus = new Vue()

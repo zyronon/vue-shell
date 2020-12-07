@@ -99,6 +99,7 @@
             handleMouseOut(e) {
                 // console.log('handleMouseOut');
                 document.removeEventListener('mousemove', null);
+                document.body.style.cursor = '';
 
             },
             handleMouseDown(event, column) {
@@ -145,9 +146,6 @@
 
                 document.addEventListener('mousemove', handleMouseMove);
                 document.addEventListener('mouseup', handleMouseUp);
-            },
-            t(e, row) {
-                console.log(row);
             },
         },
 
