@@ -20,10 +20,8 @@
                     <icon @click="isShowDialog = true" name="add" :scale="scale"></icon>
                     <span>|</span>
                     <icon name="close" :scale="scale"></icon>
-
                 </div>
             </div>
-
         </div>
         <div class="content-container">
             <div class="category" :style="{width:leftBarIsClose?'90px':'200px'}">
@@ -58,7 +56,7 @@
                     <c-table-column prop="note" label="备注"></c-table-column>
                     <c-table-column prop="changeDate" label="修改时间">
                         <template slot-scope="scope">
-                            {{scope.changeDate|day}}
+                            {{scope.changeDate|dateFormat('D')}}
                         </template>
                     </c-table-column>
                 </c-table>
@@ -135,8 +133,14 @@
         <c-menu :location="menu.location">
             <c-item @click="reload">刷新目录</c-item>
             <c-item @click="isShowDialog = true">新增</c-item>
-            <c-item @click="goto('terminal')">终端</c-item>
-            <c-item @click="goto('file')">打开</c-item>
+            <c-item
+                    :is-disabled="menu.chooseItem === null"
+                    @click="goto('terminal')">终端
+            </c-item>
+            <c-item
+                    :is-disabled="menu.chooseItem === null"
+                    @click="goto('file')">打开
+            </c-item>
             <c-item
                     :is-disabled="menu.chooseItem === null"
                     @click="edit">编辑
@@ -152,7 +156,7 @@
 </template>
 
 <script>
-    import {mapState} from "vuex";
+    import {mapState} from 'vuex'
 
     export default {
         data() {
@@ -179,10 +183,9 @@
             }
         },
         created() {
-            // this.$message.error('1213')
+            this.$store.commit('layout/setTableColumns', [])
             this.shells = this.$storageGet('shell', [])
             // this.shells = []
-
         },
         computed: {
             ...mapState('layout', [
@@ -191,7 +194,7 @@
         },
         filters: {},
         methods: {
-            t(e ) {
+            t(e) {
                 this.$console(e)
             },
             edit() {
@@ -200,22 +203,21 @@
             },
             removeShell() {
                 let index = this.shells.findIndex(value => value.id === this.menu.chooseItem.id)
-                console.log(index);
                 if (index !== -1) {
                     this.shells.splice(index, 1)
                     this.$storageSet('shell', this.shells)
                 }
-
             },
             async test() {
                 let random = this.$random()
                 let phpCode = `echo%20'${random}';`
-                let url = 'http://localhost/shell.php?c=' + phpCode;
+                let url = this.menu.chooseItem.url + '?' + this.menu.chooseItem.pwd + '='
+                url = url + phpCode
                 let res = await this.$request(url)
                 if (res === random) {
-                    console.log('成功');
+                    this.message1.success('连接成功')
                 } else {
-                    console.log('失败');
+                    this.message1.success('连接失败')
                 }
             },
             removeHeader(index) {
@@ -223,7 +225,7 @@
             },
             addHeader() {
                 if (!this.form.addHeader.key) {
-                    return console.log('不能为空');
+                    return console.log('不能为空')
                 }
                 this.form.addHeader.checked = true
                 this.form.headers.push(this.$clone(this.form.addHeader))
@@ -235,13 +237,13 @@
             },
             onContextMenu(e, item) {
                 if (e) {
-                    e.stopPropagation();
+                    e.stopPropagation()
                     e.preventDefault()
                     let {x, y} = e
                     this.menu.location = {x, y, show: true}
                 }
                 if (item) {
-                    this.$console(item)
+                    // this.$console(item)
                     this.menu.chooseItem = item
                 } else {
                     this.menu.chooseItem = null
@@ -250,19 +252,19 @@
             goto(type, item) {
                 switch (type) {
                     case 'terminal':
-                        console.log(item);
+                        console.log(item)
                         // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);
                         this.$router.push({
                             path: '/terminal'
                         })
-                        break;
+                        break
                     case 'file':
-                        console.log(item);
+                        console.log(item)
                         // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);
                         this.$router.push({
                             path: '/file'
                         })
-                        break;
+                        break
                 }
             },
             add() {

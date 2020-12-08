@@ -10,7 +10,7 @@ import cItem from '../components/menu/item'
 import cTable from '../components/table'
 import cTableColumn from '../components/table/column'
 import cTableTbody from '../components/table/tbody'
-import message from '../components/message'
+import Message from '../components/message'
 // import Message2 from '../components/message2'
 
 
@@ -23,6 +23,7 @@ export default {
             TYPES,
             CONFIG: Config,
             CONSTANT,
+            message1:Message
         }
     },
     methods: {
@@ -32,10 +33,6 @@ export default {
         // })
         // 将globalMethods里面的方法用对象展开符混入到mixin上,以方便调用，直接this.$xxx方法名就可以了
         ...globalMethods,
-
-        $message1(msg) {
-            message(msg)
-        },
 
     },
     filters: {

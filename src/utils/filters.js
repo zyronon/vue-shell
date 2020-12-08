@@ -1,41 +1,35 @@
 import dayjs from 'dayjs'
+import de from 'element-ui/src/locale/lang/de'
 
 export default {
     // 时间转换器
-    date(v) {
-        if (!v) return ''
-        if (typeof v === 'number') {
-            const temp = `${v}`
-            if (temp.length === 10) {
-                return dayjs.unix(v).format('YYYY-MM-DD HH:mm:ss')
-            }
-            return dayjs(v).format('YYYY-MM-DD HH:mm:ss')
+    dateFormat(val, type) {
+        if (!val) return ''
+        let date
+        if (typeof val === 'number') {
+            if (`${val}`.length === 10) date = dayjs.unix(val)
+            else date = dayjs(val)
         }
-        if (typeof v === 'string') {
-            if (v.length === 10) {
-                return dayjs.unix(parseInt(v, 10)).format('YYYY-MM-DD HH:mm:ss')
-            }
-            return dayjs(parseInt(v, 10)).format('YYYY-MM-DD HH:mm:ss')
+        if (typeof val === 'string') {
+            if (val.length === 10) date = dayjs.unix(parseInt(val, 10))
+            else date = dayjs(parseInt(val, 10))
         }
-        return dayjs(v).format('YYYY-MM-DD HH:mm:ss')
-    },
-    // 时间转换器
-    day(v) {
-        if (!v) return ''
-        if (typeof v === 'number') {
-            const temp = `${v}`
-            if (temp.length === 10) {
-                return dayjs.unix(v).format('YYYY-MM-DD')
-            }
-            return dayjs(v).format('YYYY-MM-DD')
+        switch (type) {
+            case 'Y':
+                return date.format('YYYY')
+            case 'M':
+                return date.format('YYYY-MM')
+            case 'D':
+                return date.format('YYYY-MM-DD')
+            case 'H':
+                return date.format('YYYY-MM-DD HH') + ':00'
+            case 'm':
+                return date.format('YYYY-MM-DD HH:mm')
+            case 's':
+                return date.format('YYYY-MM-DD HH:mm:ss')
+            default:
+                return date.format('YYYY-MM-DD HH:mm:ss')
         }
-        if (typeof v === 'string') {
-            if (v.length === 10) {
-                return dayjs.unix(parseInt(v, 10)).format('YYYY-MM-DD')
-            }
-            return dayjs(parseInt(v, 10)).format('YYYY-MM-DD')
-        }
-        return dayjs(v).format('YYYY-MM-DD')
     },
     // 为空判断
     $(v) {
@@ -45,11 +39,4 @@ export default {
         return ''
     },
 
-    // 处理身份证信息，中间隐藏掉
-    processIdNumber(v) {
-        if (!v) return ''
-        const start = v.substr(0, 6)
-        const end = v.substr(14, 4)
-        return `${start} **** **** ${end}`
-    },
 }
