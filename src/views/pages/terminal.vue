@@ -113,31 +113,27 @@
                     } else {
                         this.fontSize++
                     }
-                    e.stopPropagation();
+                    e.stopPropagation()
                     e.preventDefault()
                 }
             },
-            getPwd() {
+            async getPwd() {
                 let that = this
                 let cmd = 'echo %25cd%25'
                 let phpCode = 'header("Content-Type: text/html;charset=GBK");system(\'' + cmd + ' 2>%261\');'
-                $.ajax({
-                    url: 'http://localhost/shell.php?c=' + phpCode,
-                    success(res) {
-                        console.log(JSON.stringify(res));
-                        res = res.replace('\r\n', '')
-                        console.log(JSON.stringify(res));
-                        that.path = res
-                        that.type = {
-                            path: that.path + '>',
-                            input: that.path + '>',
-                            id: '',
-                        }
-                    }
-                })
+                let res = await this.$request('http://localhost/shell.php?c=' + phpCode)
+                console.log(JSON.stringify(res))
+                res = res.replace('\r\n', '')
+                console.log(JSON.stringify(res))
+                that.path = res
+                that.type = {
+                    path: that.path + '>',
+                    input: that.path + '>',
+                    id: '',
+                }
             },
-            exec(event, cmd) {
-                console.log(cmd === 'cls');
+            async exec(event, cmd) {
+                console.log(cmd === 'cls')
                 if (cmd === '') return
                 if (cmd === 'cls' || cmd === 'clear') {
                     this.row = []
@@ -147,22 +143,18 @@
                 }
                 let that = this
                 let phpCode = 'header("Content-Type: text/html;charset=GBK");system(\'' + cmd + ' 2>%261\');'
-                $.ajax({
-                    url: 'http://localhost/shell.php?c=' + phpCode,
-                    success(res) {
-                        that.row.push({
-                            cmd: cmd,
-                            historyInput: that.type.input,
-                            path: that.type.path,
-                            result: res,
-                        })
-                        that.type.input = that.type.path
-                        // that.$console(that.row)
+                let res = await this.$request('http://localhost/shell.php?c=' + phpCode)
+                that.row.push({
+                    cmd: cmd,
+                    historyInput: that.type.input,
+                    path: that.type.path,
+                    result: res,
+                })
+                that.type.input = that.type.path
+                // that.$console(that.row)
 
-                        that.$nextTick(() => {
-                            that.$refs.content.scrollTop = that.$refs.terminal.scrollHeight;
-                        })
-                    }
+                that.$nextTick(() => {
+                    that.$refs.content.scrollTop = that.$refs.terminal.scrollHeight
                 })
             },
             cmdAutoComplete(type, cmd) {
@@ -175,7 +167,7 @@
                             history: '',
                             result: '',
                         })
-                        break;
+                        break
                 }
 
             },
@@ -184,14 +176,14 @@
 
                 let cmd = type.input.substr(type.path.length, type.input.length)
                 if (event.keyCode === 13) {
-                    event.returnValue = false;
+                    event.returnValue = false
                     this.exec(event, cmd)
                 }
                 //tab键
                 if (event.keyCode === 9) {
-                    console.log('tab键');
+                    console.log('tab键')
                     this.cmdAutoComplete(type, cmd)
-                    event.returnValue = false;
+                    event.returnValue = false
                 }
                 //上键
                 if (event.keyCode === 38) {
@@ -210,13 +202,13 @@
                             this.type.id = this.row.length - 1
                         }
                     }
-                    console.log(this.type.id);
+                    console.log(this.type.id)
                     return
                 }
                 //下键
                 if (event.keyCode === 40) {
                     console.log(JSON.stringify(this.row, null, 4))
-                    console.log(this.type.id);
+                    console.log(this.type.id)
                     if (this.type.id !== '') {
                         if (this.type.id !== this.row.length - 1) {
                             this.type.id = this.type.id + 1
@@ -231,12 +223,12 @@
                 //删除键
                 if (event.keyCode === 8) {
                     if (type.input === type.path) {
-                        event.returnValue = false;
+                        event.returnValue = false
                     }
                 }
             },
             input(event, type) {
-                let textArea = event.target;
+                let textArea = event.target
                 if (textArea.scrollHeight > 195) {
                     textArea.style.height = textArea.scrollHeight + 'px'
                 }

@@ -1,6 +1,6 @@
 export default {
     $console(v) {
-        console.log(JSON.stringify(v, null, 4));
+        console.log(JSON.stringify(v, null, 4))
     },
     $clone(v) {
         return JSON.parse(JSON.stringify(v))
@@ -52,84 +52,6 @@ export default {
             return []
         }
     },
-    // 递归执行网络请求，强行同步！！！
-    // list，数据列表
-    // i 下标
-    // call 执行网络请求的回调
-    // cb  请求完成的回调
-    async $callApi(list, i, call, cb) {
-        if (i < list.length) {
-            await call(list[i])
-            // console.log('第', i, '次调')
-            this.$callApi(list, i + 1, call, cb)
-        } else {
-            cb()
-        }
-    },
-    // 遍厉后端返回的数组，生成树状的json结构
-    $getJsonTree(data, parentCode) {
-        const itemArr = []
-        for (const item of data) {
-            if (item.resourceInfo.parentCode === parentCode) {
-                const newNode = {
-                    id: item.resourceCode,
-                    type: item.resourceInfo.type,
-                    path: item.resourceInfo.path,
-                    label: item.resourceInfo.label,
-                    sort: item.resourceInfo.sort,
-                    disabled: item.resourceInfo.disabled,
-                    parentCode: item.resourceInfo.parentCode,
-                    children: this.$getJsonTree(data, item.resourceCode),
-                }
-                itemArr.push(newNode)
-            }
-        }
-        return itemArr
-    },
-
-    $mConfirm(type, msg, onConfirm) {
-        MessageBox.confirm(msg === '' ? '确定删除这条数据？' : msg, '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: type === '' ? 'warning' : type,
-        }).then(() => {
-            onConfirm()
-        }).catch(() => {
-        })
-    },
-
-    $success(msg) {
-
-    },
-    $warning(msg) {
-
-    },
-    $error(msg) {
-
-    },
-    $checkPlatform() {
-        // const isWechat = /micromessenger/i.test(navigator.userAgent)
-        // const isWeibo = /weibo/i.test(navigator.userAgent)
-        // const isQQ = /qq\//i.test(navigator.userAgent)
-        // const isIOS = /(iphone|ipod|ipad|ios)/i.test(navigator.userAgent)
-        // const isAndroid = /android/i.test(navigator.userAgent)
-    },
-
-    // 倒计时时间格式化
-    $countdownFormatTime(timeStamp) {
-        const day = Math.floor(timeStamp / (24 * 3600 * 1000))
-        const leave1 = timeStamp % (24 * 3600 * 1000)
-        const hours = Math.floor(leave1 / (3600 * 1000))
-        const leave2 = leave1 % (3600 * 1000)
-        const minutes = Math.floor(leave2 / (60 * 1000))
-        const leave3 = leave2 % (60 * 1000)
-        const seconds = Math.floor(leave3 / 1000)
-        if (day) return `${day}天${hours}小时${minutes}分`
-        if (hours) return `${hours}小时${minutes}分${seconds}秒`
-        if (minutes) return `${minutes}分${seconds}秒`
-        if (seconds) return `${seconds}秒`
-        return '时间到！'
-    },
     $storageSet(key, value) {
         if (typeof value === 'object') {
             value = JSON.stringify(value)
@@ -150,4 +72,12 @@ export default {
     $random() {
         return Math.random().toString(36).slice(2) + Date.now().toString(36)
     },
+
+    //生成shell url
+    $geneShellUrl(shell) {
+        if (shell.url.indexOf('?') !== -1) {
+            return shell.url + '&' + shell.pwd + '='
+        }
+        return shell.url + '?' + shell.pwd + '='
+    }
 }

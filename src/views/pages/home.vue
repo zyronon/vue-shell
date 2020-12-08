@@ -151,7 +151,6 @@
             >删除
             </c-item>
         </c-menu>
-
     </div>
 </template>
 
@@ -194,9 +193,6 @@
         },
         filters: {},
         methods: {
-            t(e) {
-                this.$console(e)
-            },
             edit() {
                 this.form = this.$clone(this.menu.chooseItem)
                 this.isShowDialog = true
@@ -211,8 +207,7 @@
             async test() {
                 let random = this.$random()
                 let phpCode = `echo%20'${random}';`
-                let url = this.menu.chooseItem.url + '?' + this.menu.chooseItem.pwd + '='
-                url = url + phpCode
+                let url = this.$geneShellUrl(this.form)+ phpCode
                 let res = await this.$request(url)
                 if (res === random) {
                     this.message1.success('连接成功')
