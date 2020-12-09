@@ -141,10 +141,10 @@
                     }
                     let row = {
                         title: fileName,
-                        content: res,
+                        content: `${res}`,
                         path: filePath,
                     }
-                    // this.$console(row)
+                     this.$console(row)
                     this.readFiles.push(row)
                     this.readFile = {...this.readFile, ...row}
                 } else {

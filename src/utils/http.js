@@ -26,7 +26,7 @@ const instance = axios.create({
 instance.interceptors.response.use(
     // 响应正常的处理
     (response) => {
-        // console.log(response)
+        console.log(response)
         // // console.log(response.data)
         const {data} = response
         // console.log(typeof data);
@@ -34,7 +34,7 @@ instance.interceptors.response.use(
         if (typeof data === 'object') {
             temp = JSON.stringify(data)
         }
-        if (temp.indexOf('ERROR//') !== -1) {
+        if (`${temp}`.indexOf('ERROR//') !== -1) {
             alert('ERROR')
             return Promise.resolve('')
         }

@@ -160,6 +160,7 @@
             }
         },
         mounted() {
+
         },
         methods: {
             ...mapActions('file', {

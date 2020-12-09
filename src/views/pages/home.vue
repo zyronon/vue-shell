@@ -3,6 +3,7 @@
          @contextmenu="$event.preventDefault()"
          @click="menu.location.show = false"
     >
+
         <div class="toolbar">
             <div class="left">
                 <icon name="menu" :scale="scale"></icon>
@@ -42,6 +43,9 @@
                     <div class="name">所有</div>
                 </div>
             </div>
+            <c-button>添加</c-button>
+
+
             <div class="content"
                  :style="{width:leftBarIsClose?'calc(100% - 90px)':'calc(100% - 200px)'}"
                  @contextmenu="onContextMenu($event)">
@@ -127,6 +131,8 @@
                 <div class="button primary" @click="isShowDialog = false">取消</div>
                 <div class="button primary" @click="test()">测试</div>
                 <div class="button primary" @click="add()">添加</div>
+                <el-button type="primary" :loading="test1" @click="t">加载中</el-button>
+
             </template>
         </my-dialog>
 
@@ -156,13 +162,17 @@
 
 <script>
     import {mapState} from 'vuex'
+    import CButton from '../../components/button/index'
 
     export default {
+        components:{
+            CButton
+        },
         data() {
             return {
+                test1:true,
                 scale: 2,
                 leftBarIsClose: false,
-                show: true,
                 form: {
                     url: '',
                     note: '',
@@ -193,6 +203,13 @@
         },
         filters: {},
         methods: {
+            t(){
+                this.test1 = !this.test1
+
+                setTimeout(()=>{
+                    this.test1 = !this.test1
+                },1500)
+            },
             edit() {
                 this.form = this.$clone(this.menu.chooseItem)
                 this.isShowDialog = true
