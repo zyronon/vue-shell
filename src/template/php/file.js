@@ -8,7 +8,6 @@ export default class File {
 
     dir() {
         return `
-        header("Content-Type: text/html;charset=GBK");
         $dir = '${this.arg1}';
         if (!@is_dir($dir)) {
             echo "ERROR:// Path Not Found Or No Permission!";

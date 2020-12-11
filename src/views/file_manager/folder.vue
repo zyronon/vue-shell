@@ -176,19 +176,15 @@
                 } else {
                     cmd = new File(this.currentPath + this.menu.createName).createFile()
                 }
-                console.log(cmd);
-                let res = await this.$request(this.shell.shellUrl + cmd)
-                console.log(res);
+                let res = await this.$genRequest(this.shell, cmd)
                 await this.gotoPath(this.currentPath)
                 this.isShowDialog = false
             },
             async rename($event) {
                 let file = this.currentPath + this.menu.chooseItem.name
                 let cmd = new File(file, $event.target.value).rename()
-                this.$console(cmd);
-                let res = await this.$request(this.shell.shellUrl + cmd)
+                let res = await this.$genRequest(this.shell, cmd)
                 this.gotoPath(this.currentPath)
-                console.log(res);
             },
             editItem() {
                 this.currentDirCopy = this.currentDirCopy.map(v => {
@@ -203,9 +199,7 @@
                 } else {
                     cmd = new File(this.currentPath + this.menu.chooseItem.name).deleteFile()
                 }
-                console.log(cmd);
-                let res = await this.$request(this.shell.shellUrl + cmd)
-                console.log(res);
+                let res = await this.$genRequest(this.shell, cmd)
                 await this.gotoPath(this.currentPath)
             },
 

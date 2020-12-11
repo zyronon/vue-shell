@@ -34,7 +34,7 @@
                 gotoPath: 'gotoPath'
             }),
             async getCurrentPath() {
-                let res = await this.$request(this.shell.shellUrl + new File().pwd()) + '/'
+                let res = await this.$genRequest(this.shell, new File().pwd())+ '/'
                 res = res.split('``')
                 let currentPath = res[1]
                 res[0].split('|').map(v => {

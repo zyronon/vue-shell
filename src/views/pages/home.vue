@@ -245,20 +245,20 @@
                     this.menu.chooseItem = null
                 }
             },
-            goto(type) {
+            goto(type, item) {
                 switch (type) {
                     case 'terminal':
                         // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);
                         this.$router.push({
                             path: '/terminal',
-                            query: {shell: this.menu.chooseItem}
+                            query: {shell: item || this.menu.chooseItem}
                         })
                         break
                     case 'file':
                         // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);
                         this.$router.push({
                             path: '/file',
-                            query: {shell: this.menu.chooseItem}
+                            query: {shell: item || this.menu.chooseItem}
                         })
                         break
                 }

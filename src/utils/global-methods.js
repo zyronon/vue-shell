@@ -1,3 +1,5 @@
+import request from './http'
+
 export default {
     $console(v) {
         console.log(JSON.stringify(v, null, 4))
@@ -79,5 +81,11 @@ export default {
             return shell.url + '&' + shell.pwd + '='
         }
         return shell.url + '?' + shell.pwd + '='
-    }
+    },
+    async $genRequest(shell, params, encode) {
+        shell.encode = 'UTF'
+        params = `header("Content-Type: text/html;charset=${encode || shell.encode}");` + params
+        // return this.$request(shell.shellUrl + params)
+        return request(this.$geneShellUrl(shell) + params)
+    },
 }

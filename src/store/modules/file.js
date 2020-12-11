@@ -1,6 +1,8 @@
 import {TYPES} from '../mutation-types'
-import request from "../../utils/http";
-import File from "../../template/php/file";
+import request from '../../utils/http'
+import File from '../../template/php/file'
+import globalMethods from '../../utils/global-methods'
+
 
 export const file = {
     namespaced: true,
@@ -37,7 +39,7 @@ export const file = {
     actions: {
         async gotoPath({state, commit}, path) {
             // console.log(value)
-            let res = await request(state.shell.shellUrl + new File(path + '/').dir())
+            let res = await globalMethods.$genRequest(state.shell, new File(path + '/').dir())
             let row = res.split('\n')
             let currentDir = []
             row.map(v => {

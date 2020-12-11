@@ -11,22 +11,19 @@ const instance = axios.create({
     // headers:{'Content-Type': 'application/x-www-form-urlencoded'}
 })
 
-// // request 拦截器
-// instance.interceptors.request.use(
-//     (config) => {
-//         // if (Storage.get('token')) {
-//         // config.headers['access_token'] = Storage.get('token')
-//         // }
-//         return config
-//     },
-//     error => Promise.reject(error),
-// )
+// request 拦截器
+instance.interceptors.request.use(
+    (config) => {
+        return config
+    },
+    error => Promise.reject(error),
+)
 
 // respone 拦截器
 instance.interceptors.response.use(
     // 响应正常的处理
     (response) => {
-        console.log(response)
+        // console.log(response)
         // // console.log(response.data)
         const {data} = response
         // console.log(typeof data);

