@@ -44,14 +44,14 @@
 
 <script>
     import axios from 'axios'
-    import DirItem from "./DirItem"
-    import OptionBar from "./OptionBar"
-    import directory from "./directory"
-    import folder from "./folder"
+    import DirItem from './DirItem'
+    import OptionBar from './OptionBar'
+    import directory from './directory'
+    import folder from './folder'
     import File from '../../template/php/file.js'
-    import CodeEdit from "./CodeEdit";
+    import CodeEdit from './CodeEdit'
     import {mapActions, mapMutations, mapState} from 'vuex'
-    import {TYPES} from "../../store/mutation-types";
+    import {TYPES} from '../../store/mutation-types'
 
 
     export default {
@@ -120,31 +120,24 @@
                 console.log()
             },
             async init() {
-                let shell = {url: 'api/shell.php', pwd: 'c'}
-                shell.shellUrl = this.generateShellUrl(shell)
+                let shell = this.$route.query.shell
+                shell.shellUrl = this.$geneShellUrl(shell)
                 this.setShell(shell)
             },
-            generateShellUrl(shell) {
-                if (shell.url.indexOf('?') !== -1) {
-                    return shell.url + '&' + shell.pwd + '='
-                }
-                return shell.url + '?' + shell.pwd + '='
-            },
-
             async readFileContent(value) {
                 let {filePath, fileName} = value
                 let files = this.readFiles.find(v => v.path === filePath)
                 if (!files) {
                     let res = await this.$request(this.shell.shellUrl + new File(filePath).read())
                     if (typeof res === 'object') {
-                        res = JSON.stringify(res,null,4)
+                        res = JSON.stringify(res, null, 4)
                     }
                     let row = {
                         title: fileName,
                         content: `${res}`,
                         path: filePath,
                     }
-                     this.$console(row)
+                    this.$console(row)
                     this.readFiles.push(row)
                     this.readFile = {...this.readFile, ...row}
                 } else {
@@ -175,6 +168,10 @@
             },
         },
         mounted() {
+            this.$bus.$on('updateContent', val => {
+                let res = this.readFiles.find(item => item.path === val.path)
+                res.content = val.content
+            })
         }
     }
 </script>

@@ -3,7 +3,7 @@
         <div class="header">
             <span class="title">{{title}}</span>
             <div class="right">
-                <div class="button primary" @click="save">保存</div>
+                <c-button @click="save">保存</c-button>
                 <img class="cp" src="@/assets/images/close.png" alt="" @click="$emit('close')">
             </div>
         </div>
@@ -73,22 +73,22 @@
     // import Base64 from 'crypto-js/enc-base64';
     import base64 from '../../utils/base64.js'
     import File from '../../template/php/file.js'
-    import {TYPES} from "../../store/mutation-types";
+    import {TYPES} from '../../store/mutation-types'
 
     export default {
         name: 'CodeEdit',  //组件命名
         props: {
             content: {
                 type: String,
-                required:true
+                required: true
             },
             path: {
                 type: String,
-                required:true
+                required: true
             },
             title: {
                 type: String,
-                required:true
+                required: true
             },
         },
         data() {
@@ -98,7 +98,7 @@
             }
         },
         created() {
-            console.log(base64);
+            console.log(base64)
         },
         methods: {
             async save() {
@@ -107,7 +107,9 @@
                     c: new File(this.path, 'change').change(),
                     'change': encodeURIComponent(base64._encode(content, false))
                 }, {}, 'POST')
-                console.log(res);
+                if (!res) {
+                    this.$bus.$emit('updateContent', {path: this.path, content})
+                }
             }
         },
         mounted() {
@@ -125,21 +127,21 @@
                 // theme: "idea",   //设置主题
                 autoCloseBrackets: true,//配合closebrackets.js自动关闭括号和花括号
                 foldGutter: true,
-                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-            });
+                gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+            })
             let meta = CodeMirror.findModeByFileName(this.path)
             if (meta) {
-                this.editor.setOption('mode', meta.mode);     //设置代码框的长宽
+                this.editor.setOption('mode', meta.mode)     //设置代码框的长宽
             }
 
-            this.editor.setOption("extraKeys", {
+            this.editor.setOption('extraKeys', {
                 // Tab键换成4个空格
                 Tab: function (cm) {
-                    var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
-                    cm.replaceSelection(spaces);
+                    var spaces = Array(cm.getOption('indentUnit') + 1).join(' ')
+                    cm.replaceSelection(spaces)
                 },
                 // Esc键退出全屏
-                "Ctrl-F": function (cm) {
+                'Ctrl-F': function (cm) {
                     CodeMirror.commands.find(cm)
                     // CodeMirror.commands.findNext(cm)
                 },
@@ -147,8 +149,8 @@
                     CodeMirror.commands.toggleComment(cm)
                 }
 
-            });
-            this.editor.setSize('100%', '100%');     //设置代码框的长宽
+            })
+            this.editor.setSize('100%', '100%')     //设置代码框的长宽
             this.editor.setValue(this.content)
         }
         // editor.getValue();    //获取代码框的值
@@ -157,6 +159,7 @@
 
 <style scoped lang="scss">
     $hover-color: rgb(229, 243, 255);
+    @import "src/assets/scss/color";
 
     img {
         height: 15px;
@@ -167,14 +170,14 @@
         height: calc(100% - 70px);
 
         .header {
+            background: $main-bg-color;
             display: flex;
             align-items: center;
             justify-content: space-between;
             height: 40px;
-            border-bottom: 1px solid #cbcbcb;
             padding: 0 20px;
 
-            .button{
+            .button {
                 margin-right: 10px;
             }
         }

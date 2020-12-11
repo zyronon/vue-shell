@@ -12,6 +12,7 @@ import cTableColumn from '../components/table/column'
 import cTableTbody from '../components/table/tbody'
 import Message from '../components/message'
 import loading from '../components/loading'
+import CButton from '../components/button'
 // import Message2 from '../components/message2'
 
 
@@ -63,7 +64,8 @@ export default {
         cTable,
         cTableColumn,
         cTableTbody,
-        loading
+        loading,
+        CButton
 
     }
 }

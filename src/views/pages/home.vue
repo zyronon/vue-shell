@@ -158,12 +158,8 @@
 
 <script>
     import {mapState} from 'vuex'
-    import CButton from '../../components/button/index'
 
     export default {
-        components: {
-            CButton,
-        },
         data() {
             return {
                 scale: 2,
@@ -198,13 +194,6 @@
         },
         filters: {},
         methods: {
-            t() {
-                this.test1 = !this.test1
-
-                setTimeout(() => {
-                    this.test1 = !this.test1
-                }, 1500)
-            },
             edit() {
                 this.form = this.$clone(this.menu.chooseItem)
                 this.isShowDialog = true
@@ -256,20 +245,20 @@
                     this.menu.chooseItem = null
                 }
             },
-            goto(type, item) {
+            goto(type) {
                 switch (type) {
                     case 'terminal':
-                        console.log(item)
                         // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);
                         this.$router.push({
-                            path: '/terminal'
+                            path: '/terminal',
+                            query: {shell: this.menu.chooseItem}
                         })
                         break
                     case 'file':
-                        console.log(item)
                         // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);
                         this.$router.push({
-                            path: '/file'
+                            path: '/file',
+                            query: {shell: this.menu.chooseItem}
                         })
                         break
                 }

@@ -21,13 +21,13 @@
                     <span v-else>{{scope.name}}</span>
                 </template>
             </c-table-column>
-            <c-table-column prop="change_date" label="修改日期" sortable></c-table-column>
-            <c-table-column prop="name" label="类型" sortable>
+            <c-table-column prop="change_date" label="修改日期" ></c-table-column>
+            <c-table-column prop="name" label="类型" >
                 <template slot-scope="scope">
                     {{scope|fileType}}
                 </template>
             </c-table-column>
-            <c-table-column prop="file_size" label="大小" sortable>
+            <c-table-column prop="file_size" label="大小" >
                 <template slot-scope="scope">
                     {{scope.file_size|size}}
                 </template>
@@ -274,7 +274,8 @@
         position: relative;
         width: 100%;
         color: $text-color;
-        background: $main-bg-color;
+       // background: $main-bg-color;
+        background: $second-bg-color;
 
         img {
             height: 15px;

