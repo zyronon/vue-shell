@@ -10,6 +10,7 @@ html, body {
     //background: rgb(44,42,56);
     //color: white;
 }
+
 a {
     text-decoration: none;
 }
@@ -21,12 +22,13 @@ ul, li {
 }
 
 
-$scrollbar-width:10px;
-div{
+$scrollbar-width: 10px;
+$scrollbar-background-color: #787878;
+div {
     &::-webkit-scrollbar {
         width: $scrollbar-width;
         height: 10px;
-        background: #F1F1F1;
+        background: $scrollbar-background-color;
     }
 
     &::-webkit-scrollbar-button {
@@ -35,19 +37,19 @@ div{
 
     &::-webkit-scrollbar-thumb {
         border-radius: 10px;
-        background: #C1C1C1;
+        background: $scrollbar-background-color;
 
         &:hover {
-            background: #a8a8a8;
+            background: $scrollbar-background-color;
         }
 
         &:active {
-            background: #787878;
+            background: $scrollbar-background-color;
         }
     }
 
     &::-webkit-scrollbar-track {
-        border-radius: 10px;
-        background: #F1F1F1;
+        background:rgb(43, 43, 43);
+        //background: transparent;
     }
 }

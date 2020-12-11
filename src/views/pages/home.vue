@@ -3,7 +3,6 @@
          @contextmenu="$event.preventDefault()"
          @click="menu.location.show = false"
     >
-
         <div class="toolbar">
             <div class="left">
                 <icon name="menu" :scale="scale"></icon>
@@ -43,13 +42,9 @@
                     <div class="name">所有</div>
                 </div>
             </div>
-
-
             <div class="content"
                  :style="{width:leftBarIsClose?'calc(100% - 90px)':'calc(100% - 200px)'}"
                  @contextmenu="onContextMenu($event)">
-                <c-button>添加</c-button>
-
                 <c-table
                         :list="shells"
                         @row-dblclick="(e,row) => goto('file',row)"
@@ -129,11 +124,11 @@
                 </div>
             </template>
             <template v-slot:footer>
-                <div class="button primary" @click="isShowDialog = false">取消</div>
-                <div class="button primary" @click="test()">测试</div>
-                <div class="button primary" @click="add()">添加</div>
-                <el-button type="primary"  @click="t">加载中</el-button>
-
+                <div class="d-flex justify-content-end">
+                    <c-button @click="isShowDialog = false">取消</c-button>
+                    <c-button @click="test()">测试</c-button>
+                    <c-button @click="add()">添加</c-button>
+                </div>
             </template>
         </my-dialog>
 
@@ -166,12 +161,11 @@
     import CButton from '../../components/button/index'
 
     export default {
-        components:{
+        components: {
             CButton,
         },
         data() {
             return {
-                test1:true,
                 scale: 2,
                 leftBarIsClose: false,
                 form: {
@@ -204,12 +198,12 @@
         },
         filters: {},
         methods: {
-            t(){
+            t() {
                 this.test1 = !this.test1
 
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.test1 = !this.test1
-                },1500)
+                }, 1500)
             },
             edit() {
                 this.form = this.$clone(this.menu.chooseItem)
@@ -225,7 +219,7 @@
             async test() {
                 let random = this.$random()
                 let phpCode = `echo%20'${random}';`
-                let url = this.$geneShellUrl(this.form)+ phpCode
+                let url = this.$geneShellUrl(this.form) + phpCode
                 let res = await this.$request(url)
                 if (res === random) {
                     this.message1.success('连接成功')

@@ -23,7 +23,7 @@
 
 <script>
     export default {
-        name: "my-dialog",
+        name: 'my-dialog',
 
         props: {
             title: {
@@ -219,8 +219,6 @@
 
         .footer {
             padding: 20px;
-            text-align: right;
-            box-sizing: border-box;
 
             .button {
                 margin: 0 5px;

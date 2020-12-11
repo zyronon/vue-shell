@@ -69,7 +69,7 @@
         position: relative;
         width: 100%;
         height: 100%;
-        /*animation: rotate 1.5s linear infinite;*/
+        animation: rotate 1.5s linear infinite;
 
         span {
             position: absolute;

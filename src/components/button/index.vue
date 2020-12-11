@@ -10,28 +10,32 @@
             loading: {
                 type: Boolean,
                 default() {
-                    return true
+                    return false
                 }
             }
         },
         data() {
-            return {
-                loading: false
-            }
+            return {}
         },
         created() {
         },
-        methods: {},
+        methods: {
+            handleOnClick($event) {
+                this.loading ? $event.stopPropagation():this.$emit('click')
+            }
+        },
         mounted() {
             //
         },
         render() {
+            let className = 'button primary '
+            className += this.loading ? 'disabled' : ''
             return (
-                <div class='button primary'>
-                    <div style="display: flex; align-items: center;">
-                        <loading size="small"/>
-                        <span style="margin-left:5px">{this.$slots.default}</span>
-                    </div>
+                <div
+                    onClick={this.handleOnClick}
+                    class={className}>
+                    {this.loading && <loading style="margin-right:5px" size="small"/>}
+                    <span>{this.$slots.default}</span>
                 </div>
             )
         }

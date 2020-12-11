@@ -159,6 +159,9 @@
                 }
             }
         },
+        created() {
+            this.$store.commit('layout/setTableColumns', [])
+        },
         mounted() {
 
         },

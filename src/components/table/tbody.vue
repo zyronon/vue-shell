@@ -1,9 +1,9 @@
 <script>
-    import {mapState} from "vuex";
-    import {addClass, hasClass, removeClass} from "element-ui/src/utils/dom";
+    import {mapState} from 'vuex'
+    import {addClass, hasClass, removeClass} from 'element-ui/src/utils/dom'
 
     export default {
-        name: "cTableTbody",
+        name: 'cTableTbody',
         props: {
             list: {
                 type: Array,
@@ -59,7 +59,7 @@
                     this.useList = this.$clone(this.noSortList)
                 } else {
                     if (type === 'ascending') {
-                        console.log('升序');
+                        console.log('升序')
                         for (let i = 0; i < this.useList.length - 1; i++) {
                             for (let j = 0; j < this.useList.length - 1 - i; j++) {
                                 if (this.useList[j][key] > this.useList[j + 1][key]) {
@@ -79,48 +79,48 @@
                                 }
                             }
                         }
-                        console.log('降序');
+                        console.log('降序')
                     }
                 }
             },
             handleMouseMove(event) {
                 // console.log(e.clientX);
                 // console.log(e);
-                let target = event.target;
-                let rect = target.getBoundingClientRect();
+                let target = event.target
+                let rect = target.getBoundingClientRect()
 
-                const bodyStyle = document.body.style;
+                const bodyStyle = document.body.style
                 if (rect.width > 12 && rect.right - event.pageX < 8) {
-                    bodyStyle.cursor = 'col-resize';
+                    bodyStyle.cursor = 'col-resize'
                 } else {
-                    bodyStyle.cursor = '';
+                    bodyStyle.cursor = ''
                 }
             },
             handleMouseOut(e) {
                 // console.log('handleMouseOut');
-                document.removeEventListener('mousemove', null);
-                document.body.style.cursor = '';
+                document.removeEventListener('mousemove', null)
+                document.body.style.cursor = ''
 
             },
             handleMouseDown(event, column) {
                 // console.log('handleMouseDown');
-                this.dragging = true;
+                this.dragging = true
 
-                this.$parent.resizeProxyVisible = true;
+                this.$parent.resizeProxyVisible = true
 
-                const table = this.$parent;
-                const tableEl = table.$el;
-                const tableLeft = tableEl.getBoundingClientRect().left;
+                const table = this.$parent
+                const tableEl = table.$el
+                const tableLeft = tableEl.getBoundingClientRect().left
 
-                let columnEl = event.target;
-                let columnRect = columnEl.getBoundingClientRect();
+                let columnEl = event.target
+                let columnRect = columnEl.getBoundingClientRect()
 
-                let colEl = tableEl.querySelector('.col-' + column.id);
+                let colEl = tableEl.querySelector('.col-' + column.id)
 
                 // console.log(colEl);
 
 
-                const minLeft = columnRect.left - tableLeft + 30;
+                const minLeft = columnRect.left - tableLeft + 30
                 // this.$console(minLeft)
                 // this.$console(event.clientX)
                 // addClass(columnEl, 'noclick');
@@ -130,22 +130,22 @@
                     startLeft: columnRect.right - tableLeft,
                     startColumnLeft: columnRect.left - tableLeft,
                     tableLeft
-                };
+                }
                 const handleMouseMove = (event) => {
-                    let deltaLeft = event.clientX - this.dragState.startMouseLeft;
+                    let deltaLeft = event.clientX - this.dragState.startMouseLeft
                     let columnWidth = columnRect.width + deltaLeft
                     // this.$console(columnRect.width + deltaLeft)
                     // colEl.style.width = Math.max(columnWidth, minLeft) + 'px'
                     colEl.style.width = columnWidth + 'px'
-                };
+                }
 
                 const handleMouseUp = () => {
-                    document.removeEventListener('mousemove', handleMouseMove);
-                    document.removeEventListener('mouseup', handleMouseUp);
-                };
+                    document.removeEventListener('mousemove', handleMouseMove)
+                    document.removeEventListener('mouseup', handleMouseUp)
+                }
 
-                document.addEventListener('mousemove', handleMouseMove);
-                document.addEventListener('mouseup', handleMouseUp);
+                document.addEventListener('mousemove', handleMouseMove)
+                document.addEventListener('mouseup', handleMouseUp)
             },
         },
 
@@ -188,7 +188,6 @@
                                     width={column.attrs.width}
                                     class={sortClass}
                                     onClick={e => this.sort(column.id)}
-
                                 >
                                     {column.attrs.label}
                                 </th>
