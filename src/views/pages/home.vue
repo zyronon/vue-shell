@@ -29,7 +29,10 @@
                     <span>本地分类</span>
                     <icon name="add" :scale="scale" @click="isShow.category = true"></icon>
                 </div>
-                <div class="row" v-for="item of categories">
+                <div class="row"
+                     :class="item.id === selectCategory.id?'active':''"
+                     v-for="item of categories"
+                     @click="selectCategory = item">
                     <icon name="menu" :scale="scale"></icon>
                     <span class="name">{{item.name}}</span>
                 </div>
@@ -38,7 +41,7 @@
                  :style="{width:leftBarIsClose?'calc(100% - 90px)':'calc(100% - 200px)'}"
                  @contextmenu="onContextMenu($event)">
                 <c-table
-                        :list="shells"
+                        :list="categoryShell"
                         @row-dblclick="(e,row) => goto('file',row)"
                         @contextmenu="(e,row) => onContextMenu(e,row)"
                 >
@@ -60,15 +63,15 @@
                 <div class="form">
                     <div class="form-row">
                         <span>URL地址：</span>
-                        <input type="text" v-model="form.url">
+                        <input class="input"  type="text" v-model="form.url">
                     </div>
                     <div class="form-row">
                         <span>连接密码：</span>
-                        <input type="text" v-model="form.pwd">
+                        <input class="input" type="text" v-model="form.pwd">
                     </div>
                     <div class="form-row">
                         <span>网站备注：</span>
-                        <input type="text" v-model="form.note">
+                        <input class="input"  type="text" v-model="form.note">
                     </div>
                     <div class="form-row">
                         <span>连接类型：</span>
@@ -127,21 +130,21 @@
             <template v-slot:content>
                 <div class="form">
                     <div class="form-row">
-                        <input type="text" v-model="form.url">
+                        <input type="text" v-model="formCategory.name">
                     </div>
                 </div>
             </template>
             <template v-slot:footer>
                 <div class="d-flex justify-content-end">
                     <c-button @click="isShow.category = false">取消</c-button>
-                    <c-button @click="add()">添加</c-button>
+                    <c-button @click="addCategory()">添加</c-button>
                 </div>
             </template>
         </my-dialog>
 
         <c-menu :location="menu.location">
             <c-item @click="reload">刷新目录</c-item>
-            <c-item @click="isShowDialog = true">新增</c-item>
+            <c-item @click="isShow.shell = true">新增</c-item>
             <c-item
                     :is-disabled="menu.chooseItem === null"
                     @click="goto('terminal')">终端
@@ -181,12 +184,9 @@
                         value: '',
                     }
                 },
-                categories: [
-                    {
-                        id: 'xxx',
-                        name: '默认分类'
-                    }
-                ],
+                categories: [],
+                selectCategory: {},
+                formCategory: {name: ''},
                 shells: [],
                 isShow: {
                     shell: false,
@@ -202,17 +202,26 @@
         created() {
             this.$store.commit('layout/setTableColumns', [])
             this.shells = this.$storageGet('shell', [])
+            this.categories = this.$storageGet('category', [])
+            this.selectCategory = this.categories[0]
             // this.shells = []
         },
         computed: {
             ...mapState('layout', [
                 'tableColumns',
             ]),
+            categoryShell() {
+                if (!this.selectCategory.id) return this.shells
+                return this.shells.filter(v => v.categoryId === this.selectCategory.id)
+            }
         },
         filters: {},
         methods: {
             addCategory() {
-
+                this.categories.push({id: this.$random(), name: this.formCategory.name})
+                this.$storageSet('category', this.categories)
+                this.formCategory.name = ''
+                this.isShow.category = false
             },
             edit() {
                 this.form = this.$clone(this.menu.chooseItem)
@@ -296,15 +305,15 @@
                     this.shells.push({
                         id: this.$random(),
                         ip: '',
-                        category: '',
                         createDate: Date.now(),
                         changeDate: Date.now(),
+                        categoryId: this.selectCategory.id,
                         ...this.form
                     })
                     this.$storageSet('shell', this.shells)
-                    this.form = {}
+                    this.form = {addHeader: {}}
                 }
-                this.isShowDialog = false
+                this.isShow.shell = false
             },
         },
         mounted() {
@@ -411,7 +420,7 @@
                 transition: all .3s;
 
                 .header {
-                    margin: 10px;
+                    margin: 10px 15px;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
@@ -420,7 +429,7 @@
 
 
                 .row {
-                    margin: 5px;
+                    margin: 2px 10px;
                     padding: 5px;
                     display: flex;
                     align-items: center;
