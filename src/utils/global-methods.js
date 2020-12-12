@@ -83,7 +83,7 @@ export default {
         return shell.url + '?' + shell.pwd + '='
     },
     async $genRequest(shell, params, encode) {
-        shell.encode = 'UTF'
+        shell.encode = 'UTF-8'
         params = `header("Content-Type: text/html;charset=${encode || shell.encode}");` + params
         // return this.$request(shell.shellUrl + params)
         return request(this.$geneShellUrl(shell) + params)

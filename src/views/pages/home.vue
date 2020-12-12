@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <div class="options">
-                    <icon @click="isShowDialog = true" name="add" :scale="scale"></icon>
+                    <icon @click="isShow.shell = true" name="add" :scale="scale"></icon>
                     <span>|</span>
                     <icon name="close" :scale="scale"></icon>
                 </div>
@@ -25,21 +25,13 @@
         </div>
         <div class="content-container">
             <div class="category" :style="{width:leftBarIsClose?'90px':'200px'}">
-                <div class="row">
-                    <svg t="1603956289510" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                         xmlns="http://www.w3.org/2000/svg" p-id="24487" width="32" height="32">
-                        <path d="M128 224v576a32 32 0 0 0 32 32h704a32 32 0 0 0 32-32v-448a32 32 0 0 0-32-32H467.776a96 96 0 0 1-85.888-53.12l-28.608-57.216A32 32 0 0 0 324.672 192H160a32 32 0 0 0-32 32z m-64 0A96 96 0 0 1 160 128h164.672a96 96 0 0 1 85.888 53.12l28.608 57.216A32 32 0 0 0 467.776 256H864A96 96 0 0 1 960 352v448a96 96 0 0 1-96 96h-704A96 96 0 0 1 64 800v-576z"
-                              p-id="24488" fill="#8a8a8a"></path>
-                    </svg>
-                    <div class="name">所有</div>
+                <div class="header">
+                    <span>本地分类</span>
+                    <icon name="add" :scale="scale" @click="isShow.category = true"></icon>
                 </div>
-                <div class="row">
-                    <svg t="1603956289510" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                         xmlns="http://www.w3.org/2000/svg" p-id="24487" width="32" height="32">
-                        <path d="M128 224v576a32 32 0 0 0 32 32h704a32 32 0 0 0 32-32v-448a32 32 0 0 0-32-32H467.776a96 96 0 0 1-85.888-53.12l-28.608-57.216A32 32 0 0 0 324.672 192H160a32 32 0 0 0-32 32z m-64 0A96 96 0 0 1 160 128h164.672a96 96 0 0 1 85.888 53.12l28.608 57.216A32 32 0 0 0 467.776 256H864A96 96 0 0 1 960 352v448a96 96 0 0 1-96 96h-704A96 96 0 0 1 64 800v-576z"
-                              p-id="24488" fill="#8a8a8a"></path>
-                    </svg>
-                    <div class="name">所有</div>
+                <div class="row" v-for="item of categories">
+                    <icon name="menu" :scale="scale"></icon>
+                    <span class="name">{{item.name}}</span>
                 </div>
             </div>
             <div class="content"
@@ -63,7 +55,7 @@
             </div>
         </div>
 
-        <my-dialog title="添加" :visible.sync="isShowDialog">
+        <my-dialog title="添加Shell" :visible.sync="isShow.shell">
             <template v-slot:content>
                 <div class="form">
                     <div class="form-row">
@@ -125,8 +117,23 @@
             </template>
             <template v-slot:footer>
                 <div class="d-flex justify-content-end">
-                    <c-button @click="isShowDialog = false">取消</c-button>
+                    <c-button @click="isShow.shell = false">取消</c-button>
                     <c-button @click="test()">测试</c-button>
+                    <c-button @click="add()">添加</c-button>
+                </div>
+            </template>
+        </my-dialog>
+        <my-dialog title="添加分类" :visible.sync="isShow.category">
+            <template v-slot:content>
+                <div class="form">
+                    <div class="form-row">
+                        <input type="text" v-model="form.url">
+                    </div>
+                </div>
+            </template>
+            <template v-slot:footer>
+                <div class="d-flex justify-content-end">
+                    <c-button @click="isShow.category = false">取消</c-button>
                     <c-button @click="add()">添加</c-button>
                 </div>
             </template>
@@ -174,7 +181,17 @@
                         value: '',
                     }
                 },
+                categories: [
+                    {
+                        id: 'xxx',
+                        name: '默认分类'
+                    }
+                ],
                 shells: [],
+                isShow: {
+                    shell: false,
+                    category: false
+                },
                 isShowDialog: false,
                 menu: {
                     location: {},
@@ -194,6 +211,9 @@
         },
         filters: {},
         methods: {
+            addCategory() {
+
+            },
             edit() {
                 this.form = this.$clone(this.menu.chooseItem)
                 this.isShowDialog = true
@@ -293,8 +313,6 @@
 </script>
 
 <style lang="scss" scoped>
-
-
     @import "../../assets/scss/color";
 
     $border-color: gray;
@@ -392,20 +410,38 @@
                 width: 200px;
                 transition: all .3s;
 
-                img, svg {
-                    width: 20px;
-                    height: 20px;
-                    margin-right: 10px;
+                .header {
+                    margin: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    color: grey;
                 }
 
+
                 .row {
-                    padding: 10px 15px;
+                    margin: 5px;
+                    padding: 5px;
                     display: flex;
-                    border-bottom: 1px solid #3c505a;
+                    align-items: center;
                     color: white;
+                    border: 1px solid $main-bg-color;
+
+                    .name {
+                        margin-left: 10px;
+                    }
+
 
                     &:hover {
-                        opacity: .7;
+                        border-radius: 4px;
+                        border: 1px solid $second-bg-color;
+                        background: $second-bg-color;
+                    }
+
+                    &.active {
+                        border-radius: 4px;
+                        border: 1px solid $second-bg-color;
+                        background: $second-bg-color;
                     }
                 }
             }
