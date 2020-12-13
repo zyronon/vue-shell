@@ -251,7 +251,7 @@
             },
             edit() {
                 this.form = this.$clone(this.menu.chooseItem)
-                this.isShowDialog = true
+                this.isShow.shell = true
             },
             removeShell() {
                 let index = this.shells.findIndex(value => value.id === this.menu.chooseItem.id)
