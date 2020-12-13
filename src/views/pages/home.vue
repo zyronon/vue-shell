@@ -1,7 +1,7 @@
 <template>
     <div class="home" ref="content"
          @contextmenu="$event.preventDefault()"
-         @click="menu.location.show = false"
+         @click="menu.shellLocation.show = false;menu.categoryLocation.show = false"
     >
         <div class="toolbar">
             <div class="left">
@@ -10,7 +10,7 @@
             </div>
             <div class="right">
                 <div class="search">
-                    <icon @click="leftBarIsClose = !leftBarIsClose" name="menu" :scale="scale"></icon>
+                    <icon v-show="false" @click="leftBarIsClose = !leftBarIsClose" name="menu" :scale="scale"></icon>
                     <div class="input-container">
                         <icon name="search" :scale="scale"></icon>
                         <input type="text">
@@ -24,7 +24,9 @@
             </div>
         </div>
         <div class="content-container">
-            <div class="category" :style="{width:leftBarIsClose?'90px':'200px'}">
+            <div class="category"
+                 @contextmenu="$event.preventDefault()"
+                 :style="{width:leftBarIsClose?'90px':'150px'}">
                 <div class="header">
                     <span>本地分类</span>
                     <icon name="add" :scale="scale" @click="isShow.category = true"></icon>
@@ -32,18 +34,19 @@
                 <div class="row"
                      :class="item.id === selectCategory.id?'active':''"
                      v-for="item of categories"
+                     @contextmenu="onContextMenu($event,'category',item)"
                      @click="selectCategory = item">
                     <icon name="menu" :scale="scale"></icon>
                     <span class="name">{{item.name}}</span>
                 </div>
             </div>
             <div class="content"
-                 :style="{width:leftBarIsClose?'calc(100% - 90px)':'calc(100% - 200px)'}"
-                 @contextmenu="onContextMenu($event)">
+                 :style="{width:leftBarIsClose?'calc(100% - 90px)':'calc(100% - 150px)'}"
+                 @contextmenu="onContextMenu($event,'shell')">
                 <c-table
                         :list="categoryShell"
                         @row-dblclick="(e,row) => goto('file',row)"
-                        @contextmenu="(e,row) => onContextMenu(e,row)"
+                        @contextmenu="(e,row) => onContextMenu(e,'shell',row)"
                 >
                     <c-table-column prop="url" label="路径" sortable></c-table-column>
                     <c-table-column prop="pwd" label="密码"></c-table-column>
@@ -63,7 +66,7 @@
                 <div class="form">
                     <div class="form-row">
                         <span>URL地址：</span>
-                        <input class="input"  type="text" v-model="form.url">
+                        <input class="input" type="text" v-model="form.url">
                     </div>
                     <div class="form-row">
                         <span>连接密码：</span>
@@ -71,7 +74,7 @@
                     </div>
                     <div class="form-row">
                         <span>网站备注：</span>
-                        <input class="input"  type="text" v-model="form.note">
+                        <input class="input" type="text" v-model="form.note">
                     </div>
                     <div class="form-row">
                         <span>连接类型：</span>
@@ -142,7 +145,7 @@
             </template>
         </my-dialog>
 
-        <c-menu :location="menu.location">
+        <c-menu :location="menu.shellLocation">
             <c-item @click="reload">刷新目录</c-item>
             <c-item @click="isShow.shell = true">新增</c-item>
             <c-item
@@ -160,6 +163,17 @@
             <c-item
                     :is-disabled="menu.chooseItem === null"
                     @click="removeShell"
+            >删除
+            </c-item>
+        </c-menu>
+        <c-menu :location="menu.categoryLocation">
+            <c-item
+                    :is-disabled="menu.chooseItem === null"
+                    @click="formCategory =  menu.chooseItem;isShow.category = true">编辑
+            </c-item>
+            <c-item
+                    :is-disabled="menu.chooseItem === null"
+                    @click="removeCategory"
             >删除
             </c-item>
         </c-menu>
@@ -194,7 +208,8 @@
                 },
                 isShowDialog: false,
                 menu: {
-                    location: {},
+                    shellLocation: {},
+                    categoryLocation: {},
                     chooseItem: null,
                 },
             }
@@ -203,7 +218,7 @@
             this.$store.commit('layout/setTableColumns', [])
             this.shells = this.$storageGet('shell', [])
             this.categories = this.$storageGet('category', [])
-            this.selectCategory = this.categories[0]
+            this.selectCategory = this.categories.length ? this.categories[0] : {}
             // this.shells = []
         },
         computed: {
@@ -217,10 +232,21 @@
         },
         filters: {},
         methods: {
-            addCategory() {
-                this.categories.push({id: this.$random(), name: this.formCategory.name})
+            removeCategory() {
+                let resIndex = this.categories.findIndex(v => v.id = this.menu.chooseItem.id)
+                this.categories.splice(resIndex, 1)
                 this.$storageSet('category', this.categories)
-                this.formCategory.name = ''
+            },
+            addCategory() {
+                if (this.formCategory.id) {
+                    let res = this.categories.find(v => v.id === this.formCategory.id)
+                    res = this.formCategory
+                } else {
+                    this.categories.push({id: this.$random(), name: this.formCategory.name})
+                }
+                this.$storageSet('category', this.categories)
+                this.formCategory = {}
+                this.$console(this.categories)
                 this.isShow.category = false
             },
             edit() {
@@ -260,12 +286,18 @@
             reload() {
                 window.location.reload()
             },
-            onContextMenu(e, item) {
+            onContextMenu(e, type, item) {
                 if (e) {
                     e.stopPropagation()
                     e.preventDefault()
+                    this.menu.shellLocation.show = false
+                    this.menu.categoryLocation.show = false
                     let {x, y} = e
-                    this.menu.location = {x, y, show: true}
+                    if (type === 'shell') {
+                        this.menu.shellLocation = {x, y, show: true}
+                    } else {
+                        this.menu.categoryLocation = {x, y, show: true}
+                    }
                 }
                 if (item) {
                     // this.$console(item)

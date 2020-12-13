@@ -78,7 +78,7 @@
                     },
                 ],
                 currentColor: 'green',
-                shell:{}
+                shell: {}
             }
         },
         created() {
@@ -86,7 +86,7 @@
         },
         directives: {
             focus: {
-                inserted: function (el) {
+                inserted(el) {
                     el.focus()
                 }
             }
@@ -94,6 +94,14 @@
         computed: {
             fontSizeStyle() {
                 return {fontSize: this.fontSize + 'px'}
+            },
+            cmd: {
+                get() {
+                    return this.type.input.substr(this.type.path.length, this.type.input.length)
+                },
+                set(newValue) {
+                    this.type.input = this.type.path + newValue
+                }
             }
         },
         methods: {
@@ -112,13 +120,11 @@
                     e.preventDefault()
                 }
             },
-
             async getPwd() {
                 this.shell = this.$route.query.shell
-
                 let cmd = 'echo %25cd%25'
                 let phpCode = 'system(\'' + cmd + ' 2>%261\');'
-                let res = await this.$genRequest(this.shell, phpCode,'GBK')
+                let res = await this.$genRequest(this.shell, phpCode, 'GBK')
                 res = res.replace('\r\n', '')
                 this.path = res
                 this.type = {
@@ -127,9 +133,7 @@
                     id: '',
                 }
             },
-
             async exec(event, cmd) {
-                console.log(cmd === 'cls')
                 if (cmd === '') return
                 if (cmd === 'cls' || cmd === 'clear') {
                     this.row = []
@@ -137,40 +141,44 @@
                     this.type.id = ''
                     return
                 }
-                let that = this
                 let phpCode = 'system(\'' + cmd + ' 2>%261\');'
-                let res = await this.$genRequest(this.shell, phpCode,'GBK')
-                that.row.push({
+                let res = await this.$genRequest(this.shell, phpCode, 'GBK')
+                this.row.push({
                     cmd: cmd,
-                    historyInput: that.type.input,
-                    path: that.type.path,
+                    historyInput: this.type.input,
+                    path: this.type.path,
                     result: res,
                 })
-                that.type.input = that.type.path
+                this.type.input = this.type.path
                 // that.$console(that.row)
-
-                that.$nextTick(() => {
-                    that.$refs.content.scrollTop = that.$refs.terminal.scrollHeight
+                this.$nextTick(() => {
+                    this.$refs.content.scrollTop = this.$refs.terminal.scrollHeight
                 })
             },
             cmdAutoComplete(type, cmd) {
                 switch (cmd) {
                     case 'cls':
-                        this.row = []
-                        this.row.push({
-                            tmpPwd: this.pwd + '>',
-                            pwd: this.pwd + '>',
-                            history: '',
-                            result: '',
-                        })
+                        this.cmd = 'clear'
+                        break
+                    case 'ip':
+                        this.cmd = 'ipconfig'
+                        break
+                    case 'if':
+                        this.cmd = 'ifconfig'
+                        break
+                    case 'net ':
+                    case 'net':
+                    case 'ne':
+                        this.cmd = 'net user'
                         break
                 }
 
             },
             keydown(event, type) {
-                // console.log(event.keyCode);
-
                 let cmd = type.input.substr(type.path.length, type.input.length)
+                // console.log(event.keyCode)
+                console.log('命令>>>>>', cmd)
+                //确定键
                 if (event.keyCode === 13) {
                     event.returnValue = false
                     this.exec(event, cmd)
@@ -187,14 +195,14 @@
                     if (this.type.id !== '') {
                         if (this.type.id !== 0) {
                             this.type.id = this.type.id - 1
-                            this.type.input = this.row[this.type.id].history
+                            this.type.input = this.row[this.type.id].historyInput
                         } else {
-                            this.type.input = this.row[this.row.length - 1].history
+                            this.type.input = this.row[this.row.length - 1].historyInput
                             this.type.id = this.row.length - 1
                         }
                     } else {
                         if (this.row.length) {
-                            this.type.input = this.row[this.row.length - 1].history
+                            this.type.input = this.row[this.row.length - 1].historyInput
                             this.type.id = this.row.length - 1
                         }
                     }
@@ -216,10 +224,44 @@
                     }
                     return
                 }
-                //删除键
+                //左键,如果光标在path.length之前了，就强制移到path.length的位置
+                if (event.keyCode === 37) {
+                    let {value, selectionStart} = event.target
+                    let pos = type.path.length
+                    if (pos + 1 > selectionStart) {
+                        if (value.length > pos) {
+                            event.target.setSelectionRange(pos + 1, pos + 1)
+                        } else {
+                            type.input = type.path + ' '
+                            event.target.setSelectionRange(pos + 1, pos + 1)
+                            setTimeout(() => {
+                                type.input = type.path
+                            })
+                        }
+                    }
+                }
+                //HOME键，同左键的作用一样
+                if (event.keyCode === 36) {
+                    let {value} = event.target
+                    let pos = type.path.length
+                    if (value.length < pos) {
+                        pos = pos + 1
+                    }
+                    setTimeout(() => {
+                        event.target.setSelectionRange(pos, pos)
+                    })
+                }
+                //DELETE键，同左键的作用一样
                 if (event.keyCode === 8) {
-                    if (type.input === type.path) {
-                        event.returnValue = false
+                    let {value, selectionStart} = event.target
+                    let pos = type.path.length
+                    if (pos === selectionStart) {
+                        setTimeout(() => {
+                            type.input = value
+                        })
+                        setTimeout(() => {
+                            event.target.setSelectionRange(pos, pos)
+                        }, 1)
                     }
                 }
             },
@@ -227,12 +269,6 @@
                 let textArea = event.target
                 if (textArea.scrollHeight > 195) {
                     textArea.style.height = textArea.scrollHeight + 'px'
-                }
-                if (event.target.value === '') {
-                    type.input = type.path
-                }
-                if (type.input.length < type.path.length) {
-                    type.input = type.path
                 }
                 if (type.input.substr(0, type.path.length) !== type.path) {
                     type.input = type.path
