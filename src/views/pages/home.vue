@@ -3,26 +3,28 @@
          @contextmenu="$event.preventDefault()"
          @click="menu.shellLocation.show = false;menu.categoryLocation.show = false"
     >
-        <div class="toolbar">
-            <div class="left">
-                <icon name="menu" :scale="scale"></icon>
-                <span>Shell管理器</span>
-            </div>
-            <div class="right">
-                <div class="search">
-                    <icon v-show="false" @click="leftBarIsClose = !leftBarIsClose" name="menu" :scale="scale"></icon>
-                    <div class="input-container">
-                        <icon name="search" :scale="scale"></icon>
-                        <input type="text">
+        <c-header>
+            <div class="toolbar">
+                <div class="left">
+                    <div class="logo">
+                        <icon name="menu" :scale="scale"></icon>
+                        <span>Shell管理器</span>
+                    </div>
+                    <div class="search">
+                        <icon v-show="false" @click="leftBarIsClose = !leftBarIsClose" name="menu" :scale="scale"></icon>
+                        <div class="input-container">
+                            <icon name="search" :scale="scale"></icon>
+                            <input type="text">
+                        </div>
                     </div>
                 </div>
-                <div class="options">
+                <div class="right">
                     <icon @click="isShow.shell = true" name="add" :scale="scale"></icon>
+                    <icon name="setting" :scale="scale"></icon>
                     <span>|</span>
-                    <icon name="close" :scale="scale"></icon>
                 </div>
             </div>
-        </div>
+        </c-header>
         <div class="content-container">
             <div class="category"
                  @contextmenu="$event.preventDefault()"
@@ -371,31 +373,27 @@
 
         .toolbar {
             height: 40px;
-            padding: 5px;
             display: flex;
 
-
             .left {
-                display: flex;
-                align-items: center;
-                width: 200px;
-                color: white;
-                height: 100%;
-
-                span {
-                    margin-left: 10px;
-                }
-            }
-
-            .right {
-                display: flex;
                 flex: 1;
-                align-items: center;
-                justify-content: space-between;
+                display: flex;
+
+                .logo{
+                    display: flex;
+                    align-items: center;
+                    width: 150px;
+                    color: white;
+                    height: 100%;
+
+                    span {
+                        margin-left: 10px;
+                    }
+                }
 
                 .search {
-                    display: flex;
                     flex: 1;
+                    display: flex;
                     align-items: center;
 
                     .input-container {
@@ -404,8 +402,8 @@
                         background: #38383C;
                         border-radius: 20px;
                         padding: 5px 10px;
-                        margin-left: 10px;
-                        width: 90%;
+                        margin-right: 10px;
+                        width: 100%;
                         box-sizing: border-box;
 
                         img {
@@ -430,17 +428,18 @@
                         }
                     }
                 }
+            }
 
-                .options {
-                    display: flex;
-                    align-items: center;
+            .right {
+                display: flex;
+                align-items: center;
 
-                    img, svg {
-                        margin: 0 5px;
-                        cursor: pointer;
-                    }
+                img, svg {
+                    margin: 0 5px;
                 }
             }
+
+
         }
 
         .content-container {

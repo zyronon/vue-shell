@@ -14,6 +14,7 @@ import Message from '../components/message'
 import loading from '../components/loading'
 import CButton from '../components/button'
 // import Message2 from '../components/message2'
+import CHeader from '../components/header'
 
 
 // 全局混入
@@ -65,7 +66,8 @@ export default {
         cTableColumn,
         cTableTbody,
         loading,
-        CButton
+        CButton,
+        CHeader
 
     }
 }

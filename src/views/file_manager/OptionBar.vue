@@ -1,6 +1,10 @@
 <template>
     <div class="option-bar">
         <div class="nav-bar">
+            <div class="search">
+                <img class="arrow-right" src="@/assets/images/search.png" alt="">
+                <input type="text" value="" placeholder="搜索">
+            </div>
             <div class="option-container">
                 <div class="breadcrumb-container">
                     <div class="breadcrumb">
@@ -43,10 +47,6 @@
                         <!--                        <img class="refresh" src="@/assets/images/refresh.png" alt="" @click="gotoPath(currentPath)">-->
                     </div>
                 </div>
-            </div>
-            <div class="search">
-                <img class="arrow-right" src="@/assets/images/search.png" alt="">
-                <input type="text" value="" placeholder="搜索">
             </div>
         </div>
     </div>

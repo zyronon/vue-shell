@@ -13,13 +13,15 @@
                 asdfasdfasd
             </div>
         </div>
+        <c-header>
+            <option-bar></option-bar>
+        </c-header>
         <div class="tab-content" :class="readFiles.length?'show-file-tab':''">
             <div :style="{'width':widths.directoryWidth+'px'}" class="left-dir">
                 <directory></directory>
             </div>
             <div :style="{'width':viewWidth - widths.directoryWidth+'px'}" class="dir-content">
                 <div class="gutter-vertical" @mousedown="resize.directory = true"></div>
-                <option-bar></option-bar>
                 <folder :directory-width="widths.directoryWidth" @openFile="readFileContent"></folder>
             </div>
         </div>
@@ -64,6 +66,8 @@
         },
         data() {
             return {
+                scale: 2,
+
                 viewWidth: 1000,
                 contextMenu: {
                     isShow: false,
@@ -121,7 +125,20 @@
             },
             async init() {
                 let shell = this.$route.query.shell
+                shell = {
+                    addHeader: {checked: true, key: '', value: ''},
+                    categoryId: 'lu0pgeo7sakimtmi17',
+                    changeDate: 1607845613212,
+                    createDate: 1607845613212,
+                    headers: [],
+                    id: 'awn6m5ygzdtkimtrj4s',
+                    ip: '',
+                    note: '',
+                    pwd: 'c',
+                    url: 'http://localhost/shell.php',
+                }
                 shell.shellUrl = this.$geneShellUrl(shell)
+
                 this.setShell(shell)
             },
 
