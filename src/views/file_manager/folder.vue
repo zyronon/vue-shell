@@ -260,8 +260,8 @@
 
     .folder {
         /*padding: 30px 0 0px 0;*/
-        /*height: 100%;*/
-        height: calc(100% - 30px);
+        height: 100%;
+        /*height: calc(100% - 40px);*/
         box-sizing: border-box;
         overflow-y: auto;
         overflow-x: hidden;

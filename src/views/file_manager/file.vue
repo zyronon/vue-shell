@@ -45,7 +45,6 @@
 </template>
 
 <script>
-    import axios from 'axios'
     import DirItem from './DirItem'
     import OptionBar from './OptionBar'
     import directory from './directory'
@@ -54,8 +53,6 @@
     import CodeEdit from './CodeEdit'
     import {mapActions, mapMutations, mapState} from 'vuex'
     import {TYPES} from '../../store/mutation-types'
-
-
     export default {
         components: {
             'dir-item': DirItem,
@@ -229,7 +226,8 @@
         .tab-content {
             //border-top: 1px solid gray;
             display: flex;
-            height: 100%;
+            height: calc(100% - 40px);
+
 
             .left-dir {
                 overflow: auto;
@@ -263,7 +261,7 @@
         }
 
         .show-file-tab {
-            height: calc(100% - 30px);
+            height: calc(100% - 70px);
         }
 
         .file-tab {

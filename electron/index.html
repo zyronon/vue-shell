@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <!--    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">-->
+    <!--    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">-->
+
+    <script crossorigin="anonymous"
+            integrity="sha512-BKbSR+cfyxLdMAsE0naLReFSLg8/pjbgfxHh/k/kUC82Hy7r6HtR5hLhobaln2gcTvzkyyehrdREdjpsQwy2Jw=="
+            src="https://lib.baomitu.com/vue/2.6.12/vue.min.js"></script>
+    <title>Hello World!</title>
+</head>
+<body>
+<div class="app" id="app">
+    1111{{test}} World!
+
+    <button onclick="createWindow()">打开新窗口</button>
+    <button onclick="openFileDialog()">打开弹框</button>
+    <button onclick="hideWindow()">最小化窗口</button>
+    <button onclick="maximizeWindow()">最大化窗口</button>
+    <button onclick="closeWindow()">关闭窗口</button>
+</div>
+
+<!-- You can also require other files to run in this process -->
+<script src="./renderer.js"></script>
+<script>
+
+</script>
+</body>
+</html>

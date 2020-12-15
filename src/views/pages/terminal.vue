@@ -1,31 +1,33 @@
 <template>
     <div class="content"
          ref="content"
-         :style="fontSizeStyle"
          :themes="currentColor"
          @wheel="zoomFontSize">
-        <div class="option-bar">
-            <div class="themes">
-                <span>主题：</span>
-                <div class="theme" v-for="item of themes" :style="{background:item.color}"
-                     @click="currentColor = item.class"></div>
+        <c-header>
+            <div class="option-bar">
+                <div class="themes">
+                    <div class="theme" v-for="item of themes" :style="{background:item.color}"
+                         @click="currentColor = item.class"></div>
+                </div>
+                <div class="zoom">
+                    <span>100%</span>
+                    <svg @click="fontSize--" t="1606139969145" class="icon zoom-in" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="4996" width="200" height="200">
+                        <path d="M785.06666667 473.16385185h-546.13333334c-21.35988148 0-38.83614815 17.47626667-38.83614815 38.83614815 0 10.67994075 4.36906667 20.38897778 11.40811852 27.42802963 7.03905185 7.03905185 16.74808889 11.40811852 27.42802963 11.40811852h546.13333334c21.35988148 0 38.83614815-17.47626667 38.83614815-38.83614815s-17.47626667-38.83614815-38.83614815-38.83614815z"
+                              p-id="4997" fill="#bfbfbf"></path>
+                    </svg>
+                    <svg @click="fontSize++" t="1606139987476" class="icon zoom-out" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="5787" width="200" height="200">
+                        <path d="M950.857143 460.8H570.514286V73.142857c0-29.257143-21.942857-58.514286-58.514286-58.514286s-51.2 29.257143-51.2 58.514286v387.657143H73.142857c-29.257143 0-51.2 21.942857-51.2 51.2s21.942857 58.514286 51.2 58.514286h387.657143V950.857143c0 29.257143 21.942857 58.514286 58.514286 58.514286s58.514286-21.942857 58.514285-58.514286V570.514286H950.857143c29.257143 0 58.514286-21.942857 58.514286-58.514286s-29.257143-51.2-58.514286-51.2z"
+                              p-id="5788" fill="#bfbfbf"></path>
+                    </svg>
+                    <c-button  @click="fontSize = 18">重置</c-button>
+                </div>
             </div>
-            <div class="zoom">
-                <span>100%</span>
-                <svg @click="fontSize--" t="1606139969145" class="icon zoom-in" viewBox="0 0 1024 1024" version="1.1"
-                     xmlns="http://www.w3.org/2000/svg" p-id="4996" width="200" height="200">
-                    <path d="M785.06666667 473.16385185h-546.13333334c-21.35988148 0-38.83614815 17.47626667-38.83614815 38.83614815 0 10.67994075 4.36906667 20.38897778 11.40811852 27.42802963 7.03905185 7.03905185 16.74808889 11.40811852 27.42802963 11.40811852h546.13333334c21.35988148 0 38.83614815-17.47626667 38.83614815-38.83614815s-17.47626667-38.83614815-38.83614815-38.83614815z"
-                          p-id="4997" fill="#bfbfbf"></path>
-                </svg>
-                <svg @click="fontSize++" t="1606139987476" class="icon zoom-out" viewBox="0 0 1024 1024" version="1.1"
-                     xmlns="http://www.w3.org/2000/svg" p-id="5787" width="200" height="200">
-                    <path d="M950.857143 460.8H570.514286V73.142857c0-29.257143-21.942857-58.514286-58.514286-58.514286s-51.2 29.257143-51.2 58.514286v387.657143H73.142857c-29.257143 0-51.2 21.942857-51.2 51.2s21.942857 58.514286 51.2 58.514286h387.657143V950.857143c0 29.257143 21.942857 58.514286 58.514286 58.514286s58.514286-21.942857 58.514285-58.514286V570.514286H950.857143c29.257143 0 58.514286-21.942857 58.514286-58.514286s-29.257143-51.2-58.514286-51.2z"
-                          p-id="5788" fill="#bfbfbf"></path>
-                </svg>
-                <div @click="fontSize = 18" class="button">重置</div>
-            </div>
-        </div>
-        <div class="terminal" ref="terminal" :themes="currentColor">
+        </c-header>
+        <div class="terminal" ref="terminal"
+             :style="fontSizeStyle"
+             :themes="currentColor">
             <div class="row" v-for="type of row">
                 <div class="input-history">
                     <span class="path">{{type.path}}</span>
@@ -50,7 +52,6 @@
 </template>
 
 <script>
-
     export default {
         data() {
             return {
@@ -77,7 +78,7 @@
                         color: '#cccccc',
                     },
                 ],
-                currentColor: 'green',
+                currentColor: 'win',
                 shell: {}
             }
         },
@@ -122,6 +123,18 @@
             },
             async getPwd() {
                 this.shell = this.$route.query.shell
+                this.shell = {
+                    addHeader: {checked: true, key: '', value: ''},
+                    categoryId: 'lu0pgeo7sakimtmi17',
+                    changeDate: 1607845613212,
+                    createDate: 1607845613212,
+                    headers: [],
+                    id: 'awn6m5ygzdtkimtrj4s',
+                    ip: '',
+                    note: '',
+                    pwd: 'c',
+                    url: 'http://localhost/shell.php',
+                }
                 let cmd = 'echo %25cd%25'
                 let phpCode = 'system(\'' + cmd + ' 2>%261\');'
                 let res = await this.$genRequest(this.shell, phpCode, 'GBK')
@@ -301,12 +314,12 @@
         }
 
         .option-bar {
-            margin-top: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
 
             .themes {
+                margin-left: 10px;
                 display: flex;
                 align-items: center;
 

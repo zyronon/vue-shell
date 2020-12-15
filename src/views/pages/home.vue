@@ -311,14 +311,12 @@
             goto(type, item) {
                 switch (type) {
                     case 'terminal':
-                        // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);
                         this.$router.push({
                             path: '/terminal',
                             query: {shell: item || this.menu.chooseItem}
                         })
                         break
                     case 'file':
-                        // console.log(location.href = 'file.html?url=' + item.url + '&pwd=' + item.pwd);
                         this.$router.push({
                             path: '/file',
                             query: {shell: item || this.menu.chooseItem}
@@ -444,7 +442,7 @@
 
         .content-container {
             display: flex;
-            height: calc(100% - 50px);
+            height: calc(100% - 40px);
 
             .category {
                 width: 200px;

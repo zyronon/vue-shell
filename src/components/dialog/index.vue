@@ -76,7 +76,7 @@
         top: 100px;
         left: 25%;
         position: absolute;
-        border-radius: 10px;
+        border-radius: 5px;
         background: $dialog-bg-color;
         width: 50%;
         //height: 100px;
