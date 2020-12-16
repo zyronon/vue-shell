@@ -12,6 +12,8 @@
 </template>
 
 <script>
+    const electron = require('electron')
+
     export default {
         name: 'index',
         props: {},
@@ -34,6 +36,8 @@
             large() {
             },
             close() {
+                let name = electron.remote.app.getName()
+                alert(name)
             },
         }
     }

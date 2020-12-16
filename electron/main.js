@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, Menu, ipcMain} = require('electron')
+const {app, dialog,BrowserWindow, Menu, ipcMain} = require('electron')
 const path = require('path')
 const fs = require('fs')	//引入Node fs库
 
@@ -24,9 +24,11 @@ function createWindow() {
 
     // and load the index.html of the app.
     // win.loadFile('./dist/index.html')
-    win.loadFile('index.html')
+    // win.loadFile('index.html')
     // win.loadFile('http://localhost:8863/')
+    // win.loadURL(`file://${__dirname}../dist/index.html`)
     // win.loadURL(`file://${__dirname}/index.html`)
+    win.loadURL(`D:\\safe\\code\\vue-shell\\dist/index.html`)
 
 }
 
@@ -54,8 +56,22 @@ app.on('window-all-closed', function () {
 
 
 const openFile = (file) => {
-    const content = fs.readFileSync(file).toString()
-    win.webContents.send('file-opened', file, content) // 我们将通过"file-opened"通道将文件的名称及其内容发送到渲染器进程
+    const res = dialog.showOpenDialogSync({
+        title: '对话框窗口的标题',
+        // 默认打开的路径，比如这里默认打开下载文件夹
+        defaultPath: app.getPath('downloads'),
+        buttonLabel: '确认按钮文案',
+        // 限制能够选择的文件类型
+        filters: [
+            // { name: 'Images', extensions: ['jpg', 'png', 'gif'] },
+            // { name: 'Movies', extensions: ['mkv', 'avi', 'mp4'] },
+            // { name: 'Custom File Type', extensions: ['as'] },
+            { name: 'All Files', extensions: ['*'] },
+        ],
+        properties: [ 'openFile', 'openDirectory', 'multiSelections', 'showHiddenFiles' ],
+        message: 'mac文件选择器title'
+    })
+    console.log('res', res)
 }
 
 function closeWindow() {

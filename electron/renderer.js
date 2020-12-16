@@ -10,7 +10,6 @@ const mainProcess = remote.require('./main.js')
 
 function createWindow() {
     mainProcess.createWindow()
-    // mainProcess.openFile()
 }
 
 function openFileDialog() {
@@ -26,6 +25,7 @@ function hideWindow() {
 function maximizeWindow() {
     mainProcess.maximizeWindow()
 }
+
 
 ipcRenderer.on('file-opened', (event, file, content) => {
     console.log(content)
