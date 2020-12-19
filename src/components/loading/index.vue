@@ -35,33 +35,33 @@
         }
     }
 </script>
-<style lang="scss" scoped>
-    $width: 14px;
-    $font-size: 2.8px;
+<style lang="less" scoped>
+    @width: 14px;
+    @font-size: 2.8px;
     .loading {
         line-height: 1;
         vertical-align: middle;
         display: inline-block;
-        width: $width;
-        height: $width;
-        font-size: $font-size;
+        width: @width;
+        height: @width;
+        font-size: @font-size;
 
 
         &.small {
-            width: $width;
-            height: $width;
-            font-size: $font-size;
+            width: @width;
+            height: @width;
+            font-size: @font-size;
         }
         &.normal {
-            width: 2* $width;
-            height: 2* $width;
-            font-size: 2 *$font-size;
+            width: 2* @width;
+            height: 2* @width;
+            font-size: 2 *@font-size;
         }
 
         &.large {
-            width: 4* $width;
-            height: 4* $width;
-            font-size: 4 *$font-size;
+            width: 4* @width;
+            height: 4* @width;
+            font-size: 4 *@font-size;
         }
     }
 

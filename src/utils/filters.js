@@ -1,5 +1,4 @@
 import dayjs from 'dayjs'
-import de from 'element-ui/src/locale/lang/de'
 
 export default {
     // 时间转换器

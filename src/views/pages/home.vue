@@ -353,19 +353,19 @@
     }
 </script>
 
-<style lang="scss" scoped>
-    @import "../../assets/scss/color";
+<style lang="less" scoped>
+    @import "../../assets/less/color";
 
-    $border-color: gray;
-    $head-bg-color: rgb(33, 33, 36);
-    $dialog-bg-color: rgb(54, 54, 54);
-    $input-bg-color: rgb(67, 67, 67);
+    @border-color: gray;
+    @head-bg-color: rgb(33, 33, 36);
+    @dialog-bg-color: rgb(54, 54, 54);
+    @input-bg-color: rgb(67, 67, 67);
 
     .home {
         padding: 0;
         margin: 0;
         position: relative;
-        background: $main-bg-color;
+        background: @main-bg-color;
         height: 100%;
 
 
@@ -420,7 +420,7 @@
                             display: inline-block;
                             font-size: inherit;
                             outline: none;
-                            transition: $border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+                            transition: @border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
                             width: 100%;
 
                         }
@@ -463,7 +463,7 @@
                     display: flex;
                     align-items: center;
                     color: white;
-                    border: 1px solid $main-bg-color;
+                    border: 1px solid @main-bg-color;
 
                     .name {
                         margin-left: 10px;
@@ -472,21 +472,21 @@
 
                     &:hover {
                         border-radius: 4px;
-                        border: 1px solid $second-bg-color;
-                        background: $second-bg-color;
+                        border: 1px solid @second-bg-color;
+                        background: @second-bg-color;
                     }
 
                     &.active {
                         border-radius: 4px;
-                        border: 1px solid $second-bg-color;
-                        background: $second-bg-color;
+                        border: 1px solid @second-bg-color;
+                        background: @second-bg-color;
                     }
                 }
             }
 
             .content {
                 transition: all .3s;
-                background: $second-bg-color;
+                background: @second-bg-color;
                 width: calc(100% - 200px);
                 overflow: auto;
                 box-sizing: border-box;

@@ -97,8 +97,8 @@
     }
 </script>
 
-<style scoped lang="scss">
-    @import "../../assets/scss/color";
+<style scoped lang="less">
+    @import "../../assets/less/color";
 
 
     .option-bar {
@@ -110,7 +110,7 @@
             flex: 1;
             display: flex;
 
-            border: 1px solid $main-bg-color;
+            border: 1px solid @main-bg-color;
             height: 100%;
 
             input {
@@ -122,7 +122,7 @@
                 height: 100%;
                 width: 100%;
                 color: rgb(187, 187, 187);
-                background: $main-bg-color;
+                background: @main-bg-color;
 
                 &:focus {
                     /*border: 1px solid rgb(0, 120, 215);*/
@@ -137,7 +137,7 @@
                 align-items: center;
 
                 div {
-                    border-left: 1px solid $main-bg-color;
+                    border-left: 1px solid @main-bg-color;
                     height: 100%;
                     width: 30px;
                     display: flex;
@@ -145,7 +145,7 @@
                     align-items: center;
 
                     &:hover {
-                        background: $main-bg-color;
+                        background: @main-bg-color;
                     }
                 }
 
@@ -171,7 +171,7 @@
         }
 
         .search {
-            border: 1px solid $main-bg-color;
+            border: 1px solid @main-bg-color;
             width: 200px;
             display: flex;
             align-items: center;
@@ -189,7 +189,7 @@
             }
 
             input {
-                background: $main-bg-color;
+                background: @main-bg-color;
                 box-sizing: border-box;
                 outline: 0;
                 border: 0;

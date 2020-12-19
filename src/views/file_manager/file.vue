@@ -191,17 +191,16 @@
     }
 </script>
 
-<style lang="scss" scoped>
-
-    @import "../../assets/scss/color";
+<style lang="less" scoped>
+    @import "../../assets/less/color";
 
     .content {
         -webkit-user-select: none; //禁止文字被选中
         height: 100%;
         width: 100%;
         position: relative;
-        background: $main-bg-color;
-        color: $text-color;
+        background: @main-bg-color;
+        color: @text-color;
 
         img {
             height: 15px;

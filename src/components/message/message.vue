@@ -87,7 +87,7 @@
         }
     }
 </script>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 
     .fade-enter-active, .fade-leave-active {
         opacity: 1;

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App'
-import './assets/scss/index.scss'
+import './assets/less/index.less'
 import router from './router'
 import store from './store'
 import mixin from './utils/mixin'

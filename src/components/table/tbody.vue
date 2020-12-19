@@ -1,6 +1,5 @@
 <script>
     import {mapState} from 'vuex'
-    import {addClass, hasClass, removeClass} from 'element-ui/src/utils/dom'
 
     export default {
         name: 'cTableTbody',
@@ -216,14 +215,14 @@
         }
     }
 </script>
-<style scoped lang="scss">
-    @import "../../assets/scss/color";
+<style scoped lang="less">
+    @import "../../assets/less/color";
 
-    $border-color: gray;
-    //$main-bg-color: #2B2B2B;
-    $head-bg-color: rgb(33, 33, 36);
-    $dialog-bg-color: rgb(54, 54, 54);
-    $input-bg-color: rgb(67, 67, 67);
+    @border-color: gray;
+    //@main-bg-color: #2B2B2B;
+    @head-bg-color: rgb(33, 33, 36);
+    @dialog-bg-color: rgb(54, 54, 54);
+    @input-bg-color: rgb(67, 67, 67);
 
     .table-body {
         overflow: auto;
@@ -236,7 +235,7 @@
             table-layout: fixed;
             //width: 100%;
             border-collapse: collapse;
-            //border: 1px solid $border-color;
+            //border: 1px solid @border-color;
 
             thead {
                 text-align: left;
@@ -249,7 +248,7 @@
                 th {
 
                     padding: 5px;
-                    // border-right: 1px solid $border-color;
+                    // border-right: 1px solid @border-color;
                     position: relative;
 
                     &:nth-last-child(1) {
@@ -272,15 +271,15 @@
                     }
                 }
 
-                $arrow-color: #ccc;
+                @arrow-color: #ccc;
 
                 .up {
                     &::after {
                         content: '';
                         width: 5px;
                         height: 5px;
-                        border-top: 1px solid $arrow-color;
-                        border-left: 1px solid $arrow-color;
+                        border-top: 1px solid @arrow-color;
+                        border-left: 1px solid @arrow-color;
                         transform: rotate(45deg) translateY(7px);
                         position: absolute;
                         left: 50%;
@@ -293,8 +292,8 @@
                         content: '';
                         width: 5px;
                         height: 5px;
-                        border-bottom: 1px solid $arrow-color;
-                        border-right: 1px solid $arrow-color;
+                        border-bottom: 1px solid @arrow-color;
+                        border-right: 1px solid @arrow-color;
                         transform: rotate(45deg) translate(-2px, 4px);
                         position: absolute;
                         left: 50%;
@@ -314,11 +313,11 @@
 
 
                     &.active {
-                        background: $hover-color;
+                        background: @hover-color;
                     }
 
                     &:hover {
-                        background: $hover-color;
+                        background: @hover-color;
                     }
                 }
 

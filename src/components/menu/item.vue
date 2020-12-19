@@ -69,8 +69,8 @@
                     this.node = {width: clientWidth, height: clientHeight}
                     let {x, y} = e
                     this.location = {x, y}
-                    // this.$console(this.node)
-                    // console.log(this.$parent.node.width);
+                    // this.@console(this.node)
+                    // console.log(this.@parent.node.width);
 
                 }
             }
@@ -78,17 +78,17 @@
     }
 </script>
 
-<style scoped lang="scss">
-    @import "../../assets/scss/color";
+<style scoped lang="less">
+    @import "../../assets/less/color";
 
-    $context-menu-border-color: rgb(81, 81, 81);
+    @context-menu-border-color: rgb(81, 81, 81);
     .item {
         display: flex;
         justify-content: space-between;
         align-items: center;
         min-width: 100px;
         padding: 3px 10px;
-        border-bottom: 1px solid $context-menu-border-color;
+        border-bottom: 1px solid @context-menu-border-color;
         position: relative;
         cursor: context-menu;
 
@@ -99,7 +99,7 @@
         }
 
         &:hover {
-            background: $hover-color;
+            background: @hover-color;
 
             & > .children {
                 display: block;
@@ -120,8 +120,8 @@
         .children {
             display: none;
             z-index: 9;
-            background: $main-bg-color;
-            border: 1px solid $context-menu-border-color;;
+            background: @main-bg-color;
+            border: 1px solid @context-menu-border-color;;
             position: absolute;
             /*left: 100%;*/
             top: -4px;
@@ -132,7 +132,7 @@
         opacity: .5;
 
         &:hover {
-            background: $main-bg-color;
+            background: @main-bg-color;
         }
     }
 

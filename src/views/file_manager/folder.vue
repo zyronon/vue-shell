@@ -255,8 +255,8 @@
     }
 </script>
 
-<style scoped lang="scss">
-    @import "../../assets/scss/color";
+<style scoped lang="less">
+    @import "../../assets/less/color";
 
     .folder {
         /*padding: 30px 0 0px 0;*/
@@ -267,9 +267,9 @@
         overflow-x: hidden;
         position: relative;
         width: 100%;
-        color: $text-color;
-       // background: $main-bg-color;
-        background: $second-bg-color;
+        color: @text-color;
+       // background: @main-bg-color;
+        background: @second-bg-color;
 
         img {
             height: 15px;
@@ -301,15 +301,15 @@
                 }
             }
 
-            $arrow-color: #ccc;
+            @arrow-color: #ccc;
 
             .up {
                 &::after {
                     content: '';
                     width: 5px;
                     height: 5px;
-                    border-top: 1px solid $arrow-color;
-                    border-left: 1px solid $arrow-color;
+                    border-top: 1px solid @arrow-color;
+                    border-left: 1px solid @arrow-color;
                     transform: rotate(45deg) translateY(7px);
                     position: absolute;
                     left: 50%;
@@ -322,8 +322,8 @@
                     content: '';
                     width: 5px;
                     height: 5px;
-                    border-bottom: 1px solid $arrow-color;
-                    border-right: 1px solid $arrow-color;
+                    border-bottom: 1px solid @arrow-color;
+                    border-right: 1px solid @arrow-color;
                     transform: rotate(45deg) translate(-2px, 4px);
                     position: absolute;
                     left: 50%;
@@ -356,13 +356,13 @@
 
                 .name {
                     input {
-                        background-color: $main-bg-color;
+                        background-color: @main-bg-color;
                         background-image: none;
-                        border: 2px solid $hover-color;
+                        border: 2px solid @hover-color;
                         border-radius: 2px;
                         -webkit-box-sizing: border-box;
                         box-sizing: border-box;
-                        color: $text-color;
+                        color: @text-color;
                         display: inline-block;
                         font-size: inherit;
                         height: 30px;
@@ -377,11 +377,11 @@
                 }
 
                 &.active {
-                    background: $hover-color;
+                    background: @hover-color;
                 }
 
                 &:hover {
-                    background: $hover-color;
+                    background: @hover-color;
                 }
             }
 

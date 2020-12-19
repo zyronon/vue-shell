@@ -12,7 +12,7 @@
 </template>
 
 <script>
-    const electron = require('electron')
+    // const electron = require('electron')
 
     export default {
         name: 'index',
@@ -36,14 +36,14 @@
             large() {
             },
             close() {
-                let name = electron.remote.app.getName()
-                alert(name)
+                // let name = electron.remote.app.getName()
+                // alert(name)
             },
         }
     }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
     .header {
         height: 40px;
         display: flex;

@@ -64,15 +64,15 @@
     }
 </script>
 
-<style scoped lang="scss">
-    @import "../../assets/scss/color";
+<style scoped lang="less">
+    @import "../../assets/less/color";
 
-    $context-menu-border-color: rgb(81, 81, 81);
+    @context-menu-border-color: rgb(81, 81, 81);
     .menu {
-        background: $main-bg-color;
-        border: 1px solid $context-menu-border-color;
+        background: @main-bg-color;
+        border: 1px solid @context-menu-border-color;
         position: fixed;
-        color: $text-color;
+        color: @text-color;
 
     }
 

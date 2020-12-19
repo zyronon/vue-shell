@@ -47,13 +47,13 @@
     }
 </script>
 
-<style scoped lang="scss">
-    $border-color: gray;
-    $main-bg-color: #2B2B2B;
-    $head-bg-color: rgb(33, 33, 36);
-    $dialog-bg-color: rgb(54, 54, 54);
-    $input-bg-color: rgb(67, 67, 67);
-    $main-bg-color: #2B2B2B;
+<style scoped lang="less">
+    @border-color: gray;
+    @main-bg-color: #2B2B2B;
+    @head-bg-color: rgb(33, 33, 36);
+    @dialog-bg-color: rgb(54, 54, 54);
+    @input-bg-color: rgb(67, 67, 67);
+    @main-bg-color: #2B2B2B;
 
     .my-dialog {
         position: fixed;
@@ -77,10 +77,10 @@
         left: 25%;
         position: absolute;
         border-radius: 5px;
-        background: $dialog-bg-color;
+        background: @dialog-bg-color;
         width: 50%;
         //height: 100px;
-        border: 1px solid $main-bg-color;
+        border: 1px solid @main-bg-color;
 
         .header {
             font-weight: bold;
@@ -117,10 +117,10 @@
                     }
 
                     input {
-                        background-color: $input-bg-color;
+                        background-color: @input-bg-color;
                         background-image: none;
                         border-radius: 4px;
-                        border: 1px solid $input-bg-color;;
+                        border: 1px solid @input-bg-color;;
                         box-sizing: border-box;
                         color: white;
                         display: inline-block;
@@ -134,10 +134,10 @@
                     }
 
                     select {
-                        background-color: $input-bg-color;
+                        background-color: @input-bg-color;
                         background-image: none;
                         border-radius: 4px;
-                        border: 1px solid $input-bg-color;;
+                        border: 1px solid @input-bg-color;;
                         box-sizing: border-box;
                         color: white;
                         display: inline-block;
@@ -170,7 +170,7 @@
                             }
 
                             th {
-                                border-right: 1px solid $border-color;
+                                border-right: 1px solid @border-color;
 
                                 &:nth-last-child(1) {
                                     border-right: none;
@@ -182,14 +182,14 @@
                             /*text-align: center;*/
                             tr {
                                 //background-color: rgb(46, 46, 46);
-                                background-color: $input-bg-color;
+                                background-color: @input-bg-color;
 
                                 height: 30px;
-                                border-bottom: 1px solid $border-color;
+                                border-bottom: 1px solid @border-color;
                             }
 
                             td {
-                                border-right: 1px solid $border-color;
+                                border-right: 1px solid @border-color;
 
                                 &:nth-last-child(1) {
                                     border-right: none;
@@ -197,7 +197,7 @@
                             }
 
                             input[type="text"] {
-                                background-color: $input-bg-color;
+                                background-color: @input-bg-color;
                                 background-image: none;
                                 border: none;
                                 box-sizing: border-box;

@@ -66,7 +66,7 @@
     import 'codemirror/theme/dracula.css'//dracula主题
     import 'codemirror/theme/material-darker.css'
     // import 'codemirror/theme/idea.css'
-    import '@/assets/scss/idea-dark.css'
+    import '@/assets/less/idea-dark.css'
     import 'codemirror/theme/monokai.css'
 
     // import {Base64} from 'js-base64';
@@ -157,9 +157,9 @@
     }
 </script>
 
-<style scoped lang="scss">
-    $hover-color: rgb(229, 243, 255);
-    @import "src/assets/scss/color";
+<style scoped lang="less">
+    @hover-color: rgb(229, 243, 255);
+    @import "src/assets/less/color";
 
     img {
         height: 15px;
@@ -170,7 +170,7 @@
         height: calc(100% - 70px);
 
         .header {
-            background: $main-bg-color;
+            background: @main-bg-color;
             display: flex;
             align-items: center;
             justify-content: space-between;

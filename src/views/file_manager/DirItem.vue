@@ -60,8 +60,8 @@
     }
 </script>
 
-<style scoped lang="scss">
-    @import "../../assets/scss/color";
+<style scoped lang="less">
+    @import "../../assets/less/color";
 
 
     .folder {
@@ -84,7 +84,7 @@
                     width: 0;
                     height: 0;
                     border: 7px solid transparent;
-                    border-left: 12px solid $folder-color;
+                    border-left: 12px solid @folder-color;
                     transform: translate(-4px, 3px) rotate(90deg);
 
                     &.close {
@@ -110,12 +110,12 @@
             }
 
             &:hover {
-                background: $active-color;
+                background: @active-color;
             }
         }
 
         .active {
-            background: $active-color;
+            background: @active-color;
 
         }
     }

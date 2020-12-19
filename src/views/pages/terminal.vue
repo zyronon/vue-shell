@@ -291,26 +291,26 @@
     }
 </script>
 
-<style lang="scss" scoped>
-    @import "../../assets/scss/color";
+<style lang="less" scoped>
+    @import "../../assets/less/color";
 
-    $font-color: rgb(0, 255, 0);
+    @font-color: rgb(0, 255, 0);
 
-    $win-bg-color: #47494A;
+    @win-bg-color: #47494A;
     //$win-bg-color: rgb(60, 63, 65);
-    $green-bg-color: #000;
+    @green-bg-color: #000;
     .content {
         overflow: auto;
         height: 100%;
 
         &[themes=green] {
             color: #00FF00;
-            background: $green-bg-color;
+            background: @green-bg-color;
         }
 
         &[themes=win] {
             color: #CCCCCC;
-            background: $win-bg-color;
+            background: @win-bg-color;
         }
 
         .option-bar {
@@ -373,11 +373,11 @@
 
 
                         &[themes=green] {
-                            background: $green-bg-color;
+                            background: @green-bg-color;
                         }
 
                         &[themes=win] {
-                            background: $win-bg-color;
+                            background: @win-bg-color;
                         }
                     }
 
@@ -393,16 +393,16 @@
                         box-sizing: border-box;
                         border: 0;
                         outline: 0;
-                        background: $green-bg-color;
+                        background: @green-bg-color;
 
                         &[themes=green] {
                             color: #00FF00;
-                            background: $green-bg-color;
+                            background: @green-bg-color;
                         }
 
                         &[themes=win] {
                             color: #CCCCCC;
-                            background: $win-bg-color;
+                            background: @win-bg-color;
                         }
                     }
                 }

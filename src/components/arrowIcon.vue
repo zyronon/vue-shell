@@ -31,8 +31,8 @@
     }
 </script>
 
-<style scoped lang="scss">
-    @import "../assets/scss/color";
+<style scoped lang="less">
+    @import "../assets/less/color";
 
     svg {
         transform: rotate(90deg) scale(.7);

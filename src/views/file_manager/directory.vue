@@ -232,7 +232,7 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
     .folders {
         float: left;
         color: rgb(186,173,180);
