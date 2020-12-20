@@ -22,13 +22,7 @@ function createWindow() {
     })
     win.webContents.openDevTools({mode: 'bottom'})
 
-    // and load the index.html of the app.
-    // win.loadFile('./dist/index.html')
-    // win.loadFile('index.html')
-    // win.loadFile('http://localhost:8863/')
-    // win.loadURL(`file://${__dirname}../dist/index.html`)
-    // win.loadURL(`file://${__dirname}/index.html`)
-    win.loadURL(`D:\\safe\\code\\vue-shell\\dist/index.html`)
+    win.loadFile('index.html')
 
 }
 

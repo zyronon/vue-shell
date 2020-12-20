@@ -19,9 +19,11 @@ function openFileDialog() {
 function closeWindow() {
     mainProcess.closeWindow()
 }
+
 function hideWindow() {
     mainProcess.hideWindow()
 }
+
 function maximizeWindow() {
     mainProcess.maximizeWindow()
 }
