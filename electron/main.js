@@ -1,18 +1,16 @@
 // Modules to control application life and create native browser window
-const {app, dialog,BrowserWindow, Menu, ipcMain} = require('electron')
+const {app, dialog, BrowserWindow, Menu, ipcMain} = require('electron')
 const path = require('path')
 const fs = require('fs')	//引入Node fs库
 
 // 在主进程中
+let mainWin
 
-let win
-
-function createWindow() {
-    // Create the browser window.
-    win = new BrowserWindow({
+function createMainWindow() {
+    mainWin = new BrowserWindow({
         width: 1000,
         height: 700,
-        // frame: false,//啥都没有了
+        frame: false,//啥都没有了
         // titleBarStyle: 'hiddenInset',//有红绿灯，注：win上无效，mac没验证
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -20,21 +18,25 @@ function createWindow() {
             enableRemoteModule: true
         }
     })
-    win.webContents.openDevTools({mode: 'bottom'})
+    mainWin.webContents.openDevTools({mode: 'bottom'})
 
-    win.loadFile('index.html')
+    mainWin.loadFile('index.html')
 
+    // mainWin.webContents.session.on('will-download', (event, item, webContents) => {
+    //     console.log('监听到下载了112312312', item)
+    // })
 }
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-    createWindow()
+    createMainWindow()
     app.on('activate', function () {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
-        if (BrowserWindow.getAllWindows().length === 0) createWindow()
+        if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
     })
 })
 
@@ -47,46 +49,3 @@ app.on('window-all-closed', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-
-
-const openFile = (file) => {
-    const res = dialog.showOpenDialogSync({
-        title: '对话框窗口的标题',
-        // 默认打开的路径，比如这里默认打开下载文件夹
-        defaultPath: app.getPath('downloads'),
-        buttonLabel: '确认按钮文案',
-        // 限制能够选择的文件类型
-        filters: [
-            // { name: 'Images', extensions: ['jpg', 'png', 'gif'] },
-            // { name: 'Movies', extensions: ['mkv', 'avi', 'mp4'] },
-            // { name: 'Custom File Type', extensions: ['as'] },
-            { name: 'All Files', extensions: ['*'] },
-        ],
-        properties: [ 'openFile', 'openDirectory', 'multiSelections', 'showHiddenFiles' ],
-        message: 'mac文件选择器title'
-    })
-    console.log('res', res)
-}
-
-function closeWindow() {
-    win.close()
-    // app.quit()
-}
-
-function hideWindow() {
-    win.minimize()
-}
-function maximizeWindow() {
-    if (win.isMaximized()){
-        win.unmaximize()
-    }else {
-        win.maximize()
-    }
-}
-
-
-exports.createWindow = createWindow
-exports.openFile = openFile
-exports.closeWindow = closeWindow
-exports.hideWindow = hideWindow
-exports.maximizeWindow = maximizeWindow

