@@ -64,7 +64,6 @@
         data() {
             return {
                 scale: 2,
-
                 viewWidth: 1000,
                 contextMenu: {
                     isShow: false,

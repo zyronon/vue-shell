@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "startElectron": "electron ./electron/main.js",
-    "startVue": "node_modules\\.bin\\electron http://localhost:9003",
+    "startVue": "node_modules\\.bin\\electron http://localhost:8863",
     "dev": "webpack-dev-server --config ./build/webpack.dev.config.js",
     "build": "webpack --config ./build/webpack.prod.config.js",
     "node": "node ./electron/genrTemplate.js"

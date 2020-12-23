@@ -89,7 +89,7 @@ class File {
         } else {
             $root_path .= "/";
         }
-        echo $root_path . '``' . $path;
+        echo $root_path . '\`\`' . $path;
     }
 
     function change() {

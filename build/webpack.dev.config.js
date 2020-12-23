@@ -9,12 +9,12 @@ module.exports = merge(baseWebpackConfig, {
     devtool: 'cheap-module-eval-source-map',
     devServer: {
         host: 'localhost',
-        port: 9003,
+        port: 8863,
         // open: true,
         hot: true
     },
     output: {
-        publicPath: 'http://localhost:9003/'
+        publicPath: 'http://localhost:8863/'
     },
     module: {
         rules: [

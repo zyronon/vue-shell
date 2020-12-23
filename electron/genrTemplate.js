@@ -58,13 +58,15 @@ export default class File {
 `
 
 fs.writeFileSync('./electron/test.js', template)
+// console.log(getFunctionBody(file, 'pwd'))
 
 function getFunctionBody(file, funcName) {
     let regexp = new RegExp(`function ${funcName}[\\s\\S]*?({[\\s\\S]*?)function`, 'g') // 首个参数为字符串模式的构造函数
     file.match(regexp)
     let phpFunctionBody = RegExp.$1
     // console.log(phpFunctionBody)
-    phpFunctionBody = phpFunctionBody.replace(/\s/g, '')
+    phpFunctionBody = phpFunctionBody.replace(/\s/g, '')//todo as也会被去掉空格，会报错
+    // phpFunctionBody = phpFunctionBody.replace(/\r\n/g, '')
     phpFunctionBody = phpFunctionBody.replace(/\$arg/g, '${this.arg')
     phpFunctionBody = phpFunctionBody.substr(1, phpFunctionBody.length - 1)
     return phpFunctionBody
