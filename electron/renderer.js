@@ -21,11 +21,7 @@ document.getElementById('uploadFile').addEventListener('click', () => {
     if (path) {
         let extension = path.split('\\')
         extension = extension[extension.length - 1]
-        let file = new File([fs.readFileSync(path)],
-            extension,
-        )
-        console.log(path)
-        console.log(file)
+        let file = new File([fs.readFileSync(path)], extension)
         const fd = new FormData()
         fd.append('file', file)
 
