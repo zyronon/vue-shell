@@ -35,6 +35,7 @@
             large() {
             },
             close() {
+                window.nodeFunc.closeWindow()
                 console.log('close')
             },
         }
@@ -53,6 +54,7 @@
         }
 
         .options {
+            //-webkit-app-region: drag;
             display: flex;
             align-items: center;
             margin-right: 10px;

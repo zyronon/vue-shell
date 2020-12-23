@@ -11,7 +11,8 @@
                         <span>Shell管理器</span>
                     </div>
                     <div class="search">
-                        <icon v-show="false" @click="leftBarIsClose = !leftBarIsClose" name="menu" :scale="scale"></icon>
+                        <icon v-show="false" @click="leftBarIsClose = !leftBarIsClose" name="menu"
+                              :scale="scale"></icon>
                         <div class="input-container">
                             <icon name="search" :scale="scale"></icon>
                             <input type="text">
@@ -219,6 +220,18 @@
         created() {
             this.$store.commit('layout/setTableColumns', [])
             this.shells = this.$storageGet('shell', [])
+            this.shells = [{
+                'id': 'zg9tejzsmskivwgcju',
+                'ip': '',
+                'createDate': 1608394325898,
+                'changeDate': 1608394325898,
+                'url': 'http://localhost/shell.php',
+                'note': '',
+                'headers': [],
+                'addHeader': {'checked': true, 'key': '', 'value': ''},
+                'pwd': 'c',
+                'type': 'php'
+            }]
             this.categories = this.$storageGet('category', [])
             this.selectCategory = this.categories.length ? this.categories[0] : {}
             // this.shells = []
@@ -377,7 +390,7 @@
                 flex: 1;
                 display: flex;
 
-                .logo{
+                .logo {
                     display: flex;
                     align-items: center;
                     width: 150px;

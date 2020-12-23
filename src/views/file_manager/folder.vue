@@ -36,7 +36,7 @@
 
         <c-menu :location="menu.location">
             <c-item @click="gotoPath(currentPath)">刷新目录</c-item>
-            <c-item>上传文件</c-item>
+            <c-item @click="chooseFile">上传文件</c-item>
             <c-item>下载文件</c-item>
             <c-item @click="deleteFile" :is-disabled="!menu.onFile">删除</c-item>
             <c-item @click="editItem" :is-disabled="!menu.onFile">重命名</c-item>
@@ -169,6 +169,10 @@
             ...mapActions('file', {
                 gotoPath: 'gotoPath'
             }),
+            chooseFile(){
+               let res =  window.nodeFunc.chooseFile()
+                console.log(res)
+            },
             async createFile() {
                 let cmd
                 if (this.menu.createType) {

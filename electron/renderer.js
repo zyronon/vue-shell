@@ -139,3 +139,11 @@ function chooseFile() {
         message: '文件选择器'
     })
 }
+
+window.nodeFunc = {
+    chooseFile: chooseFile,
+    closeWindow: () => {
+        console.log(1111)
+        remote.getCurrentWindow().close()
+    }
+}

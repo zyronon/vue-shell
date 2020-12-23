@@ -1,1 +1,0 @@
-let a = `$dir='${this.arg1}';if(!@is_dir($dir)){echo"ERROR://PathNotFoundOrNoPermission!";}else{$res='';foreach(scandir($dir)as$value){if($value==='.'||$value==='..')continue;$file=$dir.$value;$res.=$value.'``'.(is_dir($file)?'1':'0').'``'.date("Y/m/dH:i",filemtime($file)).'``'.@filesize($file);$res.="\n";}echo$res;}`

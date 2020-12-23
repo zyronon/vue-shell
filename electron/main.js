@@ -9,7 +9,7 @@ let mainWin
 function createMainWindow() {
     mainWin = new BrowserWindow({
         width: 1000,
-        height: 400,
+        height: 700,
         frame: false,//啥都没有了
         // titleBarStyle: 'hiddenInset',//有红绿灯，注：win上无效，mac没验证
         webPreferences: {

