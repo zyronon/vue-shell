@@ -98,7 +98,6 @@ const config = {
     //     'vuex': 'Vuex',
     //     'axios': 'axios'
     // }
-    // target: 'electron-renderer'
 }
 
 module.exports = config

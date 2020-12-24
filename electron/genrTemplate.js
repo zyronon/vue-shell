@@ -1,6 +1,7 @@
 const fs = require('fs')
 
-let path = 'D:\\safe\\code\\vue-shell\\php-shell\\template\\file.php'
+// let path = 'D:\\safe\\code\\vue-shell\\php-shell\\template\\file.php'
+let path = 'F:\\code\\vue-shell\\php-shell\\template\\file.php'
 let file = fs.readFileSync(path, {encoding: 'utf-8'})
 // console.log(file)
 let template = `
@@ -64,10 +65,13 @@ function getFunctionBody(file, funcName) {
     let regexp = new RegExp(`function ${funcName}[\\s\\S]*?({[\\s\\S]*?)function`, 'g') // 首个参数为字符串模式的构造函数
     file.match(regexp)
     let phpFunctionBody = RegExp.$1
-    // console.log(phpFunctionBody)
+    phpFunctionBody = phpFunctionBody.trim()
     phpFunctionBody = phpFunctionBody.replace(/\s/g, '')//todo as也会被去掉空格，会报错
     // phpFunctionBody = phpFunctionBody.replace(/\r\n/g, '')
     phpFunctionBody = phpFunctionBody.replace(/\$arg/g, '${this.arg')
-    phpFunctionBody = phpFunctionBody.substr(1, phpFunctionBody.length - 1)
+    phpFunctionBody = phpFunctionBody.replace(/echo/g, 'echo ')
+    phpFunctionBody = phpFunctionBody.replace(/as/g, ' as ')
+    phpFunctionBody = phpFunctionBody.replace(/b as e/g, 'base')
+    phpFunctionBody = phpFunctionBody.substring(1, phpFunctionBody.length - 1)
     return phpFunctionBody
 }

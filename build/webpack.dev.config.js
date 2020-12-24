@@ -6,6 +6,7 @@ const pathResolve = (dir) => path.join(__dirname, '..', dir)
 
 module.exports = merge(baseWebpackConfig, {
     mode: 'development',
+    target: 'electron-main',
     devtool: 'cheap-module-eval-source-map',
     devServer: {
         host: 'localhost',
