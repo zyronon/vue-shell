@@ -10,7 +10,7 @@ const webpack = require('webpack')
 const pathResolve = (dir) => path.join(__dirname, '..', dir)
 module.exports = merge(baseWebpackConfig, {
     mode: 'production',
-    target: 'electron-main',
+    target: 'electron-renderer',
     devtool: false,
     stats: {
         modules: false,
@@ -38,7 +38,6 @@ module.exports = merge(baseWebpackConfig, {
             // 'process.env': {NODE_ENV: 'production'}
         })
     ],
-
     optimization: {
         minimize: true,
         minimizer: [

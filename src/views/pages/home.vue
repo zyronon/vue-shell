@@ -195,6 +195,7 @@
                     url: '',
                     note: '',
                     headers: [],
+                    requestType: 1,//0:get,1:post,2:request
                     addHeader: {
                         checked: true,
                         key: '',
@@ -220,18 +221,21 @@
         created() {
             this.$store.commit('layout/setTableColumns', [])
             this.shells = this.$storageGet('shell', [])
-            this.shells = [{
-                'id': 'zg9tejzsmskivwgcju',
-                'ip': '',
-                'createDate': 1608394325898,
-                'changeDate': 1608394325898,
-                'url': 'http://localhost/shell.php',
-                'note': '',
-                'headers': [],
-                'addHeader': {'checked': true, 'key': '', 'value': ''},
-                'pwd': 'c',
-                'type': 'php'
-            }]
+            if (!this.shells.length){
+                this.shells = [{
+                    'id': 'zg9tejzsmskivwgcju',
+                    'ip': '',
+                    'createDate': 1608394325898,
+                    'changeDate': 1608394325898,
+                    'url': 'http://localhost/shell.php',
+                    'note': '',
+                    'headers': [],
+                    'addHeader': {'checked': true, 'key': '', 'value': ''},
+                    'pwd': 'c',
+                    'type': 'php',
+                    requestType: 1,//0:get,1:post,2:request
+                }]
+            }
             this.categories = this.$storageGet('category', [])
             this.selectCategory = this.categories.length ? this.categories[0] : {}
             // this.shells = []
@@ -277,9 +281,8 @@
             },
             async test() {
                 let random = this.$random()
-                let phpCode = `echo%20'${random}';`
-                let url = this.$geneShellUrl(this.form) + phpCode
-                let res = await this.$request(url)
+                let phpCode = `echo '${random}';`
+                let res = await this.$genRequest(this.form, phpCode)
                 if (res === random) {
                     this.message1.success('连接成功')
                 } else {
@@ -326,7 +329,7 @@
                     case 'terminal':
                         this.$router.push({
                             path: '/terminal',
-                            query: {shell: item || this.menu.chooseItem}
+                            query: {shell: JSON.stringify(item || this.menu.chooseItem)}
                         })
                         break
                     case 'file':
@@ -383,7 +386,7 @@
 
 
         .toolbar {
-            height: 40px;
+            height: 50px;
             display: flex;
 
             .left {
@@ -455,7 +458,7 @@
 
         .content-container {
             display: flex;
-            height: calc(100% - 40px);
+            height: calc(100% - 50px);
 
             .category {
                 width: 200px;

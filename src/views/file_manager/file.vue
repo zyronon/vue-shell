@@ -224,7 +224,7 @@
         .tab-content {
             //border-top: 1px solid gray;
             display: flex;
-            height: calc(100% - 40px);
+            height: calc(100% - 50px);
 
 
             .left-dir {
