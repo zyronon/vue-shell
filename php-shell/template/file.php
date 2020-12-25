@@ -37,7 +37,7 @@ class File {
 //        return var_dump($_FILES);
         try {
             if ($_FILES['$arg1}']['error']) echo 'ERROR://upload fail';
-            else move_uploaded_file($_FILES['$arg1}']['tmp_name'], $_FILES['$arg1}']['name']);
+            else move_uploaded_file($_FILES['$arg1}']['tmp_name'], '$arg2}'.$_FILES['$arg1}']['name']);
         } catch (Exception $e) {
             echo 'ERROR://No Permission';
         }

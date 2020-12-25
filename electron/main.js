@@ -20,7 +20,8 @@ function createMainWindow() {
     })
     mainWin.webContents.openDevTools({mode: 'bottom'})
 
-    mainWin.loadFile('index.html')
+    // mainWin.loadFile('index.html')
+    mainWin.loadFile('../dist/index.html')
 
     // mainWin.webContents.session.on('will-download', (event, item, webContents) => {
     //     console.log('监听到下载了112312312', item)

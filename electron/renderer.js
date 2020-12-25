@@ -15,41 +15,41 @@ function $console(v) {
     console.log(JSON.stringify(v, null, 4))
 }
 
-document.getElementById('uploadFile').addEventListener('click', () => {
-    window.nodeFunc.uploadFile()
-})
-
-document.getElementById('downloadFile').addEventListener('click', () => {
-    window.nodeFunc.downloadFile()
-})
-
-document.getElementById('openNewWindow').addEventListener('click', () => {
-    window.nodeFunc.openNewWindow()
-})
-
-document.getElementById('saveAs').addEventListener('click', () => {
-    window.nodeFunc.saveAs()
-})
-
-document.getElementById('chooseFile').addEventListener('click', () => {
-    window.nodeFunc.chooseFile()
-})
-
-document.getElementById('hideWindow').addEventListener('click', () => {
-    window.nodeFunc.hideWindow()
-})
-
-document.getElementById('maximizeWindow').addEventListener('click', () => {
-    window.nodeFunc.maximizeWindow()
-})
-
-document.getElementById('closeWindow').addEventListener('click', () => {
-    window.nodeFunc.closeWindow()
-})
-
-ipcRenderer.on('file-opened', (event, file, content) => {
-    console.log(content)
-})
+// document.getElementById('uploadFile').addEventListener('click', () => {
+//     window.nodeFunc.uploadFile()
+// })
+//
+// document.getElementById('downloadFile').addEventListener('click', () => {
+//     window.nodeFunc.downloadFile()
+// })
+//
+// document.getElementById('openNewWindow').addEventListener('click', () => {
+//     window.nodeFunc.openNewWindow()
+// })
+//
+// document.getElementById('saveAs').addEventListener('click', () => {
+//     window.nodeFunc.saveAs()
+// })
+//
+// document.getElementById('chooseFile').addEventListener('click', () => {
+//     window.nodeFunc.chooseFile()
+// })
+//
+// document.getElementById('hideWindow').addEventListener('click', () => {
+//     window.nodeFunc.hideWindow()
+// })
+//
+// document.getElementById('maximizeWindow').addEventListener('click', () => {
+//     window.nodeFunc.maximizeWindow()
+// })
+//
+// document.getElementById('closeWindow').addEventListener('click', () => {
+//     window.nodeFunc.closeWindow()
+// })
+//
+// ipcRenderer.on('file-opened', (event, file, content) => {
+//     console.log(content)
+// })
 
 window.nodeFunc = {
     chooseFile() {
@@ -105,60 +105,82 @@ window.nodeFunc = {
         })
         win.loadURL(path.join(__dirname, 'index.html'),)
     },
-    downloadFile() {
+    downloadFile(url = 'http://localhost/file.php', cb) {
         let win = remote.getCurrentWindow()
-        win.webContents.downloadURL('http://localhost/file.php')
+        win.webContents.downloadURL(url)
         win.webContents.session.on('will-download', (event, item, webContents) => {
-            item.setSavePath('D:\\my\\download\\test.iso')
-            console.log(item)
+            // item.setSavePath('D:\\my\\download\\test.iso')
+            // console.log(item)
 
             item.on('updated', (event, state) => {
                 if (state === 'interrupted') {
-                    console.log('下载已经中断，可以恢复')
+                    cb({code: 300, item})
+                    // console.log('下载已经中断，可以恢复')
                 } else if (state === 'progressing') {
                     if (item.isPaused()) {
-                        console.log('下载暂停')
+                        // console.log('下载暂停')
+                        cb({code: 301, item})
                     } else {
                         let a = item.getReceivedBytes() / 1024 / 1024
                         let b = item.getTotalBytes() / 1024 / 1024
-                        console.log(`收到数据: ${a.toFixed(2)} / ${b.toFixed(2)}`)
+                        // console.log(`收到数据: ${a.toFixed(2)} / ${b.toFixed(2)}`)
                         const progress = item.getReceivedBytes() / item.getTotalBytes()
-                        console.log('下载进度' + (progress * 100).toFixed(0) + '%')
+                        // console.log('下载进度' + (progress * 100).toFixed(0) + '%')
+                        cb({
+                            code: 201,
+                            item,
+                            progress,
+                            receive: item.getReceivedBytes(),
+                            total: item.getTotalBytes(),
+                        })
                     }
                 }
             })
             item.once('done', (event, state) => {
                 if (state === 'completed') {
-                    console.log('下载完成')
+                    // console.log('下载完成')
+                    cb({code: 200, item})
                 } else {
-                    console.log(`下载失败: ${state}`)
+                    cb({code: 500, item})
+                    // console.log(`下载失败: ${state}`)
                 }
             })
         })
     },
-    uploadFile() {
-        let path = this.chooseFile()
-        path = path[0]
-        if (path) {
-            let extension = path.split('\\')
-            extension = extension[extension.length - 1]
-            let file = new File([fs.readFileSync(path)], extension)
-            const fd = new FormData()
-            fd.append('file', file)
+    uploadFile(url = 'http://localhost/file.php', cb) {
+        return new Promise(resolve => {
+            let path = this.chooseFile()
+            path = path[0]
+            if (path) {
+                let extension = path.split('\\')
+                extension = extension[extension.length - 1]
+                let file = new File([fs.readFileSync(path)], extension)
+                const fd = new FormData()
+                fd.append('file', file)
 
-            let url = 'http://localhost/file.php'
 
-            axios.post(url, fd, {
-                onUploadProgress: (progressEvent) => {
-                    let complete = (progressEvent.loaded / progressEvent.total * 100 | 0) + '%'
-                    console.log('上传:' + complete)
-                },
-                // onDownloadProgress
-            }).then(res => {
-                if (res.status === 200 && res.data === '') {
-                    console.log('上传完成')
-                }
-            })
-        }
+                axios.post(url, fd, {
+                    onUploadProgress: (progressEvent) => {
+                        let complete = (progressEvent.loaded / progressEvent.total * 100 | 0) + '%'
+                        console.log('上传:' + complete)
+                        cb({path, complete})
+                    },
+                    // onDownloadProgress
+                }).then(res => {
+                    if (res.status === 200 && res.data === '') {
+                        console.log('上传完成')
+                        resolve({code: 200})
+                    } else {
+                        resolve({code: 500})
+                    }
+                }).catch(err => {
+                    resolve({code: 500})
+                })
+            }
+            resolve({code: 500})
+        })
+    },
+    test(fun) {
+        setInterval(fun, 500)
     }
 }
