@@ -2,6 +2,8 @@ import {TYPES} from '../mutation-types'
 import request from '../../utils/http'
 import File from '../../template/php/file'
 import globalMethods from '../../utils/global-methods'
+import CryptoJS from "crypto-js";
+import CONST from "../../utils/const_var";
 
 
 export const file = {
@@ -38,8 +40,14 @@ export const file = {
     getters: {},
     actions: {
         async gotoPath({state, commit}, path) {
-            // console.log(value)
-            let res = await globalMethods.$genRequest(state.shell, new File(path + '/').dir())
+            let res
+            if (state.shell.decodeType === CONST.DECODE_TYPE.BASE64.VALUE) {
+                res = await globalMethods.$genRequest(state.shell, new File(
+                    path + '/',
+                    CONST.DECODE_TYPE.BASE64[state.shell.type]
+                ).dir())
+                res = CryptoJS.enc.Base64.parse(res).toString(CryptoJS.enc.Utf8)
+            }
             let row = res.split('\n')
             let currentDir = []
             row.map(v => {

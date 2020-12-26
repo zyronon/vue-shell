@@ -1,7 +1,7 @@
 import filters from './filters'
 import globalMethods from './global-methods'
 import Config from '../config'
-import CONSTANT from './const_var'
+import CONST from './const_var'
 import {TYPES} from '../store/mutation-types'
 import myDialog from '../components/dialog'
 import arrowIcon from '../components/arrowIcon';
@@ -25,7 +25,7 @@ export default {
             viewHeight: 700,
             TYPES,
             CONFIG: Config,
-            CONSTANT,
+            CONST,
             message1:Message
         }
     },

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import globalMethods from './global-methods'
 import Config from '../config/index'
-import CONSTANT from './const_var'
+import CONST from './const_var'
 import store from '../store'
 import Storage from './storage'
 
@@ -55,10 +55,10 @@ instance.interceptors.response.use(
  * @apiParam  method 方法类型：get或者post
  * @apiParam  version 接口版本号
  * @apiParamExample
- *       request('Appointment/appointmentList', data, params, CONSTANT.GET)
+ *       request('Appointment/appointmentList', data, params, CONST.GET)
  * @apiReturn Promise
  */
-async function request(url, data = {}, params = {}, method = CONSTANT.GET, headers = {}) {
+async function request(url, data = {}, params = {}, method = CONST.GET, headers = {}) {
     let temp = ''
     for (let v in data) {
         temp += v + '=' + data[v] + '&'

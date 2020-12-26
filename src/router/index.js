@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import _import from '../utils/import'
-import CONSTANT from '../utils/const_var'
+import CONST from '../utils/const_var'
 
 Vue.use(VueRouter)
 
 // 静态路由表
-export const constantRouterMap = [
+export const CONSTRouterMap = [
      {
         path: '/terminal',
         name: 'terminal',
@@ -39,6 +39,6 @@ export const constantRouterMap = [
 // 创建 router 实例，然后传 `routes` 配置
 export default new VueRouter({
     // mode: 'history',
-    routes: constantRouterMap,
+    routes: CONSTRouterMap,
     scrollBehavior: () => ({y: 0}),
 })

