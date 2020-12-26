@@ -13,17 +13,21 @@ export default {
     DELAYTIME: 250,
     SUCCESS: '000000',
     REQUEST_TYPE: {
-        POST: 'POST'
+        POST: 'POST',
+        GET: 'GET',
     },
     ENCODE_TYPE: {
         NONE: 'NONE',
         BASE64: 'BASE64',
     },
     DECODE_TYPE: {
-        NONE: 'NONE',
+        NONE: {
+            VALUE: 'NONE',
+            FUNC: 'function encode($val) {print_r($val);};'
+        },
         BASE64: {
             VALUE: 'BASE64',
-            PHP: 'base64_encode'
+            PHP: 'function encode($val) {echo base64_encode($val);};'
         },
     },
 

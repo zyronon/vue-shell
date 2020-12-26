@@ -1,15 +1,14 @@
 // Modules to control application life and create native browser window
-const {app, dialog, BrowserWindow, Menu, ipcMain} = require('electron')
+const {app, BrowserWindow} = require('electron')
 const path = require('path')
-const fs = require('fs')	//引入Node fs库
 
 // 在主进程中
 let mainWin
 
 function createMainWindow() {
     mainWin = new BrowserWindow({
-        width: 1000,
-        height: 700,
+        width: 1200,
+        height: 900,
         frame: false,//啥都没有了
         // titleBarStyle: 'hiddenInset',//有红绿灯，注：win上无效，mac没验证
         webPreferences: {

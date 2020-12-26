@@ -8,7 +8,7 @@ import Storage from './storage'
 const instance = axios.create({
     // baseURL: process.env.NODE_ENV === 'production' ? Config.PRODUCT_API_URL : Config.API_URL,
     timeout: 15000,
-    // headers:{'Content-Type': 'application/x-www-form-urlencoded'}
+    headers:{'Content-Type': 'application/x-www-form-urlencoded'}
 })
 
 // request 拦截器

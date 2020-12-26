@@ -60,14 +60,14 @@ class File {
         $current_path = dirname($_SERVER["SCRIPT_FILENAME"]);
         if ($current_path == "") $current_path = dirname($_SERVER["PATH_TRANSLATED"]);
         $dir = $current_path . '/';
-        $res = ['current_path' => $dir];
-        $current_dir = [];
+        $res = array('current_path' => $dir);
+        $current_dir = array();
         foreach (scandir($dir) as $value) {
             $file = $dir . $value;
             if (!file_exists($file)) {
                 continue;
             }
-            $f = [];
+            $f = array();
 //            $f['type'] = is_dir($dir . $value);
             $f['name'] = $value;
 //            $f['change_date'] = date("Y/m/d H:i", filemtime($file));
@@ -204,5 +204,5 @@ class File {
 }
 
 $f = new File();
-$f->dir3();
+$f->pwd();
 ?>
