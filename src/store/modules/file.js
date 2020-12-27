@@ -41,7 +41,10 @@ export const file = {
     actions: {
         async gotoPath({state, commit}, path) {
             let res
-            res = await globalMethods.$genRequest(state.shell, new File().dir, [path + '/'],)
+            if (path.endsWith('/')) {
+                path = path.substring(0, path.length - 1)
+            }
+            res = await globalMethods.$genRequest(state.shell, new File().dir, [path],)
             let row = res.split('\n')
             let currentDir = []
             row.map(v => {

