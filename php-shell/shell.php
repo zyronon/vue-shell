@@ -11,10 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTION') {
 //5.2版本的eval函数，数组取值不能用双引号，if为空判断不能用==''，用empty代替
 //php5.2路径后缀不能为/，7.3版本可以
 //function后面不用根;号，大部分时间解析不出来，todo 也可能是我代码问题，
+//todo php5.2路径后缀不能为/，7.3版本可以
 
 
-
-
+ 
 //var_dump($_REQUEST);
 //
 //$a = 'print_r($_SERVER["SCRIPT_FILENAME"]);';

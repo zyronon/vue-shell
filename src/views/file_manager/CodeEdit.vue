@@ -69,11 +69,8 @@
     import '@/assets/less/idea-dark.css'
     import 'codemirror/theme/monokai.css'
 
-    // import {Base64} from 'js-base64';
-    // import Base64 from 'crypto-js/enc-base64';
-    import base64 from '../../utils/base64.js'
     import File from '../../template/php/file.js'
-    import {TYPES} from '../../store/mutation-types'
+    import crypto from '../../utils/crypto'
 
     export default {
         name: 'CodeEdit',  //组件命名
@@ -98,15 +95,16 @@
             }
         },
         created() {
-            console.log(base64)
         },
         methods: {
             async save() {
+                let shell = this.$route.query.shell
+                shell = JSON.parse(shell)
                 let content = this.editor.getValue()
-                let res = await this.$request('http://localhost:8863/api/shell.php', {
-                    c: new File(this.path, 'change').change(),
-                    'change': encodeURIComponent(base64._encode(content, false))
-                }, {}, 'POST')
+
+                let res = await this.$genRequest(shell, new File().change, [
+                    this.path, crypto.base64Encode(content, false)
+                ])
                 if (!res) {
                     this.$bus.$emit('updateContent', {path: this.path, content})
                 }

