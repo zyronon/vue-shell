@@ -6,7 +6,7 @@ export default class File {
     }
 
 
-    dir() {
+    dir(){
         //todo 5.2不能跨目录
         return `
         $dir = '${arguments[1]}';

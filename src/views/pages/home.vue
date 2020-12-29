@@ -157,6 +157,10 @@
             </c-item>
             <c-item
                     :is-disabled="menu.chooseItem === null"
+                    @click="goto('codeExec')">代码执行
+            </c-item>
+            <c-item
+                    :is-disabled="menu.chooseItem === null"
                     @click="goto('file')">打开
             </c-item>
             <c-item
@@ -223,7 +227,8 @@
             this.$store.commit('layout/setTableColumns', [])
             this.shells = this.$storageGet('shell', [])
             if (!this.shells.length) {
-                this.shells = [{
+                this.shells = [
+                    {
                     'id': 'zg9tejzsmskivwgcju',
                     'ip': '',
                     'createDate': 1608394325898,
@@ -369,6 +374,12 @@
                     case 'file':
                         this.$router.push({
                             path: '/file',
+                            query: {shell: JSON.stringify(item || this.menu.chooseItem)}
+                        })
+                        break
+                    case 'codeExec':
+                        this.$router.push({
+                            path: '/codeExec',
                             query: {shell: JSON.stringify(item || this.menu.chooseItem)}
                         })
                         break
