@@ -239,7 +239,7 @@
                     'addHeader': {'checked': true, 'key': '', 'value': ''},
                     'pwd': 'c',
                     'type': 'PHP',
-                    requestType: this.CONST.REQUEST_TYPE.GET,//0:get,1:post,2:request,
+                    requestType: this.CONST.REQUEST_TYPE.POST,//0:get,1:post,2:request,
                     // encodeType: this.CONST.ENCODE_TYPE.NONE,
                     // decodeType: this.CONST.DECODE_TYPE.NONE.VALUE,
                     encodeType: this.CONST.ENCODE_TYPE.BASE64,

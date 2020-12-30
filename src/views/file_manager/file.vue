@@ -96,7 +96,6 @@
                 'shell'
             ]),
         },
-
         created() {
             this.init()
         },
@@ -123,8 +122,6 @@
             async init() {
                 let shell = this.$route.query.shell
                 shell = JSON.parse(shell)
-                shell.shellUrl = this.$geneShellUrl(shell)
-
                 this.setShell(shell)
             },
 

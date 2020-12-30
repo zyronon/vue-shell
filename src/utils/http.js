@@ -8,7 +8,7 @@ import Storage from './storage'
 const instance = axios.create({
     // baseURL: process.env.NODE_ENV === 'production' ? Config.PRODUCT_API_URL : Config.API_URL,
     timeout: 15000,
-    headers:{'Content-Type': 'application/x-www-form-urlencoded'}
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 })
 
 // request 拦截器
@@ -60,8 +60,9 @@ instance.interceptors.response.use(
  */
 async function request(url, data = {}, params = {}, method = CONST.GET, headers = {}) {
     let temp = ''
-    for (let v in data) {
-        temp += v + '=' + data[v] + '&'
+    let keys = Object.keys(data)
+    for (let i = 0; i < keys.length; i++) {
+        temp += keys[i] + '=' + data[keys[i]] + (i !== keys.length - 1 ? '&' : '')
     }
     // console.log(temp);
     return instance({

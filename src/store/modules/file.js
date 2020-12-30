@@ -16,7 +16,6 @@ export const file = {
         shell: {
             url: '',
             pwd: '',
-            shellUrl: '',
         },
     },
     mutations: {
