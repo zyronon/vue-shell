@@ -4,16 +4,23 @@
             <slot></slot>
         </div>
         <div class="options">
-            <icon @click="hide" name="close" :scale="scale"></icon>
-            <icon @click="large" name="close" :scale="scale"></icon>
-            <icon @click="close" name="close" :scale="scale"></icon>
+            <minus style="margin:0 5px;"  @click="hide" theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/>
+            <full-screen style="margin:0 5px;"  @click="large" theme="outline" size="15" fill="#8A8A8A" :strokeWidth="3"/>
+            <close style="margin:0 5px;"  @click="close" theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/>
         </div>
         <div class="drag"></div>
     </div>
 </template>
 
 <script>
+    import { Close, Minus, FullScreen} from '@icon-park/vue'
+
     export default {
+        components: {
+            FullScreen,
+            Minus,
+            Close,
+        },
         name: 'index',
         props: {},
         data() {

@@ -20,8 +20,10 @@
                     </div>
                 </div>
                 <div class="right">
-                    <icon @click="isShow.shell = true" name="add" :scale="scale"></icon>
-                    <icon name="setting" :scale="scale"></icon>
+                    <div @click="isShow.shell = true">
+                        <plus theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/>
+                    </div>
+                    <setting-one style="margin:0 5px;" theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/>
                     <span>|</span>
                 </div>
             </div>
@@ -190,8 +192,13 @@
 <script>
     import {mapState} from 'vuex'
     import CONST from '../../utils/const_var'
+    import {SettingOne, Plus} from '@icon-park/vue'
 
     export default {
+        components: {
+            Plus,
+            SettingOne
+        },
         data() {
             return {
                 scale: 2,
@@ -229,50 +236,50 @@
             if (!this.shells.length) {
                 this.shells = [
                     {
-                    'id': 'zg9tejzsmskivwgcju',
-                    'ip': '',
-                    'createDate': 1608394325898,
-                    'changeDate': 1608394325898,
-                    'url': 'http://localhost/shell.php',
-                    'note': '',
-                    'headers': [],
-                    'addHeader': {'checked': true, 'key': '', 'value': ''},
-                    'pwd': 'c',
-                    'type': 'PHP',
-                    requestType: this.CONST.REQUEST_TYPE.POST,//0:get,1:post,2:request,
-                    // encodeType: this.CONST.ENCODE_TYPE.NONE,
-                    // decodeType: this.CONST.DECODE_TYPE.NONE.VALUE,
-                    encodeType: this.CONST.ENCODE_TYPE.BASE64,
-                    decodeType: this.CONST.DECODE_TYPE.BASE64.VALUE,
-                }, {
-                    'id': 'zg9tejzsmskivwgcju2',
-                    'ip': '',
-                    'createDate': 1608394325898,
-                    'changeDate': 1608394325898,
-                    'url': 'http://ccn.ee.nsysu.edu.tw//file/one_word.php',
-                    'note': '',
-                    'headers': [],
-                    'addHeader': {'checked': true, 'key': '', 'value': ''},
-                    'pwd': 'c',
-                    'type': 'PHP',
-                    requestType: this.CONST.REQUEST_TYPE.POST,//0:get,1:post,2:request,
-                    encodeType: this.CONST.ENCODE_TYPE.BASE64,
-                    decodeType: this.CONST.DECODE_TYPE.BASE64.VALUE,
-                },{
-                    'id': 'zg9tejzsmskivwgcju1',
-                    'ip': '',
-                    'createDate': 1608394325898,
-                    'changeDate': 1608394325898,
-                    'url': 'http://www.testblog.abc/shell.php',
-                    'note': '',
-                    'headers': [],
-                    'addHeader': {'checked': true, 'key': '', 'value': ''},
-                    'pwd': 'c',
-                    'type': 'PHP',
-                    requestType: this.CONST.REQUEST_TYPE.POST,//0:get,1:post,2:request,
-                    encodeType: this.CONST.ENCODE_TYPE.BASE64,
-                    decodeType: this.CONST.DECODE_TYPE.BASE64.VALUE,
-                }]
+                        'id': 'zg9tejzsmskivwgcju',
+                        'ip': '',
+                        'createDate': 1608394325898,
+                        'changeDate': 1608394325898,
+                        'url': 'http://localhost/shell.php',
+                        'note': '',
+                        'headers': [],
+                        'addHeader': {'checked': true, 'key': '', 'value': ''},
+                        'pwd': 'c',
+                        'type': 'PHP',
+                        requestType: this.CONST.REQUEST_TYPE.POST,//0:get,1:post,2:request,
+                        // encodeType: this.CONST.ENCODE_TYPE.NONE,
+                        // decodeType: this.CONST.DECODE_TYPE.NONE.VALUE,
+                        encodeType: this.CONST.ENCODE_TYPE.BASE64,
+                        decodeType: this.CONST.DECODE_TYPE.BASE64.VALUE,
+                    }, {
+                        'id': 'zg9tejzsmskivwgcju2',
+                        'ip': '',
+                        'createDate': 1608394325898,
+                        'changeDate': 1608394325898,
+                        'url': 'http://ccn.ee.nsysu.edu.tw//file/one_word.php',
+                        'note': '',
+                        'headers': [],
+                        'addHeader': {'checked': true, 'key': '', 'value': ''},
+                        'pwd': 'c',
+                        'type': 'PHP',
+                        requestType: this.CONST.REQUEST_TYPE.POST,//0:get,1:post,2:request,
+                        encodeType: this.CONST.ENCODE_TYPE.BASE64,
+                        decodeType: this.CONST.DECODE_TYPE.BASE64.VALUE,
+                    }, {
+                        'id': 'zg9tejzsmskivwgcju1',
+                        'ip': '',
+                        'createDate': 1608394325898,
+                        'changeDate': 1608394325898,
+                        'url': 'http://www.testblog.abc/shell.php',
+                        'note': '',
+                        'headers': [],
+                        'addHeader': {'checked': true, 'key': '', 'value': ''},
+                        'pwd': 'c',
+                        'type': 'PHP',
+                        requestType: this.CONST.REQUEST_TYPE.POST,//0:get,1:post,2:request,
+                        encodeType: this.CONST.ENCODE_TYPE.BASE64,
+                        decodeType: this.CONST.DECODE_TYPE.BASE64.VALUE,
+                    }]
             }
             this.categories = this.$storageGet('category', [])
             this.selectCategory = this.categories.length ? this.categories[0] : {}
