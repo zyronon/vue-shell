@@ -24,12 +24,21 @@
 .cm-s-idea span.cm-attribute { color:  rgb(169,183,198); }
 .cm-s-idea span.cm-tag { color:  rgb(169,183,198); }
 .cm-s-idea span.cm-link { color:  rgb(169,183,198); }
-.cm-s-idea .CodeMirror-activeline-background { background: rgb(43,43,43)!important; }
+.cm-s-idea .CodeMirror-activeline-background { background: rgb(50,50,50)!important; }
 .CodeMirror { background: rgb(43,43,43)!important; }
 /*.cm-s-idea .CodeMirror-activeline-background { background: #FFFAE3; } */
 .CodeMirror-code{ color: rgb(169,183,198); }
-.CodeMirror-line::selection { background: rgba(73, 72, 62, .99); }
-.CodeMirror-gutter-wrapper ::selection { background: rgba(73, 72, 62, .99); }
+
+
+/*
+选中文字
+*/
+.CodeMirror-selected { background: #49483E; }
+.CodeMirror-focused .CodeMirror-selected { background: #49483E; }
+.CodeMirror-crosshair { cursor: crosshair; }
+.CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection { background: #49483E; }
+.CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: #49483E; }
+
 
 .CodeMirror-cursor{ border-left:1.5px solid rgb(169,183,198); }
 .CodeMirror-gutters{ background:rgb(49,51,53);border-right: none; }

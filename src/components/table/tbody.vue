@@ -83,11 +83,8 @@
                 }
             },
             handleMouseMove(event) {
-                // console.log(e.clientX);
-                // console.log(e);
                 let target = event.target
                 let rect = target.getBoundingClientRect()
-
                 const bodyStyle = document.body.style
                 if (rect.width > 12 && rect.right - event.pageX < 8) {
                     bodyStyle.cursor = 'col-resize'
@@ -99,7 +96,6 @@
                 // console.log('handleMouseOut');
                 document.removeEventListener('mousemove', null)
                 document.body.style.cursor = ''
-
             },
             handleMouseDown(event, column) {
                 // console.log('handleMouseDown');

