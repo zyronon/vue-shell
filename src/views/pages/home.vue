@@ -20,10 +20,9 @@
                     </div>
                 </div>
                 <div class="right">
-                    <div @click="isShow.shell = true">
-                        <plus theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/>
-                    </div>
-                    <setting-one style="margin:0 5px;" theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/>
+                    <span @click="isShow.shell = true"><plus theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/></span>
+                    <span @click="isShow.shell = true"> <setting-one style="margin:0 5px;" theme="outline" size="19"
+                                                                     fill="#8A8A8A" :strokeWidth="3"/></span>
                     <span>|</span>
                 </div>
             </div>
@@ -34,7 +33,7 @@
                  :style="{width:leftBarIsClose?'90px':'150px'}">
                 <div class="header">
                     <span>本地分类</span>
-                    <icon name="add" :scale="scale" @click="isShow.category = true"></icon>
+                    <span @click="isShow.category = true"><plus theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/></span>
                 </div>
                 <div class="row"
                      :class="item.id === selectCategory.id?'active':''"

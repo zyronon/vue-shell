@@ -4,16 +4,16 @@
             <slot></slot>
         </div>
         <div class="options">
-            <minus style="margin:0 5px;"  @click="hide" theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/>
-            <full-screen style="margin:0 5px;"  @click="large" theme="outline" size="15" fill="#8A8A8A" :strokeWidth="3"/>
-            <close style="margin:0 5px;"  @click="close" theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/>
+            <span @click="hide" ><minus style="margin:0 5px;"theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/></span>
+            <span @click="large" ><full-screen style="margin:0 5px;"theme="outline" size="15" fill="#8A8A8A" :strokeWidth="3"/></span>
+            <span @click="close" ><close style="margin:0 5px;"theme="outline" size="19" fill="#8A8A8A" :strokeWidth="3"/></span>
         </div>
         <div class="drag"></div>
     </div>
 </template>
 
 <script>
-    import { Close, Minus, FullScreen} from '@icon-park/vue'
+    import {Close, Minus, FullScreen} from '@icon-park/vue'
 
     export default {
         components: {
