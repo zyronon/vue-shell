@@ -234,6 +234,7 @@
 
 <style lang="less" scoped>
     .folders {
+        width: 100%;
         float: left;
         color: rgb(186, 173, 180);
 

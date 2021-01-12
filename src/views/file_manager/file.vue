@@ -1,6 +1,8 @@
 <template>
     <div class="content"
          @click="contextMenu.isShow = false"
+         @mouseup="resize.directory = false"
+         @mousemove="mousemove"
          @contextmenu="$event.preventDefault()"
     >
         <div class="tabs">
@@ -15,10 +17,11 @@
             <option-bar></option-bar>
         </c-header>
         <div class="tab-content" :class="readFiles.length?'show-file-tab':''">
-            <div class="left-dir" @mousemove="mousemove">
+            <div :style="{'width':widths.directoryWidth+'px'}" class="left-dir">
                 <directory></directory>
             </div>
-            <div class="dir-content" @mousemove="mousemove">
+            <div :style="{'width':viewWidth - widths.directoryWidth+'px'}" class="dir-content">
+                <div class="gutter-vertical" @mousedown="resize.directory = true"></div>
                 <folder :directory-width="widths.directoryWidth" @openFile="readFileContent"></folder>
             </div>
         </div>
@@ -62,6 +65,7 @@
         data() {
             return {
                 scale: 2,
+                viewWidth: 1000,
                 contextMenu: {
                     isShow: false,
                     top: 0,
@@ -102,17 +106,12 @@
             ...mapMutations('file', {
                 setShell: TYPES.SET_SHELL + '',
             }),
-            mousemove(event) {
-                let target = event.target
-                let rect = target.getBoundingClientRect()
-                const bodyStyle = document.body.style
-                if (rect.width > 12 && rect.right - event.pageX < 8) {
-                    bodyStyle.cursor = 'col-resize'
-                } else {
-                    bodyStyle.cursor = ''
+            mousemove(e) {
+                if (this.resize.directory) {
+                    if (e.clientX < 120) return this.resize.directory = false
+                    this.widths.directoryWidth = e.clientX
                 }
             },
-
             save() {
                 // console.log(this.readFile.content)
                 let pre = this.$refs['pre']
@@ -125,6 +124,7 @@
                 shell = JSON.parse(shell)
                 this.setShell(shell)
             },
+
             async readFileContent(value) {
                 let {filePath, fileName} = value
                 let files = this.readFiles.find(v => v.path === filePath)
@@ -215,16 +215,33 @@
 
 
             .left-dir {
-                width: 300px;
                 overflow: auto;
                 position: relative;
 
             }
 
             .dir-content {
-                flex: 1;
                 height: 100%;
                 position: relative;
+
+                .gutter-vertical {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 1px;
+                    height: 100%;
+
+                    &::after {
+                        content: "";
+                        cursor: col-resize;
+                        display: block;
+                        height: 100%;
+                        width: 8px;
+                        position: fixed;
+                        margin-left: -3px;
+                        z-index: 10;
+                    }
+                }
             }
         }
 
