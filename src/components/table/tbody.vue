@@ -143,7 +143,6 @@ export default {
       document.addEventListener('mouseup', handleMouseUp)
     },
   },
-
   render(createElement, context) {
     let tableStyle = ''
     let tableBodyStyle = ''
